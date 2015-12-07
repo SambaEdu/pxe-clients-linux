@@ -201,7 +201,7 @@ LABEL Installation Debian $version_debian
 LABEL Installation Ubuntu et xubuntu $version_ubuntu
     MENU LABEL ^Installation ubuntu
     KERNEL menu.c32
-    APPEND pxelinux.cfg/inst_buntu.cfg   
+    APPEND pxelinux.cfg/inst_buntu.cfg
     " >> /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu
     # cp $src/install.menu /tftpboot/tftp_modeles_pxelinux.cfg/menu/
     fi
@@ -410,7 +410,7 @@ gestion_cles_publiques()
     then
         echo "Génération d'un paquet de clés pub ssh d'aprés vos authorized_keys"
         cd /root/.ssh
-        for fich_authorized_keys in authorized_keys authorized_keys2 /var/www/install/id_rsa.pub 
+        for fich_authorized_keys in authorized_keys authorized_keys2 /var/www/install/id_rsa.pub
         do
             if [ -e "$fich_authorized_keys" ]
             then
@@ -440,11 +440,11 @@ gestion_fichiers_preseed()
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_jessie.cfg 
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
     [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
     [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_buntu.cfg 
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
@@ -473,9 +473,9 @@ ExTreshold: 4
 END
         
         # securisation acces admin pass adminse3
-        echo "AdminAuth: admin:$xppass" > /etc/apt-cacher-ng/security.conf 
-        chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf 
-        chmod 600 /etc/apt-cacher-ng/security.conf 
+        echo "AdminAuth: admin:$xppass" > /etc/apt-cacher-ng/security.conf
+        chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
+        chmod 600 /etc/apt-cacher-ng/security.conf
         
         # config propre ubuntu
         echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
@@ -494,7 +494,7 @@ END
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
-            sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i 
+            sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
         done
     else
         if [ -z "$MIROIR_IP" -o -z "$CHEMIN_MIROIR" ]
@@ -511,9 +511,9 @@ END
         do
             sed -i "s|###_IP_SE3_###:9999|$MIROIR_IP|g" $i
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
-            sed -i "s|/debian|$CHEMIN_MIROIR|g" $i 
+            sed -i "s|/debian|$CHEMIN_MIROIR|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
-            sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i 
+            sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
         done
     fi
 }
@@ -616,7 +616,7 @@ gestion_profil_skel()
 
 reconfigurer_module()
 {
-    bash /home/netlogon/clients-linux/.defaut/reconfigure.bash 
+    bash /home/netlogon/clients-linux/.defaut/reconfigure.bash
 }
 
 #=====
@@ -643,18 +643,18 @@ repertoire_temporaire
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
 [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
-# il y a un probleme sur la somme de controle disponible sur le dépôt
-#[ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
+# il y a un probleme sur la somme de controle disponible sur le dépôt : cela semble réglé, à confirmer [TODO]
+[ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
 # sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
 [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386
 [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian amd64
 [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
-#[ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
+[ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
 # on met à jour si nécessaire (mise en place la première fois)
 [ $option_debian = "oui" ] && mettre_se3_archives debian i386
 [ $option_debian = "oui" ] && mettre_se3_archives debian amd64
 [ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu i386
-#[ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu amd64
+[ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu amd64
 # on supprime le répertoire temporaire
 menage
 transfert_repertoire_install
