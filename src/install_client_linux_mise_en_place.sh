@@ -50,6 +50,7 @@ url_ubuntu="archive.ubuntu.com/ubuntu"
 #
 rep_tftp="tftpboot"
 rep_temporaire="root/temp-linux"
+archive_tftp="install_client_linux_archive-tftp.tar.gz"
 
 
 #=====
@@ -122,13 +123,14 @@ recuperer_variables_se3()
     CliLinGNOME=$(echo "SELECT value FROM params WHERE name='CliLinGNOME';"|mysql -N $dbname -u$dbuser -p$dbpass)
 }
 
-extraire_archive()
+extraire_archive_tftp()
 {
-    echo "Extraction de install_client_linux_archive-tftp.tar.gz."
-    tar -xzf ./install_client_linux_archive-tftp.tar.gz
+# ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
+    echo "Extraction de $archive_tftp."
+    tar -xzf ./$archive_tftp
     if [ "$?" != "0" ]
     then
-        echo "Erreur lors de l'extraction de l'archive."
+        echo "Erreur lors de l'extraction de l'archive tftp $archive_tftp."
         exit 1
     fi
 }
@@ -190,7 +192,7 @@ mise_en_place_tftpboot()
 LABEL Installation Debian $version_debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
-    APPEND pxelinux.cfg/inst_jessie.cfg
+    APPEND pxelinux.cfg/inst_$version_debian.cfg
     " >> /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu
     fi
     
@@ -227,7 +229,7 @@ LABEL Installation Ubuntu et xubuntu $version_ubuntu
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp $src/inst_jessie.cfg $src/inst_buntu.cfg /tftpboot/pxelinux.cfg/
+    cp $src/inst_$version_debian.cfg $src/inst_buntu.cfg /tftpboot/pxelinux.cfg/
 }
 
 repertoire_temporaire()
@@ -311,7 +313,7 @@ telecharger_archives()
     wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/netboot/netboot.tar.gz -O netboot_${version}_${2}.tar.gz
 }
 
-extraire_archives()
+extraire_archives_netboot()
 {
     # 2 arguments :
     # $1 → debian ou ubuntu
@@ -359,7 +361,7 @@ mettre_se3_archives()
         if [ $? = "0" ]
         then
             echo -e "${vert}extraction des fichiers netboot $1 $version $2${neutre}"
-            extraire_archives $1 $2
+            extraire_archives_netboot $1 $2
             echo -e "${vert}mise en place des fichiers netboot $1 $version $2${neutre}"
             mise_en_place_pxe $1 $2
             echo -e ""
@@ -390,16 +392,16 @@ menage()
 transfert_repertoire_install()
 {
     cp $src/post-install* $src/preseed*.cfg $src/mesapplis*.txt $src/bashrc $src/inittab $src/tty1.conf /var/remote_adm/.ssh/id_rsa.pub /var/www/install/
-    chmod 755 /var/www/install/preseed* /var/www/install/post-install_debian_jessie.sh
+    chmod 755 /var/www/install/preseed* /var/www/install/post-install_debian_$version_debian.sh
 }
 
 gestion_script_integration()
 {
-    if [ -e "/home/netlogon/clients-linux/distribs/jessie/integration/integration_jessie.bash" ]
+    if [ -e "/home/netlogon/clients-linux/distribs/$version_debian/integration/integration_$version_debian.bash" ]
     then
-        rm -f /var/www/install/integration_jessie.bash
-        ln /home/netlogon/clients-linux/distribs/jessie/integration/integration_jessie.bash /var/www/install/
-        chmod 755 /var/www/install/integration_jessie.bash
+        rm -f /var/www/install/integration_$version_debian.bash
+        ln /home/netlogon/clients-linux/distribs/$version_debian/integration/integration_$version_debian.bash /var/www/install/
+        chmod 755 /var/www/install/integration_$version_debian.bash
     fi
 }
 
@@ -432,21 +434,21 @@ gestion_fichiers_preseed()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="ntp.ac-creteil.fr"
     
-    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_jessie.cfg pour ajout IP du Se3"
+    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_$version_debian.cfg pour ajout IP du Se3"
     
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /tftpboot/pxelinux.cfg/inst_jessie.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
     [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
     [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_jessie.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
 }
 
@@ -488,7 +490,7 @@ END
         
         service apt-cacher-ng restart
         
-        echo "Correction des fichiers de preseed jessie"
+        echo "Correction des fichiers de preseed $version_debian"
         
         for i in $(ls /var/www/install/preseed*.cfg)
         do
@@ -505,7 +507,7 @@ END
             read CHEMIN_MIROIR
         fi
         
-        echo "Correction des fichiers de preseed jessie"
+        echo "Correction des fichiers de preseed $version_debian"
         
         for i in $(ls /var/www/install/preseed*.cfg)
         do
@@ -576,14 +578,14 @@ gestion_scripts_unefois()
     # [TODO → à supprimer ?]
     # cp $src/logon_perso /home/netlogon/clients-linux/bin/
     
-    # if [ -e /home/netlogon/clients-linux/distribs/jessie/skel/.config ];then
-    #     rm -rf /home/netlogon/clients-linux/distribs/jessie/skel/config-save*
-    #     mv /home/netlogon/clients-linux/distribs/jessie/skel/.config /home/netlogon/clients-linux/distribs/jessie/skel/config-save-$LADATE
+    # if [ -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.config ];then
+    #     rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/config-save*
+    #     mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.config /home/netlogon/clients-linux/distribs/$version_debian/skel/config-save-$LADATE
     # fi
     
-    # if [ -e /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla ];then
-    #     rm -rf /home/netlogon/clients-linux/distribs/jessie/skel/mozilla-save*
-    #     mv /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla /home/netlogon/clients-linux/distribs/jessie/skel/mozilla-save-$LADATE
+    # if [ -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla ];then
+    #     rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/mozilla-save*
+    #     mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla /home/netlogon/clients-linux/distribs/$version_debian/skel/mozilla-save-$LADATE
     # fi
     
     if [ ! -e /home/netlogon/clients-linux/unefois/\^\. ]
@@ -601,17 +603,17 @@ gestion_profil_skel()
 {
     if [ -e $src/update-mozilla-profile ]
     then
-        rm -rf /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla
-        echo  "modif install_client_linux_archive - $LADATE" > /home/netlogon/clients-linux/distribs/jessie/skel/.VERSION
+        rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla
+        echo  "modif install_client_linux_archive - $LADATE" > /home/netlogon/clients-linux/distribs/$version_debian/skel/.VERSION
     fi
     
-    [ ! -e /home/netlogon/clients-linux/distribs/jessie/skel/.config ] && cp -r $src/.config /home/netlogon/clients-linux/distribs/jessie/skel/
-    [ ! -e /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla ] && cp -r $src/.mozilla /home/netlogon/clients-linux/distribs/jessie/skel/
+    [ ! -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.config ] && cp -r $src/.config /home/netlogon/clients-linux/distribs/$version_debian/skel/
+    [ ! -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla ] && cp -r $src/.mozilla /home/netlogon/clients-linux/distribs/$version_debian/skel/
     
-    rm -f /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla/firefox/default/prefs.js-save*
-    mv /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla/firefox/default/prefs.js /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
+    rm -f /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save*
+    mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
     # [TODO → à rendre conditionnel ?]
-    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js /home/netlogon/clients-linux/distribs/jessie/skel/.mozilla/firefox/default/
+    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/
 }
 
 reconfigurer_module()
@@ -629,7 +631,7 @@ reconfigurer_module()
 message_debut
 verifier_version_serveur
 recuperer_variables_se3
-extraire_archive
+extraire_archive_tftp
 installation_se3_clonage
 installation_se3_clients_linux
 droits_repertoires
