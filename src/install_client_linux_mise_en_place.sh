@@ -51,6 +51,7 @@ url_ubuntu="archive.ubuntu.com/ubuntu"
 rep_tftp="tftpboot"
 rep_temporaire="root/temp-linux"
 archive_tftp="install_client_linux_archive-tftp.tar.gz"
+ntp_serveur_defaut="ntp.ac-creteil.fr"
 
 
 #=====
@@ -185,7 +186,7 @@ verifier_presence_mkpasswd()
 mise_en_place_tftpboot()
 {
     # On vérifie si le menu Install fait référence ou non à debian-installer
-    t=$(grep "Installation Debian" /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t=$(grep "Installation Debian" /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t" ]
     then
         echo "    
@@ -193,10 +194,10 @@ LABEL Installation Debian $version_debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_$version_debian.cfg
-    " >> /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu
+    " >> /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu
     fi
     
-    t2=$(grep "Installation Ubuntu" /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t2=$(grep "Installation Ubuntu" /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
     echo "    
@@ -204,21 +205,21 @@ LABEL Installation Ubuntu et xubuntu $version_ubuntu
     MENU LABEL ^Installation ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
-    " >> /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu
-    # cp $src/install.menu /tftpboot/tftp_modeles_pxelinux.cfg/menu/
+    " >> /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu
+    # cp $src/install.menu /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/
     fi
     
-    if [ -e /tftpboot/pxelinux.cfg/install.menu ]
+    if [ -e /$rep_tftp/pxelinux.cfg/install.menu ]
     then
-        t=$(grep "Installation Debian" /tftpboot/pxelinux.cfg/install.menu)
-        t=$(grep "Installation Ubuntu" /tftpboot/pxelinux.cfg/install.menu)
+        t=$(grep "Installation Debian" /$rep_tftp/pxelinux.cfg/install.menu)
+        t=$(grep "Installation Ubuntu" /$rep_tftp/pxelinux.cfg/install.menu)
         if [ -z "$t" ]
         then
-            cp /tftpboot/pxelinux.cfg/install.menu /tftpboot/pxelinux.cfg/install.menu.$LADATE
-            cp /tftpboot/tftp_modeles_pxelinux.cfg/menu/install.menu /tftpboot/pxelinux.cfg/
+            cp /$rep_tftp/pxelinux.cfg/install.menu /$rep_tftp/pxelinux.cfg/install.menu.$LADATE
+            cp /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu /$rep_tftp/pxelinux.cfg/
         fi
     else
-        if [ ! -e "/tftpboot/pxelinux.cfg/maintenance.menu" ]
+        if [ ! -e "/$rep_tftp/pxelinux.cfg/maintenance.menu" ]
         then
             echo "Le menu d'installation Debian n'est proposée qu'avec le menu tftp semi-graphique."
             echo "configuration du mode semi-graphique"
@@ -229,7 +230,7 @@ LABEL Installation Ubuntu et xubuntu $version_ubuntu
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp $src/inst_$version_debian.cfg $src/inst_buntu.cfg /tftpboot/pxelinux.cfg/
+    cp $src/inst_$version_debian.cfg $src/inst_buntu.cfg /$rep_tftp/pxelinux.cfg/
 }
 
 repertoire_temporaire()
@@ -332,12 +333,12 @@ mise_en_place_pxe()
     #
     if [ ! -e /$rep_tftp/${1}-installer ]
     then
-        # le répertoire /tftpboot/$1-installer n'étant pas en place, il faut le créer
+        # le répertoire /$rep_tftp/$1-installer n'étant pas en place, il faut le créer
         echo -e "${vert}on crée le répertoire /$rep_tftp/${1}-installer${neutre}"
         echo -e ""
         mkdir -p /$rep_tftp/${1}-installer
     fi
-    # on déplace le répertoire $2 de $1-installer vers /tftpboot/$1-installer/
+    # on déplace le répertoire $2 de $1-installer vers /$rep_tftp/$1-installer/
     mv ${1}-installer/$2/ /$rep_tftp/${1}-installer/
 }
 
@@ -432,24 +433,24 @@ gestion_cles_publiques()
 gestion_fichiers_preseed()
 {
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
-    [ -z "$ntpserv" ] && ntpserv="ntp.ac-creteil.fr"
+    [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
     echo "Correction des fichiers TFTP inst_buntu.cfg et inst_$version_debian.cfg pour ajout IP du Se3"
     
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /tftpboot/pxelinux.cfg/inst_buntu.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /tftpboot/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
 }
 
 gestion_miroir()
