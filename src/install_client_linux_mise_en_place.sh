@@ -427,15 +427,20 @@ gestion_cles_publiques()
     fi
 }
 
-gestion_fichiers_preseed()
+gestion_fichiers_tftp()
 {
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
     echo "Correction des fichiers TFTP inst_buntu.cfg et inst_${version_debian}.cfg pour ajout IP du Se3"
-    
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    
+    echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout version debian"
+    sed -i "s|###_DEBIAN_###|${version_debian|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    
+    echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout domaine"
+    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
@@ -495,6 +500,8 @@ END
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
+            sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+            sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     else
         if [ -z "$MIROIR_IP" -o -z "$CHEMIN_MIROIR" ]
@@ -514,6 +521,8 @@ END
             sed -i "s|/debian|$CHEMIN_MIROIR|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
+            sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+            sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
 }
@@ -660,7 +669,7 @@ menage
 transfert_repertoire_install
 gestion_script_integration
 gestion_cles_publiques
-gestion_fichiers_preseed
+gestion_fichiers_tftp
 gestion_miroir
 fichier_parametres
 gestion_scripts_unefois
