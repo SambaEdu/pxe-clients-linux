@@ -18,13 +18,6 @@ vert='\e[0;32m'
 bleu='\e[1;34m'
 neutre='\e[0;m'
 
-# Chemin source → le répertoire où le script a été lancé
-src="$(pwd)"
-
-# répertoire install et lien
-repinstall="/home/netlogon/clients-linux/install"
-replink="/var/www/install"
-
 #####
 # version des systèmes des clients-linux
 # les autres seront effacés
@@ -52,7 +45,12 @@ rep_tftp="tftpboot"
 rep_temporaire="root/temp-linux"
 archive_tftp="install_client_linux_archive-tftp.tar.gz"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
-
+rep_client_linux="/home/netlogon/clients-linux"
+# répertoire install et lien
+rep_install="$rep_client_linux/install"
+rep_lien="/var/www/install"
+# Chemin source → le répertoire où le script a été lancé
+src="$(pwd)"
 
 #=====
 # Les fonctions
@@ -149,8 +147,7 @@ installation_se3_clonage()
 installation_se3_clients_linux()
 {
     # verif présence paquet client-linux
-    clients_linux_path="/home/netlogon/clients-linux"
-    if [ ! -e "$clients_linux_path" ]
+    if [ ! -e "$rep_client_linux" ]
     then
         apt-get install se3-clients-linux -y --force-yes
     fi
@@ -159,19 +156,19 @@ installation_se3_clients_linux()
 droits_repertoires()
 {
     # rights fix and directories
-    setfacl -m u:www-data:rx $clients_linux_path
-    setfacl -m d:u:www-data:rx $clients_linux_path
+    setfacl -m u:www-data:rx $rep_client_linux
+    setfacl -m d:u:www-data:rx $rep_client_linux
     
     chmod 777 /tmp
     
-    rm -rf $repinstall
-    rm -rf $replink
+    rm -rf $rep_install
+    rm -rf $rep_lien
     
-    mkdir -p $repinstall
-    chmod 755 $repinstall
+    mkdir -p $rep_install
+    chmod 755 $rep_install
     
-    chown root $repinstall
-    ln -s $repinstall $replink
+    chown root $rep_install
+    ln -s $rep_install $rep_lien
 }
 
 verifier_presence_mkpasswd()
@@ -398,10 +395,10 @@ transfert_repertoire_install()
 
 gestion_script_integration()
 {
-    if [ -e "/home/netlogon/clients-linux/distribs/$version_debian/integration/integration_$version_debian.bash" ]
+    if [ -e "$rep_client_linux/distribs/$version_debian/integration/integration_$version_debian.bash" ]
     then
         rm -f /var/www/install/integration_$version_debian.bash
-        ln /home/netlogon/clients-linux/distribs/$version_debian/integration/integration_$version_debian.bash /var/www/install/
+        ln $rep_client_linux/distribs/$version_debian/integration/integration_$version_debian.bash /var/www/install/
         chmod 755 /var/www/install/integration_$version_debian.bash
     fi
 }
@@ -572,54 +569,54 @@ END
 
 gestion_scripts_unefois()
 {
-    [ -e /home/netlogon/clients-linux/unefois/PAUSE ] && mv /home/netlogon/clients-linux/unefois/PAUSE /home/netlogon/clients-linux/unefois/NO-PAUSE
-    cp -r $src/unefois/* /home/netlogon/clients-linux/unefois/
-    cp /home/netlogon/clients-linux/bin/logon_perso /home/netlogon/clients-linux/bin/logon_perso-$LADATE
-    sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' /home/netlogon/clients-linux/bin/logon_perso
+    [ -e $rep_client_linux/unefois/PAUSE ] && mv $rep_client_linux/unefois/PAUSE $rep_client_linux/unefois/NO-PAUSE
+    cp -r $src/unefois/* $rep_client_linux/unefois/
+    cp $rep_client_linux/bin/logon_perso $rep_client_linux/bin/logon_perso-$LADATE
+    sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' $rep_client_linux/bin/logon_perso
     # [TODO → à supprimer ?]
-    # cp $src/logon_perso /home/netlogon/clients-linux/bin/
+    # cp $src/logon_perso $rep_client_linux/bin/
     
-    # if [ -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.config ];then
-    #     rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/config-save*
-    #     mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.config /home/netlogon/clients-linux/distribs/$version_debian/skel/config-save-$LADATE
+    # if [ -e $rep_client_linux/distribs/$version_debian/skel/.config ];then
+    #     rm -rf $rep_client_linux/distribs/$version_debian/skel/config-save*
+    #     mv $rep_client_linux/distribs/$version_debian/skel/.config $rep_client_linux/distribs/$version_debian/skel/config-save-$LADATE
     # fi
     
-    # if [ -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla ];then
-    #     rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/mozilla-save*
-    #     mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla /home/netlogon/clients-linux/distribs/$version_debian/skel/mozilla-save-$LADATE
+    # if [ -e $rep_client_linux/distribs/$version_debian/skel/.mozilla ];then
+    #     rm -rf $rep_client_linux/distribs/$version_debian/skel/mozilla-save*
+    #     mv $rep_client_linux/distribs/$version_debian/skel/.mozilla $rep_client_linux/distribs/$version_debian/skel/mozilla-save-$LADATE
     # fi
     
-    if [ ! -e /home/netlogon/clients-linux/unefois/\^\. ]
+    if [ ! -e $rep_client_linux/unefois/\^\. ]
     then
-        mv /home/netlogon/clients-linux/unefois/all /home/netlogon/clients-linux/unefois/\^\.
+        mv $rep_client_linux/unefois/all $rep_client_linux/unefois/\^\.
     else
-        cp /home/netlogon/clients-linux/unefois/all/* /home/netlogon/clients-linux/unefois/\^\./
-        rm -rf /home/netlogon/clients-linux/unefois/all
+        cp $rep_client_linux/unefois/all/* $rep_client_linux/unefois/\^\./
+        rm -rf $rep_client_linux/unefois/all
     fi 
-    [ -e /home/netlogon/clients-linux/unefois/\^\* ] && mv /home/netlogon/clients-linux/unefois/\^\*/*  /home/netlogon/clients-linux/unefois/\^\./
-    rm -rf /home/netlogon/clients-linux/unefois/\^\*
+    [ -e $rep_client_linux/unefois/\^\* ] && mv $rep_client_linux/unefois/\^\*/*  $rep_client_linux/unefois/\^\./
+    rm -rf $rep_client_linux/unefois/\^\*
 }
 
 gestion_profil_skel()
 {
     if [ -e $src/update-mozilla-profile ]
     then
-        rm -rf /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla
-        echo  "modif install_client_linux_archive - $LADATE" > /home/netlogon/clients-linux/distribs/$version_debian/skel/.VERSION
+        rm -rf $rep_client_linux/distribs/$version_debian/skel/.mozilla
+        echo  "modif install_client_linux_archive - $LADATE" > $rep_client_linux/distribs/$version_debian/skel/.VERSION
     fi
     
-    [ ! -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.config ] && cp -r $src/.config /home/netlogon/clients-linux/distribs/$version_debian/skel/
-    [ ! -e /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla ] && cp -r $src/.mozilla /home/netlogon/clients-linux/distribs/$version_debian/skel/
+    [ ! -e $rep_client_linux/distribs/$version_debian/skel/.config ] && cp -r $src/.config $rep_client_linux/distribs/$version_debian/skel/
+    [ ! -e $rep_client_linux/distribs/$version_debian/skel/.mozilla ] && cp -r $src/.mozilla $rep_client_linux/distribs/$version_debian/skel/
     
-    rm -f /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save*
-    mv /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
+    rm -f $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save*
+    mv $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
     # [TODO → à rendre conditionnel ?]
-    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js /home/netlogon/clients-linux/distribs/$version_debian/skel/.mozilla/firefox/default/
+    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/
 }
 
 reconfigurer_module()
 {
-    bash /home/netlogon/clients-linux/.defaut/reconfigure.bash
+    bash $rep_client_linux/.defaut/reconfigure.bash
 }
 
 #=====
