@@ -389,17 +389,17 @@ menage()
 
 transfert_repertoire_install()
 {
-    cp ${src}/post-install* ${src}/preseed*.cfg ${src}/mesapplis*.txt ${src}/bashrc ${src}/inittab ${src}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub /var/www/install/
-    chmod 755 /var/www/install/preseed* /var/www/install/post-install_debian_${version_debian}.sh
+    cp ${src}/post-install* ${src}/preseed*.cfg ${src}/mesapplis*.txt ${src}/bashrc ${src}/inittab ${src}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian_${version_debian}.sh
 }
 
 gestion_script_integration()
 {
     if [ -e "${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash" ]
     then
-        rm -f /var/www/install/integration_${version_debian}.bash
-        ln ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash /var/www/install/
-        chmod 755 /var/www/install/integration_${version_debian}.bash
+        rm -f $rep_lien/integration_${version_debian}.bash
+        ln ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash $rep_lien/
+        chmod 755 $rep_lien/integration_${version_debian}.bash
     fi
 }
 
@@ -410,7 +410,7 @@ gestion_cles_publiques()
     then
         echo "Génération d'un paquet de clés pub ssh d'aprés vos authorized_keys"
         cd /root/.ssh
-        for fich_authorized_keys in authorized_keys authorized_keys2 /var/www/install/id_rsa.pub
+        for fich_authorized_keys in authorized_keys authorized_keys2 $rep_lien/id_rsa.pub
         do
             if [ -e "$fich_authorized_keys" ]
             then
@@ -485,7 +485,6 @@ END
         # config propre ubuntu
         echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
         
-        
         if [ ! -e /var/se3/apt-cacher-ng ]
         then 
             mv /var/cache/apt-cacher-ng /var/se3/
@@ -495,7 +494,7 @@ END
         
         echo "Correction des fichiers de preseed ${version_debian}"
         
-        for i in $(ls /var/www/install/preseed*.cfg)
+        for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
@@ -514,7 +513,7 @@ END
         
         echo "Correction des fichiers de preseed ${version_debian}"
         
-        for i in $(ls /var/www/install/preseed*.cfg)
+        for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###:9999|$MIROIR_IP|g" $i
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
@@ -525,6 +524,13 @@ END
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
+    echo "Correction des fichiers post-install $version_debian"
+    for i in $(ls $rep_lien/post-install*)
+    do
+        sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+    done
+    echo "Correction du fichier bashrc"
+    sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
 }
 
 fichier_parametres()
@@ -551,9 +557,9 @@ fichier_parametres()
     ip_proxy=$(echo "$tmp_proxy"|cut -d":" -f1)
     port_proxy=$(echo "$tmp_proxy"|cut -d":" -f2)
     
-    echo "Génération du fichier de paramètres /var/www/install/params.sh"
+    echo "Génération du fichier de paramètres $rep_lien/params.sh"
     
-    cat > /var/www/install/params.sh << END
+    cat > $rep_lien/params.sh << END
 email="$email"
 mailhub="$mailhub"
 rewriteDomain="$rewriteDomain"
@@ -573,7 +579,7 @@ ip_ldap="$ldap_server"
 ldap_base_dn="$ldap_base_dn"
 END
     
-    chmod 755 /var/www/install/params.sh
+    chmod 755 $rep_lien/params.sh
 }
 
 gestion_scripts_unefois()
