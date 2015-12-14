@@ -11,7 +11,6 @@ LADATE=$(date +%Y%m%d%H%M%S)
 #
 rouge='\e[0;31m'
 rose='\e[1;31m'
-COLTITRE='\e[0;33m'
 orange='\e[0;33m'
 jaune='\e[1;33m'
 vert='\e[0;32m'
@@ -47,7 +46,7 @@ archive_tftp="install_client_linux_archive-tftp.tar.gz"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 rep_client_linux="/home/netlogon/clients-linux"
 # répertoire install et lien
-rep_install="$rep_client_linux/install"
+rep_install="${rep_client_linux}/install"
 rep_lien="/var/www/install"
 # Chemin source → le répertoire où le script a été lancé
 src="$(pwd)"
@@ -58,10 +57,11 @@ src="$(pwd)"
 
 message_debut()
 {
-    # echo -e "$COLTITRE"
+    echo -e "${orange}"
     echo "---------------------------------------------------------------------"
     echo "--------------         Mise en place du système      ----------------"
     echo "------------------------------------------------- -------------------"
+    echo -e "${neutre}"
     # [TODO → à supprimer ?]
     # echo -e "$vert"
     # echo "- Choisir le mode expert pour avoir toutes les possibilités d'installation coté clients"
@@ -147,7 +147,7 @@ installation_se3_clonage()
 installation_se3_clients_linux()
 {
     # verif présence paquet client-linux
-    if [ ! -e "$rep_client_linux" ]
+    if [ ! -e "${rep_client_linux}" ]
     then
         apt-get install se3-clients-linux -y --force-yes
     fi
@@ -156,8 +156,8 @@ installation_se3_clients_linux()
 droits_repertoires()
 {
     # rights fix and directories
-    setfacl -m u:www-data:rx $rep_client_linux
-    setfacl -m d:u:www-data:rx $rep_client_linux
+    setfacl -m u:www-data:rx ${rep_client_linux}
+    setfacl -m d:u:www-data:rx ${rep_client_linux}
     
     chmod 777 /tmp
     
@@ -183,40 +183,40 @@ verifier_presence_mkpasswd()
 mise_en_place_tftpboot()
 {
     # On vérifie si le menu Install fait référence ou non à debian-installer
-    t=$(grep "Installation Debian" /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t" ]
     then
         echo "    
-LABEL Installation Debian $version_debian
+LABEL Installation Debian ${version_debian}
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
-    APPEND pxelinux.cfg/inst_$version_debian.cfg
-    " >> /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu
+    APPEND pxelinux.cfg/inst_${version_debian}.cfg
+    " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
     fi
     
-    t2=$(grep "Installation Ubuntu" /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t2=$(grep "Installation Ubuntu" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
     echo "    
-LABEL Installation Ubuntu et xubuntu $version_ubuntu
+LABEL Installation Ubuntu et xubuntu ${version_ubuntu}
     MENU LABEL ^Installation ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
-    " >> /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu
-    # cp $src/install.menu /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/
+    " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+    # cp ${src}/install.menu /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/
     fi
     
-    if [ -e /$rep_tftp/pxelinux.cfg/install.menu ]
+    if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
     then
-        t=$(grep "Installation Debian" /$rep_tftp/pxelinux.cfg/install.menu)
-        t=$(grep "Installation Ubuntu" /$rep_tftp/pxelinux.cfg/install.menu)
+        t=$(grep "Installation Debian" /${rep_tftp}/pxelinux.cfg/install.menu)
+        t=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
         if [ -z "$t" ]
         then
-            cp /$rep_tftp/pxelinux.cfg/install.menu /$rep_tftp/pxelinux.cfg/install.menu.$LADATE
-            cp /$rep_tftp/tftp_modeles_pxelinux.cfg/menu/install.menu /$rep_tftp/pxelinux.cfg/
+            cp /${rep_tftp}/pxelinux.cfg/install.menu /${rep_tftp}/pxelinux.cfg/install.menu.$LADATE
+            cp /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu /${rep_tftp}/pxelinux.cfg/
         fi
     else
-        if [ ! -e "/$rep_tftp/pxelinux.cfg/maintenance.menu" ]
+        if [ ! -e "/${rep_tftp}/pxelinux.cfg/maintenance.menu" ]
         then
             echo "Le menu d'installation Debian n'est proposée qu'avec le menu tftp semi-graphique."
             echo "configuration du mode semi-graphique"
@@ -227,19 +227,19 @@ LABEL Installation Ubuntu et xubuntu $version_ubuntu
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp $src/inst_$version_debian.cfg $src/inst_buntu.cfg /$rep_tftp/pxelinux.cfg/
+    cp ${src}/inst_${version_debian}.cfg ${src}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
 }
 
 repertoire_temporaire()
 {
     # on se met dans un répertoire temporaire
-    echo -e "${vert}Début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/$version_debian et/ou Ubuntu/$version_ubuntu"
-    echo -e "    * ce script concerne Debian/$version_debian et/ou Ubuntu/$version_ubuntu"
+    echo -e "${vert}Début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "    * les versions précédentes seront supprimées"
     echo -e "${neutre}"
     sleep 1s
-    [ ! -e /$rep_temporaire ] && mkdir /$rep_temporaire
-    cd /$rep_temporaire
+    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
+    cd /${rep_temporaire}
 }
 
 recuperer_somme_controle_depot()
@@ -272,12 +272,12 @@ calculer_somme_controle_se3()
     # $2 → i386 ou amd64
     #
     eval version='$'version_$1
-    if [ -e /$rep_tftp/${1}-installer/$2/linux ] && [ -e /$rep_tftp/${1}-installer/$2/initrd.gz ]
+    if [ -e /${rep_tftp}/${1}-installer/$2/linux ] && [ -e /${rep_tftp}/${1}-installer/$2/initrd.gz ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle des fichiers linux et initrd.gz en place
-        eval somme_initrd_se3_${version}_$2=$(md5sum /$rep_tftp/${1}-installer/$2/initrd.gz | cut -f1 -d" ")
-        eval somme_linux_se3_${version}_$2=$(md5sum /$rep_tftp/${1}-installer/$2/linux | cut -f1 -d" ")
+        eval somme_initrd_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/$2/initrd.gz | cut -f1 -d" ")
+        eval somme_linux_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/$2/linux | cut -f1 -d" ")
     else
         # il manque un fichier : on remettra $1-installer en place
         mise="mise en place"
@@ -292,10 +292,10 @@ supprimer_fichiers()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ -e /$rep_tftp/${1}-installer/$2 ]
+    if [ -e /${rep_tftp}/${1}-installer/$2 ]
     then
         # on supprime le répertoire en place
-        find /$rep_tftp/${1}-installer/$2/ -delete
+        find /${rep_tftp}/${1}-installer/$2/ -delete
     fi
 }
 
@@ -328,15 +328,15 @@ mise_en_place_pxe()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ ! -e /$rep_tftp/${1}-installer ]
+    if [ ! -e /${rep_tftp}/${1}-installer ]
     then
-        # le répertoire /$rep_tftp/$1-installer n'étant pas en place, il faut le créer
-        echo -e "${vert}on crée le répertoire /$rep_tftp/${1}-installer${neutre}"
+        # le répertoire /${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
+        echo -e "${vert}on crée le répertoire /${rep_tftp}/${1}-installer${neutre}"
         echo -e ""
-        mkdir -p /$rep_tftp/${1}-installer
+        mkdir -p /${rep_tftp}/${1}-installer
     fi
-    # on déplace le répertoire $2 de $1-installer vers /$rep_tftp/$1-installer/
-    mv ${1}-installer/$2/ /$rep_tftp/${1}-installer/
+    # on déplace le répertoire $2 de $1-installer vers /${rep_tftp}/$1-installer/
+    mv ${1}-installer/$2/ /${rep_tftp}/${1}-installer/
 }
 
 mettre_se3_archives()
@@ -378,28 +378,28 @@ menage()
     # on revient dans le répertoire précédent
     # puis on supprime le répertoire temporaire
     rm -f pxe* ldl* ver*
-    [ -e /$rep_temporaire/debian-installer/ ] && find /$rep_temporaire/debian-installer/ -delete
-    [ -e /$rep_temporaire/ubuntu-installer/ ] && find /$rep_temporaire/ubuntu-installer/ -delete
+    [ -e /${rep_temporaire}/debian-installer/ ] && find /${rep_temporaire}/debian-installer/ -delete
+    [ -e /${rep_temporaire}/ubuntu-installer/ ] && find /${rep_temporaire}/ubuntu-installer/ -delete
     cd - >/dev/null
-    find /$rep_temporaire/ -delete
+    find /${rep_temporaire}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
-    echo -e "${vert}fin de la $mise des fichiers netboot pour Debian/$version_debian et Ubuntu/$version_ubuntu${neutre}"
+    echo -e "${vert}fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}${neutre}"
     echo -e ""
 }
 
 transfert_repertoire_install()
 {
-    cp $src/post-install* $src/preseed*.cfg $src/mesapplis*.txt $src/bashrc $src/inittab $src/tty1.conf /var/remote_adm/.ssh/id_rsa.pub /var/www/install/
-    chmod 755 /var/www/install/preseed* /var/www/install/post-install_debian_$version_debian.sh
+    cp ${src}/post-install* ${src}/preseed*.cfg ${src}/mesapplis*.txt ${src}/bashrc ${src}/inittab ${src}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub /var/www/install/
+    chmod 755 /var/www/install/preseed* /var/www/install/post-install_debian_${version_debian}.sh
 }
 
 gestion_script_integration()
 {
-    if [ -e "$rep_client_linux/distribs/$version_debian/integration/integration_$version_debian.bash" ]
+    if [ -e "${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash" ]
     then
-        rm -f /var/www/install/integration_$version_debian.bash
-        ln $rep_client_linux/distribs/$version_debian/integration/integration_$version_debian.bash /var/www/install/
-        chmod 755 /var/www/install/integration_$version_debian.bash
+        rm -f /var/www/install/integration_${version_debian}.bash
+        ln ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash /var/www/install/
+        chmod 755 /var/www/install/integration_${version_debian}.bash
     fi
 }
 
@@ -432,22 +432,22 @@ gestion_fichiers_preseed()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
-    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_$version_debian.cfg pour ajout IP du Se3"
+    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_${version_debian}.cfg pour ajout IP du Se3"
     
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /$rep_tftp/pxelinux.cfg/inst_$version_debian.cfg
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /$rep_tftp/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
 }
 
 gestion_miroir()
@@ -488,7 +488,7 @@ END
         
         service apt-cacher-ng restart
         
-        echo "Correction des fichiers de preseed $version_debian"
+        echo "Correction des fichiers de preseed ${version_debian}"
         
         for i in $(ls /var/www/install/preseed*.cfg)
         do
@@ -505,7 +505,7 @@ END
             read CHEMIN_MIROIR
         fi
         
-        echo "Correction des fichiers de preseed $version_debian"
+        echo "Correction des fichiers de preseed ${version_debian}"
         
         for i in $(ls /var/www/install/preseed*.cfg)
         do
@@ -569,54 +569,54 @@ END
 
 gestion_scripts_unefois()
 {
-    [ -e $rep_client_linux/unefois/PAUSE ] && mv $rep_client_linux/unefois/PAUSE $rep_client_linux/unefois/NO-PAUSE
-    cp -r $src/unefois/* $rep_client_linux/unefois/
-    cp $rep_client_linux/bin/logon_perso $rep_client_linux/bin/logon_perso-$LADATE
-    sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' $rep_client_linux/bin/logon_perso
+    [ -e ${rep_client_linux}/unefois/PAUSE ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
+    cp -r ${src}/unefois/* ${rep_client_linux}/unefois/
+    cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$LADATE
+    sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
     # [TODO → à supprimer ?]
-    # cp $src/logon_perso $rep_client_linux/bin/
+    # cp ${src}/logon_perso ${rep_client_linux}/bin/
     
-    # if [ -e $rep_client_linux/distribs/$version_debian/skel/.config ];then
-    #     rm -rf $rep_client_linux/distribs/$version_debian/skel/config-save*
-    #     mv $rep_client_linux/distribs/$version_debian/skel/.config $rep_client_linux/distribs/$version_debian/skel/config-save-$LADATE
+    # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ];then
+    #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/config-save*
+    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.config ${rep_client_linux}/distribs/${version_debian}/skel/config-save-$LADATE
     # fi
     
-    # if [ -e $rep_client_linux/distribs/$version_debian/skel/.mozilla ];then
-    #     rm -rf $rep_client_linux/distribs/$version_debian/skel/mozilla-save*
-    #     mv $rep_client_linux/distribs/$version_debian/skel/.mozilla $rep_client_linux/distribs/$version_debian/skel/mozilla-save-$LADATE
+    # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ];then
+    #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save*
+    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save-$LADATE
     # fi
     
-    if [ ! -e $rep_client_linux/unefois/\^\. ]
+    if [ ! -e ${rep_client_linux}/unefois/\^\. ]
     then
-        mv $rep_client_linux/unefois/all $rep_client_linux/unefois/\^\.
+        mv ${rep_client_linux}/unefois/all ${rep_client_linux}/unefois/\^\.
     else
-        cp $rep_client_linux/unefois/all/* $rep_client_linux/unefois/\^\./
-        rm -rf $rep_client_linux/unefois/all
+        cp ${rep_client_linux}/unefois/all/* ${rep_client_linux}/unefois/\^\./
+        rm -rf ${rep_client_linux}/unefois/all
     fi 
-    [ -e $rep_client_linux/unefois/\^\* ] && mv $rep_client_linux/unefois/\^\*/*  $rep_client_linux/unefois/\^\./
-    rm -rf $rep_client_linux/unefois/\^\*
+    [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
+    rm -rf ${rep_client_linux}/unefois/\^\*
 }
 
 gestion_profil_skel()
 {
-    if [ -e $src/update-mozilla-profile ]
+    if [ -e ${src}/update-mozilla-profile ]
     then
-        rm -rf $rep_client_linux/distribs/$version_debian/skel/.mozilla
-        echo  "modif install_client_linux_archive - $LADATE" > $rep_client_linux/distribs/$version_debian/skel/.VERSION
+        rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
+        echo  "modif install_client_linux_archive - $LADATE" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION
     fi
     
-    [ ! -e $rep_client_linux/distribs/$version_debian/skel/.config ] && cp -r $src/.config $rep_client_linux/distribs/$version_debian/skel/
-    [ ! -e $rep_client_linux/distribs/$version_debian/skel/.mozilla ] && cp -r $src/.mozilla $rep_client_linux/distribs/$version_debian/skel/
+    [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ] && cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
+    [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ] && cp -r ${src}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
     
-    rm -f $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save*
-    mv $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
+    rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
+    mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
     # [TODO → à rendre conditionnel ?]
-    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js $rep_client_linux/distribs/$version_debian/skel/.mozilla/firefox/default/
+    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
 }
 
 reconfigurer_module()
 {
-    bash $rep_client_linux/.defaut/reconfigure.bash
+    bash ${rep_client_linux}/.defaut/reconfigure.bash
 }
 
 #=====
