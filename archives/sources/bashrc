@@ -44,8 +44,8 @@ alias mv='mv -i'
 
 
 
-if [ -n "$(lsb_release -c | grep wheezy)" ];then
-	distrib="debian_wheezy"
+if [ -n "$(lsb_release -c | grep ###_DEBIAN_###)" ];then
+	distrib="debian_###_DEBIAN_###"
 else
 	distrib="ubuntu"
 fi

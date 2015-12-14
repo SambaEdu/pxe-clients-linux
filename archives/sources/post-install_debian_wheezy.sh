@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script lancé en fin d'installation preseed Debian wheezy
+# Script lancé en fin d'installation preseed Debian ###_DEBIAN_###
 # pour finaliser de la config .
 #
 # 
@@ -128,13 +128,13 @@ fi
 
 
 if [ -n "${ip_se3}" ]; then
-	echo "Telechargement de integration_wheezy.bash..." | tee -a $compte_rendu
+	echo "Telechargement de integration_###_DEBIAN_###.bash..." | tee -a $compte_rendu
 	mkdir -p /root/bin
 	cd /root/bin
-	wget http://${ip_se3}/install/integration_wheezy.bash >/dev/null 2>&1
+	wget http://${ip_se3}/install/integration_###_DEBIAN_###.bash >/dev/null 2>&1
 	if [ "$?" = "0" ]; then
 		echo "Telechargement reussi." | tee -a $compte_rendu
-		chmod +x integration_wheezy.bash
+		chmod +x integration_###_DEBIAN_###.bash
 	else
 		echo "Echec du telechargement." | tee -a $compte_rendu
 		echo "Le poste ne pourra pas être intégré au domaine" | tee -a $compte_rendu 
@@ -283,7 +283,7 @@ echo -e "===========================================${neutre}"
 
 
 if [ "$rep" != "n" ]; then
-	./integration_wheezy.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu 
+	./integration_###_DEBIAN_###.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu 
 	
 else
 	
@@ -307,7 +307,7 @@ else
 	echo "Renommage termine."| tee -a $compte_rendu 
 	echo "pour intégrer le poste plus tard : 
 	cd /root/bin/
-	./integration_wheezy.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu 
+	./integration_###_DEBIAN_###.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu 
 fi
 
 
@@ -323,7 +323,7 @@ if [ "$gdm" = "lightdm" ]; then
     update-rc.d lightdm defaults
 fi
 
-mv /root/bin/post-install_debian_wheezy.sh /root/bin/post-install_debian_wheezy.sh.$ladate
+mv /root/bin/post-install_debian_###_DEBIAN_###.sh /root/bin/post-install_debian_###_DEBIAN_###.sh.$ladate
 
 
 echo "Reconfig grub..." | tee -a $compte_rendu
