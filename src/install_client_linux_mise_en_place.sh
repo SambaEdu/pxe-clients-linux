@@ -437,7 +437,7 @@ gestion_fichiers_tftp()
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
     echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout version debian"
-    sed -i "s|###_DEBIAN_###|${version_debian|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
     
     echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout domaine"
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
