@@ -42,7 +42,7 @@ url_ubuntu="archive.ubuntu.com/ubuntu"
 #
 rep_tftp="tftpboot"
 rep_temporaire="root/temp-linux"
-archive_tftp="install_client_linux_archive-tftp.tar.gz"
+archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 rep_client_linux="/home/netlogon/clients-linux"
 # répertoire install et lien
@@ -125,11 +125,11 @@ recuperer_variables_se3()
 extraire_archive_tftp()
 {
 # ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
-    echo "Extraction de $archive_tftp."
-    tar -xzf ./$archive_tftp
+    echo "Extraction de ${archive_tftp}.tar.gz."
+    tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
     then
-        echo "Erreur lors de l'extraction de l'archive tftp $archive_tftp."
+        echo "Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
         exit 1
     fi
 }
@@ -227,7 +227,7 @@ LABEL Installation Ubuntu et xubuntu ${version_ubuntu}
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp ${src}/inst_${version_debian}.cfg ${src}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
+    cp ${src}/${archive_tftp}/inst_${version_debian}.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
 }
 
 repertoire_temporaire()
@@ -389,7 +389,7 @@ menage()
 
 transfert_repertoire_install()
 {
-    cp ${src}/post-install* ${src}/preseed*.cfg ${src}/mesapplis*.txt ${src}/bashrc ${src}/inittab ${src}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    cp ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/inittab ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
     chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian_${version_debian}.sh
 }
 
@@ -585,7 +585,7 @@ END
 gestion_scripts_unefois()
 {
     [ -e ${rep_client_linux}/unefois/PAUSE ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
-    cp -r ${src}/unefois/* ${rep_client_linux}/unefois/
+    cp -r ${src}/${archive_tftp}/unefois/* ${rep_client_linux}/unefois/
     cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$LADATE
     sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
     # [TODO → à supprimer ?]
@@ -614,6 +614,7 @@ gestion_scripts_unefois()
 
 gestion_profil_skel()
 {
+# pourquoi ce test ? [TODO]
     if [ -e ${src}/update-mozilla-profile ]
     then
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
