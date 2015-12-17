@@ -182,15 +182,29 @@ verifier_presence_mkpasswd()
 
 mise_en_place_tftpboot()
 {
-    # On vérifie si le menu Install fait référence ou non à debian-installer
-    t=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    # correction éventuelle de la présence de wheezy ou trusty dans install.menu
+    t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t" ]
     then
+        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        sed -i "s| wheezy||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+        sed -i "s| wheezy||g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        sed -i "s| trusty||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+        sed -i "s| trusty||g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
+        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/inst.wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg
+        [ -e /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg
+    fi
+    # On vérifie si le menu Install fait référence ou non à debian-installer
+    t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    if [ -z "$t1" ]
+    then
         echo "    
-LABEL Installation Debian ${version_debian}
+LABEL Installation Debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
-    APPEND pxelinux.cfg/inst_${version_debian}.cfg
+    APPEND pxelinux.cfg/inst_debian.cfg
     " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
     fi
     
@@ -198,7 +212,7 @@ LABEL Installation Debian ${version_debian}
     if [ -z "$t2" ]
     then
     echo "    
-LABEL Installation Ubuntu et xubuntu ${version_ubuntu}
+LABEL Installation Ubuntu et xubuntu
     MENU LABEL ^Installation ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
@@ -208,9 +222,9 @@ LABEL Installation Ubuntu et xubuntu ${version_ubuntu}
     
     if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
     then
-        t=$(grep "Installation Debian" /${rep_tftp}/pxelinux.cfg/install.menu)
-        t=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
-        if [ -z "$t" ]
+        t1=$(grep "Installation Debian" /${rep_tftp}/pxelinux.cfg/install.menu)
+        t2=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
+        if [ -z "$t1" -o -z "$t2" ]
         then
             cp /${rep_tftp}/pxelinux.cfg/install.menu /${rep_tftp}/pxelinux.cfg/install.menu.$LADATE
             cp /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu /${rep_tftp}/pxelinux.cfg/
@@ -227,7 +241,7 @@ LABEL Installation Ubuntu et xubuntu ${version_ubuntu}
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp ${src}/${archive_tftp}/inst_${version_debian}.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
+    cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
 }
 
 repertoire_temporaire()
@@ -390,7 +404,7 @@ menage()
 transfert_repertoire_install()
 {
     cp ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/inittab ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
-    chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian_${version_debian}.sh
+    chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian.sh
 }
 
 gestion_script_integration()
@@ -432,26 +446,26 @@ gestion_fichiers_tftp()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
-    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_${version_debian}.cfg pour ajout IP du Se3"
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3"
+    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout version debian"
-    sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    echo "Correction des fichiers TFTP inst_debian.cfg pour ajout version debian"
+    sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    echo "Correction des fichiers TFTP inst_${version_debian}.cfg pour ajout domaine"
-    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    echo "Correction des fichiers TFTP inst_debian.cfg pour ajout domaine"
+    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_${version_debian}.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
 }
 
@@ -511,7 +525,7 @@ END
             read CHEMIN_MIROIR
         fi
         
-        echo "Correction des fichiers de preseed ${version_debian}"
+        echo "Correction des fichiers de preseed debian ${version_debian}"
         
         for i in $(ls $rep_lien/preseed*.cfg)
         do
