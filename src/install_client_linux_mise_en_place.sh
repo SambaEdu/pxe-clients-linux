@@ -187,13 +187,13 @@ mise_en_place_tftpboot()
     if [ -z "$t" ]
     then
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/install.menu
         sed -i "s| wheezy||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s| wheezy||g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        sed -i "s| wheezy||g" /${rep_tftp}/pxelinux.cfg/install.menu
         sed -i "s| trusty||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s| trusty||g" /${rep_tftp}/pxelinux.cfg/menu/install.menu
+        sed -i "s| trusty||g" /${rep_tftp}/pxelinux.cfg/install.menu
         # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
-        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/inst.wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg
+        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst.wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst.wheezy.cfg
         [ -e /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg
     fi
     # On vérifie si le menu Install fait référence ou non à debian-installer
