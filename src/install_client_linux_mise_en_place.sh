@@ -110,16 +110,16 @@ recuperer_variables_se3()
     [ -e /root/debug ] && DEBUG="yes"
     
     # Lire la valeur de MIROIR_LOCAL et MIROIR_IP et CHEMIN_MIROIR dans la base MySQL ?
-    MIROIR_LOCAL=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLin';"|mysql -N $dbname -u$dbuser -p$dbpass)
+    MIROIR_LOCAL=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLin';" | mysql -N $dbname -u$dbuser -p$dbpass)
     if [ "$MIROIR_LOCAL" = "yes" ]
     then
-        MIROIR_IP=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLinIP';"|mysql -N $dbname -u$dbuser -p$dbpass)
-        CHEMIN_MIROIR=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLinChem';"|mysql -N $dbname -u$dbuser -p$dbpass)
+        MIROIR_IP=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLinIP';" | mysql -N $dbname -u$dbuser -p$dbpass)
+        CHEMIN_MIROIR=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLinChem';" | mysql -N $dbname -u$dbuser -p$dbpass)
     fi
-    CliLinNoPreseed=$(echo "SELECT value FROM params WHERE name='CliLinNoPreseed';"|mysql -N $dbname -u$dbuser -p$dbpass)
-    CliLinXfce64=$(echo "SELECT value FROM params WHERE name='CliLinXfce64';"|mysql -N $dbname -u$dbuser -p$dbpass)
-    CliLinLXDE=$(echo "SELECT value FROM params WHERE name='CliLinLXDE';"|mysql -N $dbname -u$dbuser -p$dbpass)
-    CliLinGNOME=$(echo "SELECT value FROM params WHERE name='CliLinGNOME';"|mysql -N $dbname -u$dbuser -p$dbpass)
+    CliLinNoPreseed=$(echo "SELECT value FROM params WHERE name='CliLinNoPreseed';" | mysql -N $dbname -u$dbuser -p$dbpass)
+    CliLinXfce64=$(echo "SELECT value FROM params WHERE name='CliLinXfce64';" | mysql -N $dbname -u$dbuser -p$dbpass)
+    CliLinLXDE=$(echo "SELECT value FROM params WHERE name='CliLinLXDE';" | mysql -N $dbname -u$dbuser -p$dbpass)
+    CliLinGNOME=$(echo "SELECT value FROM params WHERE name='CliLinGNOME';" | mysql -N $dbname -u$dbuser -p$dbpass)
 }
 
 extraire_archive_tftp()
@@ -416,7 +416,7 @@ gestion_cles_publiques()
             then
                 while read A
                 do
-                    comment=$(echo "$A"|cut -d" " -f3)
+                    comment=$(echo "$A" | cut -d" " -f3)
                     if [ -n "$comment" -a ! -e "$comment.pub" ]; then
                         echo "$A" > $comment.pub
                     fi
@@ -535,27 +535,27 @@ END
 
 fichier_parametres()
 {
-    email=$(grep "^root=" /etc/ssmtp/ssmtp.conf |cut -d"=" -f2)
+    email=$(grep "^root=" /etc/ssmtp/ssmtp.conf | cut -d"=" -f2)
     if [ -z "$email" ]
     then
         email=root
     fi
     
-    mailhub=$(grep "^mailhub=" /etc/ssmtp/ssmtp.conf |cut -d"=" -f2)
+    mailhub=$(grep "^mailhub=" /etc/ssmtp/ssmtp.conf | cut -d"=" -f2)
     if [ -z "$mailhub" ]
     then
         mailhub=mail
     fi
     
-    rewriteDomain=$(grep "^rewriteDomain=" /etc/ssmtp/ssmtp.conf |cut -d"=" -f2)
+    rewriteDomain=$(grep "^rewriteDomain=" /etc/ssmtp/ssmtp.conf | cut -d"=" -f2)
     if [ -z "$rewriteDomain" ]
     then
         rewriteDomain=$dhcp_domain_name
     fi
     
-    tmp_proxy=$(cat /etc/profile | grep http_proxy= | cut -d= -f2|sed -e 's|"||g'|sed -e "s|.*//||")
-    ip_proxy=$(echo "$tmp_proxy"|cut -d":" -f1)
-    port_proxy=$(echo "$tmp_proxy"|cut -d":" -f2)
+    tmp_proxy=$(cat /etc/profile | grep http_proxy= | cut -d= -f2 | sed -e 's|"||g' | sed -e "s|.*//||")
+    ip_proxy=$(echo "$tmp_proxy" | cut -d":" -f1)
+    port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
     echo "Génération du fichier de paramètres $rep_lien/params.sh"
     
