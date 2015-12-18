@@ -79,15 +79,18 @@ verifier_version_serveur()
 {
     if egrep -q "^6.0" /etc/debian_version
     then
-        echo "Votre serveur est bien version Debian Squeeze"
+        echo "La version de votre serveur est Debian Squeeze"
         echo "Le script peut se poursuivre"
+        echo ""
     elif egrep -q "^7.0" /etc/debian_version
     then
-        echo "Votre serveur est bien version Debian Wheezy"
-    echo "Le script peut se poursuivre"
+        echo "La version de votre serveur est Debian Wheezy"
+        echo "Le script peut se poursuivre"
+        echo ""
     else
         echo "Votre serveur n'est pas en version Squeeze ou Wheezy."
         echo "Opération annulée !"
+        echo ""
         exit 1
     fi
 }
@@ -184,7 +187,7 @@ mise_en_place_tftpboot()
 {
     # correction éventuelle de la présence de wheezy ou trusty dans install.menu
     t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
-    if [ -z "$t" ]
+    if [ ! -z "$t" ]
     then
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/install.menu
@@ -193,8 +196,8 @@ mise_en_place_tftpboot()
         sed -i "s| trusty||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
         sed -i "s| trusty||g" /${rep_tftp}/pxelinux.cfg/install.menu
         # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
-        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst.wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst.wheezy.cfg
-        [ -e /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst.wheezy.cfg
+        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg
+        [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     fi
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
