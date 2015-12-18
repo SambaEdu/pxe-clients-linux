@@ -135,6 +135,7 @@ extraire_archive_tftp()
         echo "Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
         exit 1
     fi
+    echo ""
 }
 
 installation_se3_clonage()
@@ -441,6 +442,8 @@ gestion_cles_publiques()
             fi
         done
         tar -czf /var/www/paquet_cles_pub_ssh.tar.gz *.pub
+        echo ""
+        
     fi
 }
 
@@ -470,6 +473,7 @@ gestion_fichiers_tftp()
     
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    echo ""
 }
 
 gestion_miroir()
@@ -527,7 +531,7 @@ END
             echo "--- Chemin dans le miroir ?"
             read CHEMIN_MIROIR
         fi
-        
+        echo ""
         echo "Correction des fichiers de preseed debian ${version_debian}"
         
         for i in $(ls $rep_lien/preseed*.cfg)
