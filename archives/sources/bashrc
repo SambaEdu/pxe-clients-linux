@@ -13,10 +13,11 @@ CYAN="\033[0;36m"
 
 DOMDNS=$(grep "^search " /etc/resolv.conf | cut -d" " -f2)
 
-if [ "$TERM" = "screen" ]; then
-	export PS1=${JAUNE}'\d \t' ${GRIS}' '${CYAN}'\u@\h.'${DOMDNS}${BLANC}':'${BLEU}'\w'${BLANC}'\n\$ '
+if [ "$TERM" = "screen" ]
+then
+    export PS1=${JAUNE}'\d \t' ${GRIS}' '${CYAN}'\u@\h.'${DOMDNS}${BLANC}':'${BLEU}'\w'${BLANC}'\n\$ '
 else
-	export PS1=${VERT}'\d \t '${GRIS}'\u@\h.'${DOMDNS}${BLANC}':'${BLEU}'\w'${BLANC}'\n\$ '
+    export PS1=${VERT}'\d \t '${GRIS}'\u@\h.'${DOMDNS}${BLANC}':'${BLEU}'\w'${BLANC}'\n\$ '
 fi
 
 umask 022
@@ -44,14 +45,16 @@ alias mv='mv -i'
 
 
 
-if [ -n "$(lsb_release -c | grep ###_DEBIAN_###)" ];then
-	distrib="debian_###_DEBIAN_###"
+if [ -n "$(lsb_release -c | grep ###_DEBIAN_###)" ]
+then
+    distrib="debian"
 else
-	distrib="ubuntu"
+    distrib="ubuntu"
 fi
 
-if [ -e /root/bin/post-install_$distrib.sh ]; then 
-	/root/bin/post-install_$distrib.sh
+if [ -e /root/bin/post-install_$distrib.sh ]
+then 
+    /root/bin/post-install_$distrib.sh
 fi
 # 
 # if [ -e /root/bin/inittab.orig ]; then 
