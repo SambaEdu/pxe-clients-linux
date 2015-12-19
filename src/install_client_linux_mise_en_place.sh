@@ -77,8 +77,8 @@ verifier_version_serveur()
         echo "Le script peut se poursuivre"
         echo ""
     else
-        echo "Votre serveur n'est pas en version Squeeze ou Wheezy."
-        echo "Opération annulée !"
+        echo "${rouge}Votre serveur n'est pas en version Squeeze ou Wheezy."
+        echo "Opération annulée !${neutre}"
         echo ""
         exit 1
     fi
@@ -121,8 +121,8 @@ extraire_archive_tftp()
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
     then
-        echo "Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
-        echo ""
+        echo "${rouge}Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
+        echo "${neutre}"
         exit 1
     fi
     echo ""
@@ -248,10 +248,10 @@ LABEL Installation Ubuntu et xubuntu
 repertoire_temporaire()
 {
     # on se met dans un répertoire temporaire
-    echo -e "${vert}Début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "Début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "    * les versions précédentes seront supprimées"
-    echo -e "${neutre}"
+    echo -e ""
     sleep 1s
     [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
     cd /${rep_temporaire}
@@ -346,7 +346,7 @@ mise_en_place_pxe()
     if [ ! -e /${rep_tftp}/${1}-installer ]
     then
         # le répertoire /${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
-        echo -e "${vert}on crée le répertoire /${rep_tftp}/${1}-installer${neutre}"
+        echo -e "on crée le répertoire /${rep_tftp}/${1}-installer"
         echo -e ""
         mkdir -p /${rep_tftp}/${1}-installer
     fi
@@ -369,13 +369,13 @@ mettre_se3_archives()
     if [ "$a" != "$b" -o "$c" != "$d" ]
     then
         supprimer_fichiers $1 $2
-        echo -e "${vert}téléchargement de l'archive netboot.tar.gz pour $1 $version $2${neutre}"
+        echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2"
         telecharger_archives $1 $2
         if [ $? = "0" ]
         then
-            echo -e "${vert}extraction des fichiers netboot $1 $version $2${neutre}"
+            echo -e "extraction des fichiers netboot $1 $version $2"
             extraire_archives_netboot $1 $2
-            echo -e "${vert}mise en place des fichiers netboot $1 $version $2${neutre}"
+            echo -e "mise en place des fichiers netboot $1 $version $2"
             mise_en_place_pxe $1 $2
             echo -e ""
         else
@@ -383,7 +383,7 @@ mettre_se3_archives()
             sleep 2s
         fi
     else
-        echo -e "${vert}fichiers linux et initrd.gz en place pour $1 $version $2${neutre}"
+        echo -e "fichiers linux et initrd.gz en place pour $1 $version $2"
         echo -e ""
     fi
 }
@@ -398,7 +398,7 @@ menage_netboot()
     cd - >/dev/null
     find /${rep_temporaire}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
-    echo -e "${vert}fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}${neutre}"
+    echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}"
     echo -e ""
 }
 
@@ -494,7 +494,7 @@ VerboseLog: 1
 ExTreshold: 4
 END
         
-        # securisation acces admin pass adminse3
+        # sécurisation accés admin pass adminse3
         echo "AdminAuth: admin:$xppass" > /etc/apt-cacher-ng/security.conf
         chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
         chmod 600 /etc/apt-cacher-ng/security.conf
@@ -506,11 +506,10 @@ END
         then 
             mv /var/cache/apt-cacher-ng /var/se3/
         fi
-        
         service apt-cacher-ng restart
         
-        echo "Correction des fichiers de preseed ${version_debian}"
-        
+        echo ""
+        echo "correction des fichiers de preseed ${version_debian}"
         for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
@@ -528,7 +527,7 @@ END
             read CHEMIN_MIROIR
         fi
         echo ""
-        echo "Correction des fichiers de preseed debian ${version_debian}"
+        echo "correction des fichiers de preseed debian ${version_debian}"
         
         for i in $(ls $rep_lien/preseed*.cfg)
         do
@@ -541,12 +540,12 @@ END
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
-    echo "Correction des fichiers post-install $version_debian"
+    echo "correction des fichiers post-install $version_debian"
     for i in $(ls $rep_lien/post-install*)
     do
         sed -i "s|###_DEBIAN_###|$version_debian|g" $i
     done
-    echo "Correction du fichier bashrc"
+    echo "correction du fichier bashrc"
     sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
 }
 
@@ -574,7 +573,7 @@ fichier_parametres()
     ip_proxy=$(echo "$tmp_proxy" | cut -d":" -f1)
     port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
-    echo "Génération du fichier de paramètres $rep_lien/params.sh"
+    echo "génération du fichier de paramètres $rep_lien/params.sh"
     cat > $rep_lien/params.sh << END
 email="$email"
 mailhub="$mailhub"
@@ -650,7 +649,6 @@ reconfigurer_module()
 {
     echo "on lance la reconfiguration du module clients-linux"
     bash ${rep_client_linux}/.defaut/reconfigure.bash
-    echo ""
 }
 
 message_fin()
