@@ -476,12 +476,14 @@ gestion_miroir()
 {
     if [ "$MIROIR_LOCAL" != "yes" ]
     then
-        echo "Installation et configuration de apt-cacher-ng pour se3"
-        echo "Le cache sera dans /var/se3/apt-cacher-ng"
-        apt-get install apt-cacher-ng -y
-        rm -f /etc/apt-cacher-ng/acng.conf.*
-        mv /etc/apt-cacher-ng/acng.conf /etc/apt-cacher-ng/acng.conf.$LADATE
-        cat > /etc/apt-cacher-ng/acng.conf <<END
+        if [ ! -e /etc/apt-cacher-ng ]
+        then
+            echo "Installation et configuration de apt-cacher-ng pour se3"
+            echo "Le cache sera dans /var/se3/apt-cacher-ng"
+            apt-get install apt-cacher-ng -y
+            rm -f /etc/apt-cacher-ng/acng.conf.*
+            mv /etc/apt-cacher-ng/acng.conf /etc/apt-cacher-ng/acng.conf.$LADATE
+            cat > /etc/apt-cacher-ng/acng.conf <<END
 CacheDir: /var/se3/apt-cacher-ng
 LogDir: /var/log/apt-cacher-ng
 Port:9999
@@ -493,22 +495,21 @@ ReportPage: acng-report.html
 VerboseLog: 1
 ExTreshold: 4
 END
-        
-        # sécurisation accés admin pass adminse3
-        echo "AdminAuth: admin:$xppass" > /etc/apt-cacher-ng/security.conf
-        chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
-        chmod 600 /etc/apt-cacher-ng/security.conf
-        
-        # config propre ubuntu
-        echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
-        
-        if [ ! -e /var/se3/apt-cacher-ng ]
-        then 
-            mv /var/cache/apt-cacher-ng /var/se3/
+            # sécurisation accés admin pass adminse3
+            echo "AdminAuth: admin:$xppass" > /etc/apt-cacher-ng/security.conf
+            chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
+            chmod 600 /etc/apt-cacher-ng/security.conf
+            
+            # config propre ubuntu
+            echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
+            
+            if [ ! -e /var/se3/apt-cacher-ng ]
+            then 
+                mv /var/cache/apt-cacher-ng /var/se3/
+            fi
+            service apt-cacher-ng restart
+            echo ""
         fi
-        service apt-cacher-ng restart
-        
-        echo ""
         echo "correction des fichiers de preseed ${version_debian}"
         for i in $(ls $rep_lien/preseed*.cfg)
         do
