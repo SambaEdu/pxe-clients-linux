@@ -57,22 +57,11 @@ src="$(pwd)"
 
 message_debut()
 {
-    echo -e "${orange}"
+    echo -e "${bleu}"
     echo "---------------------------------------------------------------------"
-    echo "--------------         Mise en place du système      ----------------"
+    echo "          Mise en place de l'installation via pxe/preseed"
     echo "------------------------------------------------- -------------------"
     echo -e "${neutre}"
-    # [TODO → à supprimer ?]
-    # echo -e "$vert"
-    # echo "- Choisir le mode expert pour avoir toutes les possibilités d'installation coté clients"
-    # echo "- Choisir le mode standard  pour avoir uniquement la possibilité d'installer xfce en mode auto"
-    # echo -e "$neutre"
-    # echo "Appuyez sur Entree pour continuer"
-    # read -t 10 dummy
-    #  
-    #echo "---- Mode (e)xpert ou (s)tandard ? --- e/s"
-    #read -t 10 CHOIX
-    #CHOIX=e
 }
 
 verifier_version_serveur()
@@ -133,6 +122,7 @@ extraire_archive_tftp()
     if [ "$?" != "0" ]
     then
         echo "Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
+        echo ""
         exit 1
     fi
     echo ""
@@ -140,44 +130,45 @@ extraire_archive_tftp()
 
 installation_se3_clonage()
 {
-    # verif présence se3-clonage
+    # vérification de la présence du paquet se3-clonage
     if [ ! -e "/usr/share/se3/scripts/se3_pxe_menu_ou_pas.sh" ]
     then
         echo "installation du module Clonage"
         /usr/share/se3/scripts/install_se3-module.sh se3-clonage
+        echo ""
     fi
 }
 
 installation_se3_clients_linux()
 {
-    # verif présence paquet client-linux
+    # vérification de la présence du paquet client-linux
     if [ ! -e "${rep_client_linux}" ]
     then
+        echo "installation du module client-linux"
         apt-get install se3-clients-linux -y --force-yes
+        echo ""
     fi
 }
 
 droits_repertoires()
 {
+    echo "Mise en place des répertoires $rep_install et $rep_lien"
     # rights fix and directories
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
-    
-    chmod 777 /tmp
-    
+    chmod 777 /tmp  # à supprimer ? [TODO]
     rm -rf $rep_install
     rm -rf $rep_lien
-    
     mkdir -p $rep_install
     chmod 755 $rep_install
-    
     chown root $rep_install
     ln -s $rep_install $rep_lien
+    echo ""
 }
 
 verifier_presence_mkpasswd()
 {
-    # verif présence mkpasswd
+    # vérification de la présence de mkpasswd
     if [ ! -e "/usr/bin/mkpasswd" ]
     then
         apt-get install whois -y
@@ -190,6 +181,7 @@ mise_en_place_tftpboot()
     t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ ! -z "$t" ]
     then
+        echo "correction du fichier install.menu"
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/install.menu
         sed -i "s| wheezy||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
@@ -199,29 +191,33 @@ mise_en_place_tftpboot()
         # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
         [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg
         [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
+        echo ""
     fi
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
     then
+        echo "on rajoute une entrée pour l'installation de Debian via pxe"
         echo "    
 LABEL Installation Debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_debian.cfg
     " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+        echo ""
     fi
     
     t2=$(grep "Installation Ubuntu" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
-    echo "    
+        echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe"
+        echo "    
 LABEL Installation Ubuntu et xubuntu
-    MENU LABEL ^Installation ubuntu
+    MENU LABEL ^Installation Ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
     " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-    # cp ${src}/install.menu /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/
+        echo ""
     fi
     
     if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
@@ -243,6 +239,7 @@ LABEL Installation Ubuntu et xubuntu
             echo "----> Linux <----- mis en place. À changer au plus vite depuis l'interface de configuration tftp"
             sleep 5
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
+            echo ""
         fi
     fi
     cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
@@ -391,7 +388,7 @@ mettre_se3_archives()
     fi
 }
 
-menage()
+menage_netboot()
 {
     # on revient dans le répertoire précédent
     # puis on supprime le répertoire temporaire
@@ -443,7 +440,6 @@ gestion_cles_publiques()
         done
         tar -czf /var/www/paquet_cles_pub_ssh.tar.gz *.pub
         echo ""
-        
     fi
 }
 
@@ -579,7 +575,6 @@ fichier_parametres()
     port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
     echo "Génération du fichier de paramètres $rep_lien/params.sh"
-    
     cat > $rep_lien/params.sh << END
 email="$email"
 mailhub="$mailhub"
@@ -599,8 +594,8 @@ ocs="$inventaire"
 ip_ldap="$ldap_server"
 ldap_base_dn="$ldap_base_dn"
 END
-    
     chmod 755 $rep_lien/params.sh
+    echo ""
 }
 
 gestion_scripts_unefois()
@@ -653,7 +648,18 @@ gestion_profil_skel()
 
 reconfigurer_module()
 {
+    echo "on lance la reconfiguration du module clients-linux"
     bash ${rep_client_linux}/.defaut/reconfigure.bash
+    echo ""
+}
+
+message_fin()
+{
+    echo -e "${bleu}"
+    echo "---------------------------------------------------------------------"
+    echo "          L'installation via pxe/preseed est en place"
+    echo "------------------------------------------------- -------------------"
+    echo -e "${neutre}"
 }
 
 #=====
@@ -693,7 +699,7 @@ repertoire_temporaire
 [ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu i386
 [ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu amd64
 # on supprime le répertoire temporaire
-menage
+menage_netboot
 transfert_repertoire_install
 gestion_script_integration
 gestion_cles_publiques
@@ -703,6 +709,7 @@ fichier_parametres
 gestion_scripts_unefois
 gestion_profil_skel
 reconfigurer_module
+message_fin
 #
 # fin du programme
 #####
