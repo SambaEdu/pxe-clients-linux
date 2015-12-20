@@ -50,6 +50,7 @@ rep_install="${rep_client_linux}/install"
 rep_lien="/var/www/install"
 # Chemin source → le répertoire où le script a été lancé
 src="$(pwd)"
+compte_rendu=/root/compte_rendu_install_client_linux_mise_en_place_${ladate}.txt
 
 #=====
 # Les fonctions
@@ -57,10 +58,11 @@ src="$(pwd)"
 
 message_debut()
 {
+    echo "Compte-rendu de la mise en place de l'installation via pxe/preseed : $ladate" > $compte_rendu
     echo -e "${bleu}"
-    echo "---------------------------------------------------------------------"
-    echo "          Mise en place de l'installation via pxe/preseed"
-    echo "------------------------------------------------- -------------------"
+    echo "---------------"
+    echo "Mise en place de l'installation via pxe/preseed"
+    echo "---------------"
     echo -e "${neutre}"
 }
 
@@ -68,17 +70,17 @@ verifier_version_serveur()
 {
     if egrep -q "^6.0" /etc/debian_version
     then
-        echo "La version de votre serveur est Debian Squeeze"
-        echo "Le script peut se poursuivre"
+        echo "la version de votre serveur est Debian Squeeze" | tee -a $compte_rendu
+        echo "le script peut se poursuivre"
         echo ""
     elif egrep -q "^7.0" /etc/debian_version
     then
-        echo "La version de votre serveur est Debian Wheezy"
-        echo "Le script peut se poursuivre"
+        echo "la version de votre serveur est Debian Wheezy" | tee -a $compte_rendu
+        echo "le script peut se poursuivre"
         echo ""
     else
-        echo "${rouge}Votre serveur n'est pas en version Squeeze ou Wheezy."
-        echo "Opération annulée !${neutre}"
+        echo "${rouge}votre serveur n'est pas en version Squeeze ou Wheezy." | tee -a $compte_rendu
+        echo "opération annulée !${neutre}" | tee -a $compte_rendu
         echo ""
         exit 1
     fi
@@ -117,12 +119,12 @@ recuperer_variables_se3()
 extraire_archive_tftp()
 {
 # ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
-    echo "Extraction de ${archive_tftp}.tar.gz."
+    echo "extraction de ${archive_tftp}.tar.gz." | tee -a $compte_rendu
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
     then
-        echo "${rouge}Erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz."
-        echo "${neutre}"
+        echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz." | tee -a $compte_rendu
+        echo "${neutre}" | tee -a $compte_rendu
         exit 1
     fi
     echo ""
@@ -133,7 +135,7 @@ installation_se3_clonage()
     # vérification de la présence du paquet se3-clonage
     if [ ! -e "/usr/share/se3/scripts/se3_pxe_menu_ou_pas.sh" ]
     then
-        echo "installation du module Clonage"
+        echo "installation du module Clonage" | tee -a $compte_rendu
         /usr/share/se3/scripts/install_se3-module.sh se3-clonage
         echo ""
     fi
@@ -144,7 +146,7 @@ installation_se3_clients_linux()
     # vérification de la présence du paquet client-linux
     if [ ! -e "${rep_client_linux}" ]
     then
-        echo "installation du module client-linux"
+        echo "installation du module client-linux" | tee -a $compte_rendu
         apt-get install se3-clients-linux -y --force-yes
         echo ""
     fi
@@ -152,7 +154,7 @@ installation_se3_clients_linux()
 
 droits_repertoires()
 {
-    echo "Mise en place des répertoires $rep_install et $rep_lien"
+    echo "mise en place des répertoires $rep_install et $rep_lien" | tee -a $compte_rendu
     # rights fix and directories
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
@@ -181,7 +183,7 @@ mise_en_place_tftpboot()
     t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ ! -z "$t" ]
     then
-        echo "correction du fichier install.menu"
+        echo "correction du fichier install.menu" | tee -a $compte_rendu
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
         sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/install.menu
         sed -i "s| wheezy||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
@@ -191,33 +193,30 @@ mise_en_place_tftpboot()
         # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
         [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg
         [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
-        echo ""
     fi
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
     then
-        echo "on rajoute une entrée pour l'installation de Debian via pxe"
+        echo "on rajoute une entrée pour l'installation de Debian via pxe" | tee -a $compte_rendu
         echo "    
 LABEL Installation Debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_debian.cfg
     " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        echo ""
     fi
     
     t2=$(grep "Installation Ubuntu" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
-        echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe"
+        echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe" | tee -a $compte_rendu
         echo "    
 LABEL Installation Ubuntu et xubuntu
     MENU LABEL ^Installation Ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
     " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        echo ""
     fi
     
     if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
@@ -232,26 +231,25 @@ LABEL Installation Ubuntu et xubuntu
     else
         if [ ! -e "/${rep_tftp}/pxelinux.cfg/maintenance.menu" ]
         then
-            echo "Le menu d'installation Debian n'est proposée qu'avec le menu tftp semi-graphique."
+            echo "le menu d'installation Debian n'est proposée qu'avec le menu tftp semi-graphique." | tee -a $compte_rendu
             echo "configuration du mode semi-graphique"
-            echo "Mise en place du mot de passe temporaire ci-dessous pour accéder au menu maintenance"
+            echo "mise en place du mot de passe temporaire ci-dessous pour accéder au menu maintenance"
             CHANGEMYSQL "tftp_pass_menu_pxe" "Linux" 
             echo "----> Linux <----- mis en place. À changer au plus vite depuis l'interface de configuration tftp"
             sleep 5
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
-            echo ""
         fi
     fi
     cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
+    echo ""
 }
 
 repertoire_temporaire()
 {
     # on se met dans un répertoire temporaire
-    echo -e "Début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
     echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "    * les versions précédentes seront supprimées"
-    echo -e ""
     sleep 1s
     [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
     cd /${rep_temporaire}
@@ -275,7 +273,7 @@ recuperer_somme_controle_depot()
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
-        echo -e "${rouge}échec de la récupération de MD5SUMS $1 $2${neutre}"
+        echo -e "${rouge}échec de la récupération de MD5SUMS $1 $2${neutre}" | tee -a $compte_rendu
         sleep 2s
     fi
 }
@@ -346,8 +344,7 @@ mise_en_place_pxe()
     if [ ! -e /${rep_tftp}/${1}-installer ]
     then
         # le répertoire /${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
-        echo -e "on crée le répertoire /${rep_tftp}/${1}-installer"
-        echo -e ""
+        echo -e "on crée le répertoire /${rep_tftp}/${1}-installer" | tee -a $compte_rendu
         mkdir -p /${rep_tftp}/${1}-installer
     fi
     # on déplace le répertoire $2 de $1-installer vers /${rep_tftp}/$1-installer/
@@ -369,22 +366,20 @@ mettre_se3_archives()
     if [ "$a" != "$b" -o "$c" != "$d" ]
     then
         supprimer_fichiers $1 $2
-        echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2"
+        echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
         telecharger_archives $1 $2
         if [ $? = "0" ]
         then
-            echo -e "extraction des fichiers netboot $1 $version $2"
+            echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
             extraire_archives_netboot $1 $2
-            echo -e "mise en place des fichiers netboot $1 $version $2"
+            echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
             mise_en_place_pxe $1 $2
-            echo -e ""
         else
-            echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}"
+            echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
             sleep 2s
         fi
     else
-        echo -e "fichiers linux et initrd.gz en place pour $1 $version $2"
-        echo -e ""
+        echo -e "fichiers linux et initrd.gz en place pour $1 $version $2" | tee -a $compte_rendu
     fi
 }
 
@@ -398,14 +393,17 @@ menage_netboot()
     cd - >/dev/null
     find /${rep_temporaire}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
-    echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}"
+    echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
     echo -e ""
 }
 
 transfert_repertoire_install()
 {
-    cp ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/inittab ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
-    chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian.sh
+    cp ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_debian.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    # les fichiers gdm3 et lightdm serviront lors de la post-installation
+    printf '#!/bin/sh\nwhile true\ndo\n    sleep 10\ndone\n' >$rep_lien/gdm3
+    cp $rep_lien/gdm3 $rep_lien/lightdm
+    chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian.sh $rep_lien/gdm3 $rep_lien/lightdm
 }
 
 gestion_script_integration()
@@ -423,7 +421,7 @@ gestion_cles_publiques()
     rm -f /var/www/paquet_cles_pub_ssh.tar.gz
     if [ ! -e "/var/www/paquet_cles_pub_ssh.tar.gz" ]
     then
-        echo "Génération d'un paquet de clés pub ssh d'aprés vos authorized_keys"
+        echo "Génération d'un paquet de clés pub ssh d'aprés vos authorized_keys" | tee -a $compte_rendu
         cd /root/.ssh
         for fich_authorized_keys in authorized_keys authorized_keys2 $rep_lien/id_rsa.pub
         do
@@ -448,14 +446,14 @@ gestion_fichiers_tftp()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
-    echo "Correction des fichiers TFTP inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3"
+    echo "correction des fichiers TFTP inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3" | tee -a $compte_rendu
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    echo "Correction des fichiers TFTP inst_debian.cfg pour ajout version debian"
+    echo "correction des fichiers TFTP inst_debian.cfg pour ajout version debian" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    echo "Correction des fichiers TFTP inst_debian.cfg pour ajout domaine"
+    echo "correction des fichiers TFTP inst_debian.cfg pour ajout domaine" | tee -a $compte_rendu
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
@@ -478,7 +476,7 @@ gestion_miroir()
     then
         if [ ! -e /etc/apt-cacher-ng ]
         then
-            echo "Installation et configuration de apt-cacher-ng pour se3"
+            echo "installation et configuration de apt-cacher-ng pour se3" | tee -a $compte_rendu
             echo "Le cache sera dans /var/se3/apt-cacher-ng"
             apt-get install apt-cacher-ng -y
             rm -f /etc/apt-cacher-ng/acng.conf.*
@@ -510,7 +508,7 @@ END
             service apt-cacher-ng restart
             echo ""
         fi
-        echo "correction des fichiers de preseed ${version_debian}"
+        echo "correction des fichiers de preseed ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
@@ -528,7 +526,7 @@ END
             read CHEMIN_MIROIR
         fi
         echo ""
-        echo "correction des fichiers de preseed debian ${version_debian}"
+        echo "correction des fichiers de preseed debian ${version_debian}" | tee -a $compte_rendu
         
         for i in $(ls $rep_lien/preseed*.cfg)
         do
@@ -541,12 +539,12 @@ END
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
-    echo "correction des fichiers post-install $version_debian"
+    echo "correction des fichiers post-install $version_debian" | tee -a $compte_rendu
     for i in $(ls $rep_lien/post-install*)
     do
         sed -i "s|###_DEBIAN_###|$version_debian|g" $i
     done
-    echo "correction du fichier bashrc"
+    echo "correction du fichier bashrc" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
 }
 
@@ -574,23 +572,23 @@ fichier_parametres()
     ip_proxy=$(echo "$tmp_proxy" | cut -d":" -f1)
     port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
-    echo "génération du fichier de paramètres $rep_lien/params.sh"
+    echo "génération du fichier de paramètres $rep_lien/params.sh" | tee -a $compte_rendu
     cat > $rep_lien/params.sh << END
 email="$email"
 mailhub="$mailhub"
 rewriteDomain="$rewriteDomain"
 
-# Parametres Proxy:
+# Parametres Proxy :
 ip_proxy="$ip_proxy"
 port_proxy="$port_proxy"
 
-# Parametres SE3:
+# Parametres SE3 :
 ip_se3="$se3ip"
 nom_se3="$(hostname)"
 nom_domaine="$dhcp_domain_name"
 ocs="$inventaire"
 
-# Parametres LDAP:
+# Parametres LDAP :
 ip_ldap="$ldap_server"
 ldap_base_dn="$ldap_base_dn"
 END
@@ -634,7 +632,7 @@ gestion_profil_skel()
     if [ -e ${src}/update-mozilla-profile ]
     then
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
-        echo  "modif install_client_linux_archive - $LADATE" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION
+        echo  "modif install_client_linux_archive - $LADATE" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
     fi
     
     [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ] && cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
@@ -648,17 +646,17 @@ gestion_profil_skel()
 
 reconfigurer_module()
 {
-    echo "on lance la reconfiguration du module clients-linux"
+    echo "on lance la reconfiguration du module clients-linux" | tee -a $compte_rendu
     bash ${rep_client_linux}/.defaut/reconfigure.bash
 }
 
 message_fin()
 {
     echo -e "${bleu}"
-    echo "---------------------------------------------------------------------"
-    echo "          L'installation via pxe/preseed est en place"
-    echo "------------------------------------------------- -------------------"
-    echo -e "${neutre}"
+    echo "---------------"
+    echo "L'installation via pxe/preseed est en place" | tee -a $compte_rendu
+    echo "---------------"
+    echo -e "${neutre}" | tee -a $compte_rendu
 }
 
 #=====
