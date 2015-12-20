@@ -318,8 +318,7 @@ installer_liste_paquets()
     echo -e "${jaune}"
     echo -e "=========="
     echo -e "début de l'installation des paquets de base" | tee -a $compte_rendu
-    echo -e "=========="
-    echo -e "${neutre}" | tee -a $compte_rendu
+    echo -e "==========${neutre}" | tee -a $compte_rendu
     sleep 2
     
     if [ -e /etc/proxy.sh ]
@@ -347,8 +346,7 @@ installer_liste_paquets()
         installer_un_paquet $i
     done
     # faut-il prendre en compte d'autres fichiers ? [TODO]
-    echo -e "${jaune}"
-    echo -e "=========="
+    echo -e "${jaune}=========="
     echo -e "fin de l'installation des paquets mesapplis-debian" | tee -a $compte_rendu
     echo -e "=========="
     echo -e "${neutre}" | tee -a $compte_rendu
@@ -362,7 +360,7 @@ lancer_integration()
 
 renommer_machine()
 {
-    echo "on n'intègre pas au domaine… renommage du poste pour $nom_machine"| tee -a $compte_rendu 
+    echo "on n'intègre pas au domaine… renommage du poste pour $nom_machine" | tee -a $compte_rendu 
     echo "$nom_machine" > "/etc/hostname"
     invoke-rc.d hostname.sh stop >/dev/null 2>&1
     invoke-rc.d hostname.sh start >/dev/null 2>&1
