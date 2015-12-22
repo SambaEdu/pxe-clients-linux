@@ -1,6 +1,8 @@
 # Installation de clients Linux Debian Wheezy via SE3 + intégration automatique :
 
-**Documentation générale du module `se3-clients-linux`**
+
+**Documentation générale du module `pxe-clients-linux`**
+
 
 ## Table des matières
 
