@@ -179,6 +179,7 @@ verifier_presence_mkpasswd()
 
 mise_en_place_tftpboot()
 {
+    echo "vérification du répertoire /tftpboot…"
     # correction éventuelle de la présence de wheezy ou trusty dans install.menu
     t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ ! -z "$t" ]
