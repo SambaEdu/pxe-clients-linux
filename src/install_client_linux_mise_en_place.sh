@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# lastupdate 20151207
+# version 20151222
 #
 
 LADATE=$(date +%Y%m%d%H%M%S)
@@ -684,7 +684,7 @@ repertoire_temporaire
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
 [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
-# il y a un probleme sur la somme de controle disponible sur le dépôt : cela semble réglé, à confirmer [TODO]
+# il y a un probleme sur la somme de controle disponible sur le dépôt amd64: à confirmer [TODO]
 [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
 # sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
 [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386

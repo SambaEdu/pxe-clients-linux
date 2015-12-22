@@ -5,7 +5,7 @@
 # pour finaliser la config  et intégrer au domaine le client linux
 #
 # 
-# version 20151220
+# version 20151222
 #
 #####
 
