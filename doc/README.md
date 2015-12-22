@@ -5,7 +5,7 @@
 ## Table des matières
 
 * [Vue d'ensemble](#vue-densemble)
-* [Distributions GNU/Linux proposées](#distributions-gnuLinux-proposées)
+* [Distributions GNU/Linux proposées](#distributions-gnulinux-proposées)
 * [Annexes](#annexes)
 * [Ressources externes](#ressources-externes)
 * [Pour les impatients qui veulent utiliser le dispositif rapidement]()
