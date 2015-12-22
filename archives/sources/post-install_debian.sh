@@ -76,7 +76,7 @@ message_debut()
     echo -e "Post-configuration du client-linux Debian ###_DEBIAN_###"
     echo -e "------------------------------"
     echo -e "${neutre}"
-    echo -e "Appuyez sur Entrée pour continuer (sinon, attendre 10s…)"
+    echo -e "appuyez sur Entrée pour continuer (sinon, attendre 10s…)"
     read -t 10 dummy
 }
 
@@ -93,7 +93,7 @@ cles_publiques_ssh()
         cat *.pub > authorized_keys && \
         rm paquet_cles_pub_ssh.tar.gz
     else
-        echo "échec de la recupération des clés publiques SSH" | tee -a $compte_rendu
+        echo "${rouge}échec de la recupération des clés publiques SSH${neutre}" | tee -a $compte_rendu
         sleep 5
     fi
 }
@@ -114,7 +114,7 @@ then
 fi
 ' >> /etc/profile
     else
-        echo "IP proxy ou port_proxy non trouvés…" | tee -a $compte_rendu
+        echo "${rouge}IP proxy ou port_proxy non trouvés…${neutre}" | tee -a $compte_rendu
     fi
 }
 
@@ -144,8 +144,22 @@ BASE $ldap_base_dn
 # TLS_CACERT /etc/ldap/slapd.pem
 " > /etc/ldap/ldap.conf
     else
-        echo "IP ldap ou ldap_base_dn non trouvés…" | tee -a $compte_rendu
+        echo "${rouge}IP ldap ou ldap_base_dn non trouvés…${neutre}" | tee -a $compte_rendu
     fi
+}
+
+configurer_ssmtp()
+{
+    echo "configuration de SSMTP…"
+    cp /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf.${ladate}
+    echo "
+root=$email
+#mailhub=mail
+mailhub=$mailhub
+rewriteDomain=$rewriteDomain
+hostname=$nom_machine.$nom_domaine
+" > /etc/ssmtp/ssmtp.conf
+    sleep 2
 }
 
 configurer_ocs()
@@ -156,7 +170,7 @@ configurer_ocs()
         installer_un_paquet ocsinventory-agent
         echo "server=$ip_se3:909" > /etc/ocsinventory/ocsinventory-agent.cfg
     else
-        echo "paramètre ocs pas à 1…" | tee -a $compte_rendu
+        echo "${rouge}le paramètre ocs n'est pas à 1…${neutre}" | tee -a $compte_rendu
     fi
 }
 
@@ -171,8 +185,8 @@ recuperer_script_integration()
         echo "téléchargement réussi" | tee -a $compte_rendu
         chmod +x integration_###_DEBIAN_###.bash
     else
-        echo "échec du téléchargement" | tee -a $compte_rendu
-        echo "le poste ne pourra pas être intégré au domaine…" | tee -a $compte_rendu
+        echo "${rouge}échec du téléchargement${neutre}" | tee -a $compte_rendu
+        echo "${orange}le poste ne pourra pas être intégré au domaine…${neutre}" | tee -a $compte_rendu
         ISCRIPT="erreur"
     fi
 }
@@ -193,7 +207,7 @@ recuperer_nom_client()
             t=$(ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||" | head -n1)
             if [ -z "$t" ]
             then
-                echo "Nom de machine non trouvé dans l'annuaire LDAP" | tee -a $compte_rendu
+                echo "nom de machine non trouvé dans l'annuaire LDAP" | tee -a $compte_rendu
             else
                 tab_nom_machine=($(ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||"))
                 if [ "${#tab_nom_machine[*]}" = "1" ]
@@ -202,19 +216,19 @@ recuperer_nom_client()
                     t2=$(echo "${tab_nom_machine[0]}" | sed -e "s|_|-|g")
                     if [ "$t" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "Le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides."
+                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides${neutre}"
                     elif [ "$t2" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "Le nom de machine ${tab_nom_machine[0]} contient des _ qui seront remplaces par des -"
+                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des ${jaune}_${orange} qui seront remplaces par des ${jaune}-${neutre}"
                         nom_machine="$t2"
                         echo "nouveau nom : $nom_machine"
                         sleep 2
                     else
                         nom_machine=${tab_nom_machine[0]}
-                        echo "Nom de machine trouve dans l annuaire LDAP : $nom_machine"
+                        echo "nom de machine trouvé dans l'annuaire LDAP : $nom_machine"
                     fi
                 else
-                    echo "Attention : adresse MAC $mac est associee à plusieurs machines:"
+                    echo "${rouge}attention : l'adresse MAC ${neutre}${mac}${rouge} est associée à plusieurs machines :${neutre}"
                     ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||"
                 fi
             fi
@@ -224,42 +238,27 @@ recuperer_nom_client()
     fi
     while [ -z "$nom_machine" ]
     do
-        echo -e "Machine non connue de l'annuaire, Veuillez saisir un nom"
-        echo -e "Attention : espaces et _ sont interdits et 15 caractères maxi !"
+        echo -e "machine non connue de l'annuaire, Veuillez saisir un nom"
+        echo -e "attention : espaces et _ sont interdits et 15 caractères maxi !"
         read nom_machine
-        echo "Nom de machine: $nom_machine"
+        echo "nom de machine: $nom_machine"
         if [ -n "${nom_machine}" ]
         then
             t=$(echo "${nom_machine:0:1}" | grep "[A-Za-z]")
             if [ -z "$t" ]
             then
-                echo "Le nom doit commencer par une lettre"
+                echo "le nom doit commencer par une lettre"
                 nom_machine=""
             else
                 t=$(echo "${nom_machine}" | sed -e "s/[A-Za-z0-9\-]//g")
                 if [ -n "$t" ]
                 then
-                    echo "Le nom $nom_machine contient des caractères invalides: '$t'"
+                    echo "le nom $nom_machine contient des caractères invalides: '$t'"
                     nom_machine=""
                 fi
             fi
         fi
     done
-    sleep 2
-}
-
-configurer_ssmtp()
-{
-    echo ""
-    echo "Configuration de SSMTP…"
-    cp /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf.${ladate}
-    echo "
-root=$email
-#mailhub=mail
-mailhub=$mailhub
-rewriteDomain=$rewriteDomain
-hostname=$nom_machine.$nom_domaine
-" > /etc/ssmtp/ssmtp.conf
     sleep 2
 }
 
@@ -272,7 +271,7 @@ integrer_domaine()
         echo -e "Intégration au domaine SE3"
         echo -e "=====${neutre}"
         echo -e "voulez-vous intégrer la machine au domaine SE3 ?"
-        echo -e "répondre n sinon (attente de 10s…)"
+        echo -e "sinon répondre n (attente de 10s…)"
         read -t 10 rep
         [ "$rep" != "n" ] && echo "la machine sera mise au domaine" && sleep 1 | tee -a $compte_rendu
     else
@@ -330,7 +329,8 @@ installer_liste_paquets()
     aptitude -q2 update
     # aptitude -y safe-upgrade
     # on installe tofrodos pour convertir les formats DOS au format UNIX
-    installer_un_paquet tofrodos
+    # déjà installé via le preseed
+    #installer_un_paquet tofrodos
     # faut-il tester la présence du fichier ? [TODO]
     echo "installation des paquets définis dans mesapplis-debian.txt" | tee -a $compte_rendu
     fromdos /root/bin/mesapplis-debian.txt
@@ -360,7 +360,7 @@ lancer_integration()
 
 renommer_machine()
 {
-    echo "on n'intègre pas au domaine… renommage du poste pour $nom_machine" | tee -a $compte_rendu 
+    echo "on n'intègre pas au domaine… mais renommage du poste pour $nom_machine" | tee -a $compte_rendu 
     echo "$nom_machine" > "/etc/hostname"
     invoke-rc.d hostname.sh stop >/dev/null 2>&1
     invoke-rc.d hostname.sh start >/dev/null 2>&1
@@ -415,7 +415,7 @@ message_fin()
 {
     echo -e "${bleu}"
     echo "------------------------------"
-    echo "Fin du script : redémarrage dans 10s pour finaliser l'installation" | tee -a $compte_rendu
+    echo "redémarrage dans 10s pour finaliser la post-installation" | tee -a $compte_rendu
     echo "------------------------------"
     echo -e "${neutre}" | tee -a $compte_rendu
     read -t 10 dummy
@@ -435,10 +435,10 @@ cles_publiques_ssh
 configurer_proxy
 configurer_vim
 configurer_ldap
+configurer_ssmtp
 configurer_ocs
 recuperer_script_integration
 recuperer_nom_client
-configurer_ssmtp
 integrer_domaine
 installer_liste_paquets
 [ "$rep" != "n" ] && lancer_integration
