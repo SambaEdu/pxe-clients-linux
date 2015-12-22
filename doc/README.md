@@ -6,11 +6,12 @@
 
 ## Table des matières
 
-* [Vue d'ensemble](#vue-densemble)
+* [Vue d'ensemble du dispositif](#vue-densemble)
 * [Distributions GNU/Linux proposées](#distributions-gnulinux-proposées)
 * [Annexes](#annexes)
 * [Ressources externes](#ressources-externes)
-* [Pour les impatients qui veulent utiliser le dispositif rapidement]()
+* [Mise en place du dispositif]()
+* [Utilisation du dispositif]()
 * [Les listes des applications installées]()
 
 
@@ -31,6 +32,10 @@ Voici les grandes lignes de l'utilisation du dispositif :
 
 Une fois le système choisi, l'installation démarre (**phase 1**) puis, après le redémarrage de la machine, il est lancé automatiquement (**phase 2**) la préparation et l'intégration au domaine géré par le `se3`. Après avoir à nouveau démarré, la machine est prête : les utlisateurs peuvent ouvrir une session avec leur compte réseau.
 
+L'installation peut aussi bien se faire sur le disque dur entier ou bien en cohabitation (ou `double-boot`) avec un autre Système d'exploitation (il faudra alors qu'il y ait un espace libre non partitionné). Les deux possibilités sont proposées dans les menus `pxe`.
+
+**Remarque :** une fois une machine installée et intégrée, la gestion est prise en charge par le module `se3-clients-linux` dont la documentation est mise en lien ci-dessous.
+
 
 ## Distributions `GNU/Linux` proposées
 
@@ -46,11 +51,9 @@ Les distributions GNU/Linux qui sont proposées à l'installation sont :
 
 Ces distributions sont proposées pour des machines **32bits** (i386) ou **64bits** (amd64).
 
-L'installation peut aussi bien se faire sur le disque dur entier ou bien en cohabitation avec un autre Système d'exploitation (il faudra alors laisser un espace vide non partitionné). Les deux possibilités sont proposées dans les menus `pxe`.
-
 
 ## Ressources externes
 
 * [la documentation de Sébastien Muller](http://www-annexe.ac-rouen.fr/productions/tice/SE3_install_wheezy_pxe_web_gen_web/co/SE3_install_wheezy_pxe_web.html)
-* [la documentation du paquet `se3-clients-linux`]()
+* [la documentation du module `se3-clients-linux`](https://github.com/flaf/se3-clients-linux/blob/master/doc/README.md)
 
