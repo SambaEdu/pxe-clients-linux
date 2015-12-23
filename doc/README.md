@@ -8,16 +8,12 @@
 
 * [Vue d'ensemble du dispositif](#vue-densemble)
 * [Distributions GNU/Linux proposées](#distributions-gnulinux-proposées)
+* [Mise en place du dispositif](misenplace.md)
+* [Utilisation du dispositif](utilisation.md)
+* [Les listes des applications installées](listeapplis.md)
+
 * [Annexes](#annexes)
 * [Ressources externes](#ressources-externes)
-* [Mise en place du dispositif]()
-* [Utilisation du dispositif]()
-* [Les listes des applications installées]()
-
-
-## Annexes
-
-* [Installer et tester en toute sécurité la version du paquet issue de la branche `se3testing`]()
 
 
 ## Vue d'ensemble
@@ -50,6 +46,11 @@ Les distributions GNU/Linux qui sont proposées à l'installation sont :
     * Lbuntu
 
 Ces distributions sont proposées pour des machines **32bits** (i386) ou **64bits** (amd64).
+
+
+## Annexes
+
+* [Installer et tester en toute sécurité la version du paquet issue de la branche `se3testing`]()
 
 
 ## Ressources externes
