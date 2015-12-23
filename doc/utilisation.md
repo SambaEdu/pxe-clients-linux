@@ -33,7 +33,7 @@ Selon les ordinateurs, l'activation de ce mode `pxe` est plus ou moins aisé.
 Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est possible que si auparavant on a activé le mode `Low power`. On se demande bien pourquoi ces constructeurs s'ingénient à cacher ces fonctions, dans le genre "pourquoi faire simple quand on peut faire compliqué…".
 
 
-## Menus pxe disponibles
+## Menus `pxe` disponibles
 
 Une 1ère étape est proposée afin de sécuriser ce mode de fonctionnement : après avoir choisi l'entrée `Maintenance`, un mot de passe est requis.
 
