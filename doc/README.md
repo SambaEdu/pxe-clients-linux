@@ -11,14 +11,13 @@
 * [Mise en place du dispositif](misenplace.md)
 * [Utilisation du dispositif](utilisation.md)
 * [Les listes des applications installées](listeapplis.md)
-
 * [Annexes](#annexes)
 * [Ressources externes](#ressources-externes)
 
 
 ## Vue d'ensemble
 
-Cette documentation concerne l'installation via un amorçage par `pxe` et des fichiers `preseed` suivie d'une intégration au domaine géré par `se3`.
+Cette documentation concerne l'installation via un amorçage par `pxe` (Pre-boot eXecution Environment) et des fichiers `preseed` suivie d'une intégration au domaine géré par `se3`.
 
 Voici les grandes lignes de l'utilisation du dispositif :
 
@@ -43,6 +42,7 @@ Les distributions GNU/Linux qui sont proposées à l'installation sont :
     * Ldxe
 * Ubuntu Trusty Tahr (version 14.04)
     * Ubuntu
+    * Xbuntu
     * Lbuntu
 
 Ces distributions sont proposées pour des machines **32bits** (i386) ou **64bits** (amd64).
@@ -57,4 +57,6 @@ Ces distributions sont proposées pour des machines **32bits** (i386) ou **64bit
 
 * [la documentation de Sébastien Muller](http://www-annexe.ac-rouen.fr/productions/tice/SE3_install_wheezy_pxe_web_gen_web/co/SE3_install_wheezy_pxe_web.html)
 * [la documentation du module `se3-clients-linux`](https://github.com/flaf/se3-clients-linux/blob/master/doc/README.md)
+* [amorçage via `pxe`](https://fr.wikipedia.org/wiki/Preboot_Execution_Environment)
+* [installation de `Debian` par préconfiguration](https://www.debian.org/releases/jessie/amd64/apb.html.fr)
 
