@@ -1,8 +1,8 @@
 # Utilisation du dispositif d'installation de clients `Gnu/Linux`
 
-*[Vue d'ensemble](#vue-densemble)
-*[Démarrage en `pxe`](#démarrage-en-pxe)
-*[Menus pxe disponibles](#menus-pxe-disponibles)
+* [Vue d'ensemble](#vue-densemble)
+* [Démarrage en `pxe`](#démarrage-en-pxe)
+* [Menus pxe disponibles](#menus-pxe-disponibles)
 
 
 ## Vue d'ensemble
