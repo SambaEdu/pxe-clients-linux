@@ -1,0 +1,2 @@
+20151230;1304ce9576789256ed362208583397e9;install_client_linux_archive-tftp.tar.gz
+20151230;5812b5935a88c3a8fcc9c9589430b3ba;install_client_linux_mise_en_place.sh
