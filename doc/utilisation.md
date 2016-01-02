@@ -3,8 +3,8 @@
 * [Vue d'ensemble](#vue-densemble)
 * [Démarrage en `pxe`](#démarrage-en-pxe)
 * [Menus pxe disponibles](#menus-pxe-disponibles)
-* [Installation du système `phase 1`](#installation-du-système-(phase-1))
-* [Post-installation `phase 2`](#post-installation-(phase-2))
+* [Installation du système `phase 1`](#installation-du-système-phase-1)
+* [Post-installation `phase 2`](#post-installation-phase-2)
 
 
 ## Vue d'ensemble
