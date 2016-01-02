@@ -3,6 +3,8 @@
 * [Vue d'ensemble](#vue-densemble)
 * [Démarrage en `pxe`](#démarrage-en-pxe)
 * [Menus pxe disponibles](#menus-pxe-disponibles)
+* [Installation du système `phase 1`](#installation-du-système-(phase-1))
+* [Post-installation `phase 2`](#post-installation-(phase-2))
 
 
 ## Vue d'ensemble
@@ -53,5 +55,25 @@ Ensuite, choisissez l'entrée `Installation`…
 Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
 ![menu pxe debian](/doc/images/menu_pxe_debian.png)
 → dans ce menu, `Gnome` est l'environnement de Bureau proposé.
+
+
+## Installation du système (phase 1)
+
+L'installation du système choisi se fait automatiquement.
+![menu pxe preseed](/doc/images/menu_pxe_preseed.png)
+
+Cependant, selon le matériel utilisé, il se peut que soit demandé un `firmware` pour la carte réseau. On peut soit fournir ce micro-programme via une clé `usb` ou bien l'installer une fois le système opérationnel.
+
+Des fichiers de log sont disponibles dans `/var/log/installer/syslog`.
+
+
+## Post-installation (phase 2)
+
+Une fois le système installé, la machine redémarre et la post-installation est lancée automatiquement.
+![menu pxe post-installation](/doc/images/menu_pxe_post_installation.png)
+
+Au redémarrage suivant, le client `GNU∕Linux` est prêt ;-) et son administration se fait via le paquet `se3-clients-linux`.
+
+Un compte-rendu de cette `phase 2` est disponible avec le fichier `/root/compte_rendu_post-install_ladate.txt`.
 
 
