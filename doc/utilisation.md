@@ -26,7 +26,10 @@ On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session ave
 
 ## Démarrage en `pxe`
 
-Pour amorcer une machine via le réseau, avec `pxe`, il faut que ce mode soit activé dans le `Bios` de l'ordinateur.
+Pour amorcer une machine via le réseau, avec `pxe`, appuyez sur la touche `F12` lors du démarrage de cet ordinateur.
+![menu pxe demmarage](/doc/images/menu_pxe_demarrage.png)
+
+**Remarque :** il faut que le mode `pxe` soit activé dans le `Bios` de l'ordinateur.
 
 Selon les ordinateurs, l'activation de ce mode `pxe` est plus ou moins aisé.
 
@@ -35,15 +38,17 @@ Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est poss
 
 ## Menus `pxe` disponibles
 
+**Remarque :** la navigation dans les menus `pxe` se fait à l'aide des touches `↑` et `↓` ; pour sélectionner une des entrées du menu, il suffit d'utiliser la touche `Entrée`.
+
 Une 1ère étape est proposée afin de sécuriser ce mode de fonctionnement : après avoir choisi l'entrée `Maintenance`…
-![menu pxe](/doc/images/menu_pxe_entree.png)
+![menu pxe entrée](/doc/images/menu_pxe_entree.png)
 … un mot de passe est requis.
 
 Ensuite, choisissez l'entrée `Installation`…
-![menu pxe](/doc/images/menu_pxe_maintenance.png)
+![menu pxe maintenance](/doc/images/menu_pxe_maintenance.png)
 
 … et enfin une des entrées `Installation Debian` ou `Installation Ubuntu`.
-![menu pxe](/doc/images/menu_pxe_installation.png)
+![menu pxe installation](/doc/images/menu_pxe_installation.png)
 
 Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
 
