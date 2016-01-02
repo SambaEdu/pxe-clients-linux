@@ -4,7 +4,7 @@
 # version 20151222
 #
 
-LADATE=$(date +%Y%m%d%H%M%S)
+ladate=$(date +%Y%m%d%H%M%S)
 
 #####
 # quelques couleurs ;-)
@@ -180,21 +180,8 @@ verifier_presence_mkpasswd()
 mise_en_place_tftpboot()
 {
     echo "vérification du répertoire /tftpboot…"
-    # correction éventuelle de la présence de wheezy ou trusty dans install.menu
-    t=$(grep "inst_wheezy.cfg" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
-    if [ ! -z "$t" ]
-    then
-        echo "correction du fichier install.menu" | tee -a $compte_rendu
-        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s|inst_wheezy|inst_debian|g" /${rep_tftp}/pxelinux.cfg/install.menu
-        sed -i "s| wheezy||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s| wheezy||g" /${rep_tftp}/pxelinux.cfg/install.menu
-        sed -i "s| trusty||g" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
-        sed -i "s| trusty||g" /${rep_tftp}/pxelinux.cfg/install.menu
-        # suppression de inst.wheezy.cfg et de inst.jessie.cfg (seront remplacés par inst_debian.cfg)
-        [ -e /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg ] && rm -f /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/inst_wheezy.cfg
-        [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
-    fi
+    # suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
+    [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
@@ -226,7 +213,7 @@ LABEL Installation Ubuntu et xubuntu
         t2=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
         if [ -z "$t1" -o -z "$t2" ]
         then
-            cp /${rep_tftp}/pxelinux.cfg/install.menu /${rep_tftp}/pxelinux.cfg/install.menu.$LADATE
+            cp /${rep_tftp}/pxelinux.cfg/install.menu /${rep_tftp}/pxelinux.cfg/install.menu.$ladate
             cp /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu /${rep_tftp}/pxelinux.cfg/
         fi
     else
@@ -481,7 +468,7 @@ gestion_miroir()
             echo "Le cache sera dans /var/se3/apt-cacher-ng"
             apt-get install apt-cacher-ng -y
             rm -f /etc/apt-cacher-ng/acng.conf.*
-            mv /etc/apt-cacher-ng/acng.conf /etc/apt-cacher-ng/acng.conf.$LADATE
+            mv /etc/apt-cacher-ng/acng.conf /etc/apt-cacher-ng/acng.conf.$ladate
             cat > /etc/apt-cacher-ng/acng.conf <<END
 CacheDir: /var/se3/apt-cacher-ng
 LogDir: /var/log/apt-cacher-ng
@@ -601,19 +588,19 @@ gestion_scripts_unefois()
 {
     [ -e ${rep_client_linux}/unefois/PAUSE ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
     cp -r ${src}/${archive_tftp}/unefois/* ${rep_client_linux}/unefois/
-    cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$LADATE
+    cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$ladate
     sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
     # [TODO → à supprimer ?]
     # cp ${src}/logon_perso ${rep_client_linux}/bin/
     
     # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ];then
     #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/config-save*
-    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.config ${rep_client_linux}/distribs/${version_debian}/skel/config-save-$LADATE
+    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.config ${rep_client_linux}/distribs/${version_debian}/skel/config-save-$ladate
     # fi
     
     # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ];then
     #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save*
-    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save-$LADATE
+    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save-$ladate
     # fi
     
     if [ ! -e ${rep_client_linux}/unefois/\^\. ]
@@ -633,14 +620,14 @@ gestion_profil_skel()
     if [ -e ${src}/update-mozilla-profile ]
     then
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
-        echo  "modif install_client_linux_archive - $LADATE" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
+        echo  "modif install_client_linux_archive - $ladate" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
     fi
     
     [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ] && cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
     [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ] && cp -r ${src}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
     
     rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
-    mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$LADATE
+    mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$ladate
     # [TODO → à rendre conditionnel ?]
     cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
 }
@@ -656,8 +643,8 @@ message_fin()
     echo -e "${bleu}"
     echo "---------------"
     echo "L'installation via pxe/preseed est en place" | tee -a $compte_rendu
-    echo "---------------"
-    echo -e "${neutre}" | tee -a $compte_rendu
+    echo "---------------${neutre}"
+    echo -e "" | tee -a $compte_rendu
 }
 
 #=====
