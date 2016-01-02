@@ -36,7 +36,7 @@ Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est poss
 ## Menus `pxe` disponibles
 
 Une 1ère étape est proposée afin de sécuriser ce mode de fonctionnement : après avoir choisi l'entrée `Maintenance`, un mot de passe est requis.
-![menu pxe](/doc/images/menu_pxe_entrée.png)
+![menu pxe](/doc/images/menu_pxe_entree.png)
 
 Ensuite, il faudra choisir l'entrée `Installation`…
 ![menu pxe](/doc/images/menu_pxe_maintenance.png)
