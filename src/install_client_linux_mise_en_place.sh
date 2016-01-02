@@ -180,31 +180,35 @@ verifier_presence_mkpasswd()
 mise_en_place_tftpboot()
 {
     echo "vérification du répertoire /tftpboot…"
-    # suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
+    # cas des anciennes versions : suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
     [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
     then
         echo "on rajoute une entrée pour l'installation de Debian via pxe" | tee -a $compte_rendu
-        echo "    
+        cat >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
+
 LABEL Installation Debian
     MENU LABEL ^Installation Debian
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_debian.cfg
-    " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+
+END
     fi
     
     t2=$(grep "Installation Ubuntu" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
         echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe" | tee -a $compte_rendu
-        echo "    
+        cat >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
+
 LABEL Installation Ubuntu et xubuntu
     MENU LABEL ^Installation Ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
-    " >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu
+
+END
     fi
     
     if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
