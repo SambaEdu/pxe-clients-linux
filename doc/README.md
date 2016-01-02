@@ -34,13 +34,13 @@ L'installation peut aussi bien se faire sur le disque dur entier ou bien en coha
 
 ## Distributions `GNU/Linux` proposées
 
-Les distributions GNU/Linux qui sont proposées à l'installation sont :
+Les distributions `GNU/Linux` qui sont proposées à l'installation sont :
 
-* Debian Jessie (version 8)
+* Debian `Jessie` (version 8)
     * Gnome
     * Xfce
     * Ldxe
-* Ubuntu Trusty Tahr (version 14.04)
+* Ubuntu `Trusty Tahr` (version 14.04)
     * Ubuntu
     * Xbuntu
     * Lbuntu

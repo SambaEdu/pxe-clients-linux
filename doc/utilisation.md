@@ -41,3 +41,4 @@ Ensuite, il faudra choisir l'entrée `Installation` et enfin une des entrées `I
 
 Enfin, vous pourrez choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
 
+![menu pxe](/doc/images/menu_pxe_01.png)
