@@ -51,5 +51,5 @@ Ensuite, choisissez l'entrée `Installation`…
 ![menu pxe installation](/doc/images/menu_pxe_installation.png)
 
 Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
-
+![menu pxe debian](/doc/images/menu_pxe_debian.png)
 
