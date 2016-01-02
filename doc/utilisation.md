@@ -36,9 +36,14 @@ Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est poss
 ## Menus `pxe` disponibles
 
 Une 1ère étape est proposée afin de sécuriser ce mode de fonctionnement : après avoir choisi l'entrée `Maintenance`, un mot de passe est requis.
+![menu pxe](/doc/images/menu_pxe_entrée.png)
 
-Ensuite, il faudra choisir l'entrée `Installation` et enfin une des entrées `Installation Debian` ou `Installation Ubuntu`.
+Ensuite, il faudra choisir l'entrée `Installation`…
+![menu pxe](/doc/images/menu_pxe_maintenance.png)
 
-Enfin, vous pourrez choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
+… et enfin une des entrées `Installation Debian` ou `Installation Ubuntu`.
+![menu pxe](/doc/images/menu_pxe_installation.png)
 
-![menu pxe](/doc/images/menu_pxe_01.png)
+Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les architectures `i386` et `amd64` et selon qu'un système d'exploitation est déjà installé (à condition d'avoir laissé un espace vide non formaté) pour obtenir un `double-boot`.
+
+
