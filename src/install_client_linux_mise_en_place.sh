@@ -118,7 +118,9 @@ recuperer_variables_se3()
 
 extraire_archive_tftp()
 {
-# ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
+    # ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
+    # on supprime le répertoire ${archive_tftp} avant de décompresser l'archive
+    [ -e ${archive_tftp} ] && rm -rf ${archive_tftp}
     echo "extraction de ${archive_tftp}.tar.gz." | tee -a $compte_rendu
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
@@ -429,6 +431,7 @@ gestion_cles_publiques()
             fi
         done
         tar -czf /var/www/paquet_cles_pub_ssh.tar.gz *.pub
+        cd - >/dev/null
         echo ""
     fi
 }
@@ -618,7 +621,7 @@ gestion_scripts_unefois()
 
 gestion_profil_skel()
 {
-# pourquoi ce test concernant update-mozilla-profile ? [TODO]
+    # pourquoi ce test concernant update-mozilla-profile ? [TODO]
     if [ -e ${src}/update-mozilla-profile ]
     then
         echo "gestion du profil skel de la distribution"
