@@ -58,11 +58,11 @@ compte_rendu=/root/compte_rendu_install_client_linux_mise_en_place_${ladate}.txt
 
 message_debut()
 {
-    echo "Compte-rendu de la mise en place de l'installation via pxe/preseed : $ladate" > $compte_rendu
+    echo -e "Compte-rendu de la mise en place de l'installation via pxe/preseed : $ladate" > $compte_rendu
     echo -e "${bleu}"
-    echo "---------------"
-    echo "Mise en place de l'installation via pxe/preseed"
-    echo "---------------"
+    echo -e "---------------"
+    echo -e "Mise en place de l'installation via pxe/preseed"
+    echo -e "---------------"
     echo -e "${neutre}"
 }
 
@@ -620,20 +620,33 @@ gestion_scripts_unefois()
 
 gestion_profil_skel()
 {
-# pourquoi ce test ? [TODO]
+# pourquoi ce test concernant update-mozilla-profile ? [TODO]
     if [ -e ${src}/update-mozilla-profile ]
     then
+        echo "gestion du profil skel de la distribution"
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
         echo  "modif install_client_linux_archive - $ladate" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
     fi
-    
-    [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ] && cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
-    [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ] && cp -r ${src}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
-    
-    rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
-    mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$ladate
-    # [TODO → à rendre conditionnel ?]
-    cp /etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
+    # normalement, si le paquet se3-clients-linux est installé, on devrait avoir .config dans le skel
+    if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ]
+    then
+        echo "skel : mise en place de .config"
+        cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
+    fi
+    # même remarque que ci-dessus… sauf si présence de update-mozilla-profile
+    if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ]
+    then
+        echo "skel : mise en place de .mozilla"
+        cp -r ${src}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
+        prefsjs="/etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js"
+        if [ -e $prefsjs ]
+        then
+            echo "skel : utilisation de $prefsjs"
+            rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
+            mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$ladate
+            cp $prefsjs ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
+        fi
+    fi
 }
 
 reconfigurer_module()
@@ -646,9 +659,9 @@ message_fin()
 {
     echo -e "${bleu}"
     echo "---------------"
-    echo "L'installation via pxe/preseed est en place" | tee -a $compte_rendu
-    echo "---------------${neutre}"
-    echo -e "" | tee -a $compte_rendu
+    echo -e "L'installation via pxe/preseed est en place" | tee -a $compte_rendu
+    echo -e "---------------${neutre}"
+    echo "" | tee -a $compte_rendu
 }
 
 #=====
@@ -695,7 +708,7 @@ gestion_cles_publiques
 gestion_fichiers_tftp
 gestion_miroir
 fichier_parametres
-gestion_scripts_unefois
+#gestion_scripts_unefois
 gestion_profil_skel
 reconfigurer_module
 message_fin
