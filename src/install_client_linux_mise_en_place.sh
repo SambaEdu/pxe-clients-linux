@@ -590,30 +590,28 @@ END
 
 gestion_scripts_unefois()
 {
+    # voir la doc du paquet se3-clients-linux pour le rôle du fichier PAUSE
     [ -e ${rep_client_linux}/unefois/PAUSE ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
+    
+    # l'archive contient des scripts unefois à mettre en place pour tous les clients
+    # sont-ils nécessaires ? Voir les fonctions cles_publiques_ssh et configurer_ocs du script de post-installation
     cp -r ${src}/${archive_tftp}/unefois/* ${rep_client_linux}/unefois/
-    cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$ladate
-    sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
-    # [TODO → à supprimer ?]
-    # cp ${src}/logon_perso ${rep_client_linux}/bin/
     
-    # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ];then
-    #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/config-save*
-    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.config ${rep_client_linux}/distribs/${version_debian}/skel/config-save-$ladate
-    # fi
+    # [TODO → en attente de modification ou de suppression des 2 lignes suivantes]
+    #cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$ladate
+    #sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
     
-    # if [ -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ];then
-    #     rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save*
-    #     mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/mozilla-save-$ladate
-    # fi
-    
+    # gestion du répertoire ^.
     if [ ! -e ${rep_client_linux}/unefois/\^\. ]
     then
+        # ^. n'existe pas : on renomme all en ^.
         mv ${rep_client_linux}/unefois/all ${rep_client_linux}/unefois/\^\.
     else
+        # ^. existe : on copie le contenu de all dans ^. puis on supprime all
         cp ${rep_client_linux}/unefois/all/* ${rep_client_linux}/unefois/\^\./
         rm -rf ${rep_client_linux}/unefois/all
     fi 
+    # gestion du répertoire ^* : remplacé par ^.
     [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
     rm -rf ${rep_client_linux}/unefois/\^\*
 }
@@ -708,7 +706,7 @@ gestion_cles_publiques
 gestion_fichiers_tftp
 gestion_miroir
 fichier_parametres
-#gestion_scripts_unefois
+gestion_scripts_unefois
 gestion_profil_skel
 reconfigurer_module
 message_fin
