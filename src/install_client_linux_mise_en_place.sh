@@ -508,9 +508,10 @@ END
             then 
                 mv /var/cache/apt-cacher-ng /var/se3/
             fi
-            service apt-cacher-ng restart
             echo ""
         fi
+        # restart apt-cacher-ng
+        service apt-cacher-ng restart
         echo "correction des fichiers de preseed ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
         do
