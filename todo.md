@@ -7,6 +7,7 @@
 * compléter la doc pour le choix du nom du client (partie post-installation).
 * mettre en fonctions les scripts pour Ubuntu.
 * permettre des commentaires dans les fichiers "mesapplis".
+* permettre la possibilité d'installer des paquets une fois l'installation effectuée. Par ex avec /home/netlogon/clients-linux/lanceparc. A voir si cela doit être mis en place par ce dispositif ou bien se3-clients-linux 
 
 
 # Quelques remarques
