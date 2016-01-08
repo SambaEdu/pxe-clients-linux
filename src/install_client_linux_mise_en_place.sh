@@ -523,6 +523,8 @@ END
             echo ""
         fi
         # restart apt-cacher-ng
+        # pour être certain que le service est disponible suite à une éventuelle mise à jour de se3-clonage
+        echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
         service apt-cacher-ng restart
         echo "correction des fichiers de preseed ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
