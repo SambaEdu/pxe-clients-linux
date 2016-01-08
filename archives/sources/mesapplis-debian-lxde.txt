@@ -1,3 +1,4 @@
+# liste de paquets à installer pour Lxde lors de la post-installation
 evince-gtk
 inkscape
 gdebi

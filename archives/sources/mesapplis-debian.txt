@@ -1,3 +1,4 @@
+# liste de paquets à installer pour Debian lors de la post-installation
 firmware-linux
 flashplugin-nonfree
 shutter
@@ -13,8 +14,13 @@ faad
 ttf-mscorefonts-installer
 icedtea-plugin
 myspell-fr-gut
-geogebra
 gstreamer0.10-fluendo-mp3
+
+# paquets déjà installés lors de l'installation en preseed de Debian
+geogebra
+
+# les paquets suivants ne pourront être installés qu'avec le dépôt
+# → à prévoir pour des scripts unefois
 gstreamer0.10-ffmpeg
 ffmpeg
 libdvdcss2

@@ -1,3 +1,4 @@
+# liste de paquets à installer pour Gnome lors de la post-installation
 nautilus-image-converter
 nautilus-open-terminal
 gnome-shell-extension-suspend-button
