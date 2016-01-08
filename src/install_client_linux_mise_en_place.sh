@@ -154,19 +154,32 @@ installation_se3_clients_linux()
     fi
 }
 
-droits_repertoires()
+gerer_repertoires()
 {
     echo "mise en place des répertoires $rep_install et $rep_lien" | tee -a $compte_rendu
     # rights fix and directories
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
     chmod 777 /tmp  # à supprimer ? [TODO]
+    # on préserve la liste des applis perso
+    if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
+    then
+        [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
+        mv $rep_install/mesapplis-debian-perso.txt $rep_temporaire/
+    fi
+    # on supprime le répertoire install et le lien vers /var/www/
     rm -rf $rep_install
     rm -rf $rep_lien
+    # on crée le répertoire install et le lien vers /var/www/
     mkdir -p $rep_install
     chmod 755 $rep_install
     chown root $rep_install
     ln -s $rep_install $rep_lien
+    # on remet en place la liste des applis perso
+    if [ -e "$rep_temporaire/mesapplis-debian-perso.txt" ]
+    then
+        mv $rep_temporaire/mesapplis-debian-perso.txt $rep_install/
+    fi
     echo ""
 }
 
@@ -345,7 +358,7 @@ mise_en_place_pxe()
     mv ${1}-installer/$2/ /${rep_tftp}/${1}-installer/
 }
 
-mettre_se3_archives()
+placer_se3_archives()
 {
     # 2 arguments :
     # $1 → debian ou ubuntu
@@ -393,7 +406,8 @@ menage_netboot()
 
 transfert_repertoire_install()
 {
-    cp ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_debian.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    # on met en place les fichiers dans le répertoire install sans écraser la liste des applis perso s'il y en a une
+    cp -n ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_debian.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
     # les fichiers gdm3 et lightdm serviront lors de la post-installation
     printf '#!/bin/sh\nwhile true\ndo\n    sleep 10\ndone\n' >$rep_lien/gdm3
     cp $rep_lien/gdm3 $rep_lien/lightdm
@@ -687,7 +701,7 @@ recuperer_variables_se3
 extraire_archive_tftp
 installation_se3_clonage
 installation_se3_clients_linux
-droits_repertoires
+gerer_repertoires
 verifier_presence_mkpasswd
 mise_en_place_tftpboot
 # on crée un répertoire temporaire
@@ -706,10 +720,10 @@ repertoire_temporaire
 [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
 [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
 # on met à jour si nécessaire (mise en place la première fois)
-[ $option_debian = "oui" ] && mettre_se3_archives debian i386
-[ $option_debian = "oui" ] && mettre_se3_archives debian amd64
-[ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu i386
-[ $option_ubuntu = "oui" ] && mettre_se3_archives ubuntu amd64
+[ $option_debian = "oui" ] && placer_se3_archives debian i386
+[ $option_debian = "oui" ] && placer_se3_archives debian amd64
+[ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu i386
+[ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu amd64
 # on supprime le répertoire temporaire
 menage_netboot
 transfert_repertoire_install
