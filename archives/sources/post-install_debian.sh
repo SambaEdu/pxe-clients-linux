@@ -273,7 +273,7 @@ integrer_domaine()
         echo -e "voulez-vous intégrer la machine au domaine SE3 ?"
         echo -e "sinon répondre n (attente de 10s…)"
         read -t 10 rep
-        [ "$rep" != "n" ] && echo "la machine sera mise au domaine" && sleep 1 | tee -a $compte_rendu
+        [ "$rep" != "n" ] && echo "la machine sera mise au domaine dans quelques temps…" && sleep 1 | tee -a $compte_rendu
     else
         echo "script d'intégration non présent…" | tee -a $compte_rendu
     fi
@@ -312,6 +312,29 @@ installer_un_paquet()
     fi
 }
 
+gerer_mesapplis()
+{
+    # 1 argument
+    # $1 → le fichier contenant les paquets à installer
+    
+    # le paquet tofrodos pour convertir les formats DOS au format UNIX
+    # est déjà installé via le preseed
+    fromdos /root/bin/$1
+    # on élimine les espaces en début de ligne et les commentaires
+    liste_paquet=$(grep -Ev '^[[:space:]]*(#|$)' /root/bin/$1 | cut -d# -f 1)
+    if [ -s $liste_paquet ]
+    then
+        echo "installation des paquets définis dans $1" | tee -a $compte_rendu
+        for i in $liste_paquet
+        do
+            installer_un_paquet $i
+        done
+     else
+        echo -e "${rouge}pas de liste $1 ?${neutre}" | tee -a $compte_rendu
+     fi
+    
+}
+
 installer_liste_paquets()
 {
     echo -e "${jaune}"
@@ -319,7 +342,7 @@ installer_liste_paquets()
     echo -e "début de l'installation des paquets de base" | tee -a $compte_rendu
     echo -e "==========${neutre}" | tee -a $compte_rendu
     sleep 2
-    
+    # on s'assure de l'utilisation du proxy
     if [ -e /etc/proxy.sh ]
     then
         . /etc/proxy.sh
@@ -327,29 +350,15 @@ installer_liste_paquets()
     # on recharge la liste des paquets
     echo "on recharge la liste des paquets"
     aptitude -q2 update
-    # aptitude -y safe-upgrade
-    # on installe tofrodos pour convertir les formats DOS au format UNIX
-    # déjà installé via le preseed
-    #installer_un_paquet tofrodos
-    # faut-il tester la présence du fichier ? [TODO]
-    echo "installation des paquets définis dans mesapplis-debian.txt" | tee -a $compte_rendu
-    fromdos /root/bin/mesapplis-debian.txt
-    for i in $(cat /root/bin/mesapplis-debian.txt)
-    do
-        installer_un_paquet $i
-    done
-    # faut-il tester la présence du fichier ? [TODO]
-    echo "installation des paquets définis dans mesapplis-debian-eb.txt" | tee -a $compte_rendu
-    fromdos /root/bin/mesapplis-debian-eb.txt
-    for i in $(cat /root/bin/mesapplis-debian-eb.txt)
-    do
-        installer_un_paquet $i
-    done
-    # faut-il prendre en compte d'autres fichiers ? [TODO]
-    echo -e "${jaune}=========="
-    echo -e "fin de l'installation des paquets mesapplis-debian" | tee -a $compte_rendu
-    echo -e "=========="
-    echo -e "${neutre}" | tee -a $compte_rendu
+    # traitement des 3 listes de paquets
+    test_applis=""
+    [ -e /root/bin/mesapplis-debian.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian.txt
+    [ -e /root/bin/mesapplis-debian-eb.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian-eb.txt
+    [ -e /root/bin/mesapplis-debian-perso.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian-perso.txt
+    if [ "$test_applis" = "" ]
+    then
+        echo -e "${rouge}aucune liste de paquets ?${neutre}" | tee -a $compte_rendu
+    fi
 }
 
 lancer_integration()
