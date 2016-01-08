@@ -36,6 +36,7 @@ option_ubuntu="oui"
 #
 url_debian="ftp.fr.debian.org/debian"
 url_ubuntu="archive.ubuntu.com/ubuntu"
+depot_firmware_debian="cdimage.debian.org/cdimage/unofficial/non-free/firmware"
 
 #####
 # variables
