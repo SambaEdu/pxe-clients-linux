@@ -274,9 +274,8 @@ recuperer_somme_controle_depot()
     wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
     if [ $? = "0" ]
     then
-        # on récupère la somme de contrôle concernant les fichiers linux et initrd.gz
-        eval somme_initrd_depot_${version}_$2=$(cat MD5SUMS | grep "./netboot/${1}-installer/$2/initrd.gz" | cut -f1 -d" ")
-        eval somme_linux_depot_${version}_$2=$(cat MD5SUMS | grep "./netboot/${1}-installer/$2/linux" | cut -f1 -d" ")
+        # on récupère la somme de contrôle concernant l'archive netboot.tar.gz
+        eval somme_netboot_depot_${version}_$2=$(cat MD5SUMS | grep "./netboot/netboot.tar.gz" | cut -f1 -d" ")
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
@@ -292,17 +291,15 @@ calculer_somme_controle_se3()
     # $2 → i386 ou amd64
     #
     eval version='$'version_$1
-    if [ -e /${rep_tftp}/${1}-installer/$2/linux ] && [ -e /${rep_tftp}/${1}-installer/$2/initrd.gz ]
+    if [ -e /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz ]
     then
         mise="mise à jour"
-        # on calcule la somme de contrôle des fichiers linux et initrd.gz en place
-        eval somme_initrd_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/$2/initrd.gz | cut -f1 -d" ")
-        eval somme_linux_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/$2/linux | cut -f1 -d" ")
+        # on calcule la somme de contrôle de l'archive précédemment sauvegardée
+        eval somme_netboot_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz | cut -f1 -d" ")
     else
-        # il manque un fichier : on remettra $1-installer en place
+        # il manque l'archive précédente : on remettra $1-installer en place
         mise="mise en place"
-        eval somme_initrd_se3_${version}_$2=""
-        eval somme_linux_se3_${version}_$2=""
+        eval somme_netboot_se3_${version}_$2=""
     fi
 }
 
@@ -340,6 +337,8 @@ extraire_archives_netboot()
     # extraction des archives
     eval version='$'version_$1
     tar -xzf netboot_${version}_${2}.tar.gz
+    # on sauvegarde l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
+    mv netboot_${version}_${2}.tar.gz /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
 }
 
 mise_en_place_pxe()
@@ -366,11 +365,9 @@ placer_se3_archives()
     #
     # si les 2 sommes sont différentes, on supprime les anciens fichiers et on télécharge la nouvelle archive
     eval version='$'version_$1
-    eval a='$'somme_initrd_se3_${version}_$2
-    eval b='$'somme_initrd_depot_${version}_$2
-    eval c='$'somme_linux_se3_${version}_$2
-    eval d='$'somme_linux_depot_${version}_$2
-    if [ "$a" != "$b" -o "$c" != "$d" ]
+    eval a='$'somme_netboot_se3_${version}_$2
+    eval b='$'somme_netboot_depot_${version}_$2
+    if [ "$a" != "$b" ]
     then
         supprimer_fichiers $1 $2
         echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
