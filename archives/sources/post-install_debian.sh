@@ -322,7 +322,8 @@ gerer_mesapplis()
     fromdos /root/bin/$1
     # on élimine les espaces en début de ligne et les commentaires
     liste_paquet=$(grep -Ev '^[[:space:]]*(#|$)' /root/bin/$1 | cut -d# -f 1)
-    if [ -s $liste_paquet ]
+    test_liste=$(echo "$liste_paquet")
+    if [ ! -z "$test_liste" ]
     then
         echo "installation des paquets définis dans $1" | tee -a $compte_rendu
         for i in $liste_paquet

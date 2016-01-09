@@ -161,12 +161,12 @@ gerer_repertoires()
     # rights fix and directories
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
-    chmod 777 /tmp  # à supprimer ? [TODO]
+    chmod 777 /tmp  # [à supprimer ? TODO]
+    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
     # on préserve la liste des applis perso
     if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
     then
-        [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
-        mv $rep_install/mesapplis-debian-perso.txt $rep_temporaire/
+        mv $rep_install/mesapplis-debian-perso.txt /$rep_temporaire/
     fi
     # on supprime le répertoire install et le lien vers /var/www/
     rm -rf $rep_install
@@ -177,9 +177,9 @@ gerer_repertoires()
     chown root $rep_install
     ln -s $rep_install $rep_lien
     # on remet en place la liste des applis perso
-    if [ -e "$rep_temporaire/mesapplis-debian-perso.txt" ]
+    if [ -e "/$rep_temporaire/mesapplis-debian-perso.txt" ]
     then
-        mv $rep_temporaire/mesapplis-debian-perso.txt $rep_install/
+        mv /$rep_temporaire/mesapplis-debian-perso.txt $rep_install/
     fi
     echo ""
 }
@@ -704,7 +704,7 @@ installation_se3_clients_linux
 gerer_repertoires
 verifier_presence_mkpasswd
 mise_en_place_tftpboot
-# on crée un répertoire temporaire
+# on utilise un répertoire temporaire
 repertoire_temporaire
 # sommes de contrôle des fichiers des dépôts
 # i386 → 32 bits
