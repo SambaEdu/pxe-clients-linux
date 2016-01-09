@@ -404,6 +404,104 @@ menage_netboot()
     echo -e ""
 }
 
+recuperer_somme_controle_firmware_depot_debian()
+{
+    wget -q http://$depot_firmware_debian/$version_debian/current/MD5SUMS
+    if [ $? = "0" ]
+    then
+        # on récupère la somme de contrôle concernant les firmwares
+        eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware.cpio.gz" | cut -f1 -d" ")
+        # on supprime le fichier récupéré
+        rm -f MD5SUMS
+    else
+        echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        sleep 2s
+    fi
+}
+
+calculer_somme_controle_firmware_se3_debian()
+{
+    if [ -e /${rep_tftp}/debian-installer/firmware.cpio.gz ]
+    then
+        mise="mise à jour"
+        # on calcule la somme de contrôle concernant les firmwares en place
+        eval somme_firmware_se3_${version_debian}=$(md5sum /${rep_tftp}/debian-installer/firmware.cpio.gz | cut -f1 -d" ")
+    else
+        # il manque firmware.cpio.gz : à mettre en place
+        mise="mise en place"
+        eval somme_firmware_se3_${version_debian}=""
+    fi
+}
+
+supprimer_firmware_debian()
+{
+    if [ -e /${rep_tftp}/debian-installer/firmware.cpio.gz ]
+    then
+        # on supprime l'archive en place
+        find /${rep_tftp}/debian-installer/firmware.cpio.gz -delete
+    fi
+}
+
+telecharger_firmware_debian()
+{
+    # on télécharge les firmwares : aussi bien pour i386 que amd64
+    wget -q http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O /${rep_tftp}/debian-installer/firmware.cpio.gz
+    if [ $? != "0" ]
+    then
+        echo -e "${rouge}échec du téléchargement des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        return 1
+    fi
+}
+
+incorporer_firmware_debian()
+{
+    # 1 argument :
+    # $1 → i386 ou amd64
+    if [ -e /${rep_tftp}/debian-installer/$1/initrd.gz ]
+    then
+        # méthode valable à partir de jessie
+        cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initdr.gz.orig
+        cat /${rep_tftp}/debian-installer/$1/initdr.gz.orig /${rep_tftp}/debian-installer/firmware.cpio.gz > /${rep_tftp}/debian-installer/$1/initdr.gz
+        rm -f /${rep_tftp}/debian-installer/$1/initdr.gz.orig
+        echo -e "firmwares incorporés à initdr.gz $1" | tee -a $compte_rendu
+    else
+        echo -e "${rouge}il manque le fichier initdr.gz ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
+    fi
+    
+}
+
+gerer_firmware_debian()
+{
+    eval a='$'somme_firmware_se3_${version_debian}
+    eval b='$'somme_firmware_depot_${version_debian}
+    if [ "$a" != "$b" ]
+    then
+        supprimer_firmware_debian
+        echo -e "téléchargement des firmwares pour debian ${version_debian}" | tee -a $compte_rendu
+        telecharger_firmware_debian
+        if [ $? = "0" ]
+        then
+            # les firmwares ayant changés, on incorpore les firmwares aux fichiers initdr.gz
+            incorporer_firmware_debian i386
+            incorporer_firmware_debian amd64
+        fi
+    else
+        # les firmwares n'ont pas changés
+        # les fichiers initdr.gz ont-ils changé ?
+        [ "$drapeau_initdr_i386" != "" ] && incorporer_firmware_debian i386
+        [ "$drapeau_initdr_amd64" != "" ] && incorporer_firmware_debian amd64
+        [ "$drapeau_initdr_i386" = "" ] && [ "$drapeau_initdr_amd64" = "" ] && echo -e "firmwares déjà en place pour ${version_debian}" | tee -a $compte_rendu
+    fi
+}
+
+gestion_firmware_debian()
+{
+    # pour debian uniquement
+    recuperer_somme_controle_firmware_depot_debian
+    calculer_somme_controle_firmware_se3_debian
+    gerer_firmware_debian
+}
+
 transfert_repertoire_install()
 {
     # on met en place les fichiers dans le répertoire install sans écraser la liste des applis perso s'il y en a une
@@ -728,6 +826,7 @@ repertoire_temporaire
 [ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu amd64
 # on supprime le répertoire temporaire
 menage_netboot
+gestion_firmware_debian
 transfert_repertoire_install
 gestion_script_integration
 gestion_cles_publiques
