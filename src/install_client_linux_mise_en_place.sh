@@ -379,8 +379,8 @@ placer_se3_archives()
             extraire_archives_netboot $1 $2
             echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
             mise_en_place_pxe $1 $2
-            [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initdr_i386="1"
-            [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initdr_amd64="1"
+            [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
+            [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
         else
             echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
             sleep 2s
@@ -460,12 +460,12 @@ incorporer_firmware_debian()
     if [ -e /${rep_tftp}/debian-installer/$1/initrd.gz ]
     then
         # méthode valable à partir de jessie
-        cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initdr.gz.orig
-        cat /${rep_tftp}/debian-installer/$1/initdr.gz.orig /${rep_tftp}/debian-installer/firmware.cpio.gz > /${rep_tftp}/debian-installer/$1/initdr.gz
-        rm -f /${rep_tftp}/debian-installer/$1/initdr.gz.orig
-        echo -e "firmwares incorporés à initdr.gz $1" | tee -a $compte_rendu
+        cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initrd.gz.orig
+        cat /${rep_tftp}/debian-installer/$1/initrd.gz.orig /${rep_tftp}/debian-installer/firmware.cpio.gz > /${rep_tftp}/debian-installer/$1/initrd.gz
+        rm -f /${rep_tftp}/debian-installer/$1/initrd.gz.orig
+        echo -e "firmwares incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
-        echo -e "${rouge}il manque le fichier initdr.gz ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}il manque le fichier initrd.gz ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
     fi
     
 }
@@ -481,16 +481,16 @@ gerer_firmware_debian()
         telecharger_firmware_debian
         if [ $? = "0" ]
         then
-            # les firmwares ayant changés, on incorpore les firmwares aux fichiers initdr.gz
+            # les firmwares ayant changés, on incorpore les firmwares aux fichiers initrd.gz
             incorporer_firmware_debian i386
             incorporer_firmware_debian amd64
         fi
     else
         # les firmwares n'ont pas changés
-        # les fichiers initdr.gz ont-ils changé ?
-        [ "$drapeau_initdr_i386" != "" ] && incorporer_firmware_debian i386
-        [ "$drapeau_initdr_amd64" != "" ] && incorporer_firmware_debian amd64
-        [ "$drapeau_initdr_i386" = "" ] && [ "$drapeau_initdr_amd64" = "" ] && echo -e "firmwares déjà en place pour ${version_debian}" | tee -a $compte_rendu
+        # les fichiers initrd.gz ont-ils changé ?
+        [ "$drapeau_initrd_i386" != "" ] && incorporer_firmware_debian i386
+        [ "$drapeau_initrd_amd64" != "" ] && incorporer_firmware_debian amd64
+        [ "$drapeau_initrd_i386" = "" ] && [ "$drapeau_initrd_amd64" = "" ] && echo -e "firmwares déjà en place pour ${version_debian}" | tee -a $compte_rendu
     fi
 }
 
