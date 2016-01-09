@@ -379,6 +379,8 @@ placer_se3_archives()
             extraire_archives_netboot $1 $2
             echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
             mise_en_place_pxe $1 $2
+            [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initdr_i386="1"
+            [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initdr_amd64="1"
         else
             echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
             sleep 2s
