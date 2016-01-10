@@ -367,11 +367,12 @@ installer_liste_paquets()
     then
         echo -e "${rouge}aucune liste de paquets ?${neutre}" | tee -a $compte_rendu
     fi
+    echo ""
 }
 
 lancer_integration()
 {
-    echo "intégration du client-linux $nom_machine au domaine géré par le se3"
+    echo "intégration du client-linux $nom_machine au domaine géré par le se3" | tee -a $compte_rendu
     ./integration_###_DEBIAN_###.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu
 }
 
