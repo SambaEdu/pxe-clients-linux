@@ -86,7 +86,7 @@ cles_publiques_ssh()
     mkdir -p /root/.ssh
     chmod 700 /root/.ssh
     cd /root/.ssh
-    wget http://${ip_se3}/paquet_cles_pub_ssh.tar.gz >/dev/null 2>&1
+    wget -q http://${ip_se3}/paquet_cles_pub_ssh.tar.gz
     if [ "$?" = "0" ]
     then
         tar -xzf paquet_cles_pub_ssh.tar.gz && \
@@ -97,6 +97,7 @@ cles_publiques_ssh()
         # [gestion de cette erreur ? TODO]
         sleep 5
     fi
+    cd - >/dev/null
 }
 
 configurer_proxy()
@@ -183,7 +184,7 @@ recuperer_script_integration()
     echo "téléchargement du script integration_###_DEBIAN_###.bash…" | tee -a $compte_rendu
     mkdir -p /root/bin
     cd /root/bin
-    wget http://${ip_se3}/install/integration_###_DEBIAN_###.bash >/dev/null 2>&1
+    wget -q http://${ip_se3}/install/integration_###_DEBIAN_###.bash
     if [ "$?" = "0" ]
     then
         echo "téléchargement réussi" | tee -a $compte_rendu
@@ -194,6 +195,7 @@ recuperer_script_integration()
         ISCRIPT="erreur"
         # [gestion de cette erreur ? TODO]
     fi
+    cd - >/dev/null
 }
 
 recuperer_nom_client()
@@ -426,6 +428,14 @@ annuler_autologin()
     rm -rf /etc/systemd/system/getty@tty1.service.d
 }
 
+lancer_script_perso()
+{
+    cd /root/bin
+    wget -q http://${ip_se3}/install/messcripts_perso/monscript-perso.sh
+    bash monscript-perso.sh | tee -a $compte_rendu
+    cd - >/dev/null
+}
+
 message_fin()
 {
     echo -e "${bleu}"
@@ -462,6 +472,7 @@ configurer_grub
 menage_script
 activer_gdm
 annuler_autologin
+lancer_script_perso
 message_fin
 reboot
 exit 0
