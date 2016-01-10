@@ -9,6 +9,7 @@
 * mettre en place une liste perso d'applis pour ubuntu
 * permettre la possibilité d'installer des paquets une fois l'installation effectuée. Par ex avec /home/netlogon/clients-linux/lanceparc. A voir si cela doit être mis en place par ce dispositif ou bien se3-clients-linux
 * gestion des erreurs dans les scripts mise en place et post-installation
+* gestion du cas où on a plusieurs cartes réseaux (script post-installation)
 
 
 # liste de évolutions réalisées

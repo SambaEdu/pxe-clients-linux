@@ -731,10 +731,6 @@ gestion_scripts_unefois()
     # sont-ils nécessaires ? Voir les fonctions cles_publiques_ssh et configurer_ocs du script de post-installation
     cp -r ${src}/${archive_tftp}/unefois/* ${rep_client_linux}/unefois/
     
-    # [TODO → en attente de modification ou de suppression des 2 lignes suivantes]
-    #cp ${rep_client_linux}/bin/logon_perso ${rep_client_linux}/bin/logon_perso-$ladate
-    #sed -i -r '/initialisation_perso[[:space:]]*\(\)/,/^\}/s/^([[:space:]]*)true/\1activer_pave_numerique/' ${rep_client_linux}/bin/logon_perso
-    
     # gestion du répertoire ^.
     if [ ! -e ${rep_client_linux}/unefois/\^\. ]
     then
@@ -753,6 +749,7 @@ gestion_scripts_unefois()
 gestion_profil_skel()
 {
     # pourquoi ce test concernant update-mozilla-profile ? [TODO]
+    # d'où vient la présence éventuelle de ce fichier ?
     if [ -e ${src}/update-mozilla-profile ]
     then
         echo "gestion du profil skel de la distribution"
@@ -820,7 +817,6 @@ repertoire_temporaire
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
 [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
 [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
-# il y a un probleme sur la somme de controle disponible sur le dépôt amd64: à confirmer [TODO]
 [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
 # sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
 [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386

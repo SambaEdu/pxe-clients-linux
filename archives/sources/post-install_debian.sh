@@ -94,6 +94,7 @@ cles_publiques_ssh()
         rm paquet_cles_pub_ssh.tar.gz
     else
         echo "${rouge}échec de la recupération des clés publiques SSH${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
         sleep 5
     fi
 }
@@ -115,6 +116,7 @@ fi
 ' >> /etc/profile
     else
         echo "${rouge}IP proxy ou port_proxy non trouvés…${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
     fi
 }
 
@@ -145,6 +147,7 @@ BASE $ldap_base_dn
 " > /etc/ldap/ldap.conf
     else
         echo "${rouge}IP ldap ou ldap_base_dn non trouvés…${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
     fi
 }
 
@@ -171,6 +174,7 @@ configurer_ocs()
         echo "server=$ip_se3:909" > /etc/ocsinventory/ocsinventory-agent.cfg
     else
         echo "${rouge}le paramètre ocs n'est pas à 1…${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
     fi
 }
 
@@ -188,6 +192,7 @@ recuperer_script_integration()
         echo "${rouge}échec du téléchargement${neutre}" | tee -a $compte_rendu
         echo "${orange}le poste ne pourra pas être intégré au domaine…${neutre}" | tee -a $compte_rendu
         ISCRIPT="erreur"
+        # [gestion de cette erreur ? TODO]
     fi
 }
 
