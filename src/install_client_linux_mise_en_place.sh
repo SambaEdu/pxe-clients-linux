@@ -253,17 +253,6 @@ END
     echo ""
 }
 
-repertoire_temporaire()
-{
-    # on se met dans un répertoire temporaire
-    echo -e "début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
-    echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
-    echo -e "    * les versions précédentes seront supprimées"
-    sleep 1s
-    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
-    cd /${rep_temporaire}
-}
-
 recuperer_somme_controle_depot()
 {
     # 2 arguments :
@@ -406,6 +395,36 @@ menage_netboot()
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
     echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
     echo -e ""
+}
+
+gestion_netboot()
+{
+    echo -e "début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
+    echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "    * les versions précédentes seront supprimées"
+    sleep 1s
+    # on se met dans un répertoire temporaire
+    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
+    cd /${rep_temporaire}
+    # sommes de contrôle des fichiers des dépôts
+    # i386 → 32 bits
+    # amd64 → 64 bits
+    [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
+    [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
+    [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
+    [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
+    # sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
+    [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386
+    [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian amd64
+    [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
+    [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
+    # on met à jour si nécessaire (mise en place la première fois)
+    [ $option_debian = "oui" ] && placer_se3_archives debian i386
+    [ $option_debian = "oui" ] && placer_se3_archives debian amd64
+    [ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu i386
+    [ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu amd64
+    # on supprime le répertoire temporaire
+    menage_netboot
 }
 
 recuperer_somme_controle_firmware_depot_debian()
@@ -809,27 +828,7 @@ installation_se3_clients_linux
 gerer_repertoires
 verifier_presence_mkpasswd
 mise_en_place_tftpboot
-# on utilise un répertoire temporaire
-repertoire_temporaire
-# sommes de contrôle des fichiers des dépôts
-# i386 → 32 bits
-# amd64 → 64 bits
-[ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
-[ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
-[ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
-[ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
-# sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
-[ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386
-[ $option_debian = "oui" ] && calculer_somme_controle_se3 debian amd64
-[ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
-[ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
-# on met à jour si nécessaire (mise en place la première fois)
-[ $option_debian = "oui" ] && placer_se3_archives debian i386
-[ $option_debian = "oui" ] && placer_se3_archives debian amd64
-[ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu i386
-[ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu amd64
-# on supprime le répertoire temporaire
-menage_netboot
+gestion_netboot
 gestion_firmware_debian
 transfert_repertoire_install
 gestion_script_integration
