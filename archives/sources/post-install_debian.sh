@@ -430,10 +430,16 @@ annuler_autologin()
 
 lancer_script_perso()
 {
-    cd /root/bin
     wget -q http://${ip_se3}/install/messcripts_perso/monscript-perso.sh
-    bash monscript-perso.sh | tee -a $compte_rendu
-    cd - >/dev/null
+    if [ "$?" = "0" ]
+    then
+        echo "lancement des scripts perso" | tee -a $compte_rendu
+        bash monscript-perso.sh | tee -a $compte_rendu
+        cd - >/dev/null
+    else
+        echo "${rouge}échec du téléchargement des scripts perso${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
+    fi
 }
 
 message_fin()
