@@ -122,11 +122,11 @@ extraire_archive_tftp()
     # ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
     # on supprime le répertoire ${archive_tftp} avant de décompresser l'archive
     [ -e ${archive_tftp} ] && rm -rf ${archive_tftp}
-    echo "extraction de ${archive_tftp}.tar.gz." | tee -a $compte_rendu
+    echo "extraction de ${archive_tftp}.tar.gz" | tee -a $compte_rendu
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
     then
-        echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz." | tee -a $compte_rendu
+        echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz" | tee -a $compte_rendu
         echo "${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         exit 1
@@ -170,9 +170,9 @@ gerer_repertoires()
         mv $rep_install/mesapplis-debian-perso.txt /$rep_temporaire/
     fi
     # on préserve le répertoire des scripts perso
-    if [ -e "$rep_install/messcripts_perso/" ]
+    if [ -e "$rep_install/messcripts_perso" ]
     then
-        mv $rep_install/messcripts_perso/ /$rep_temporaire/
+        mv $rep_install/messcripts_perso /$rep_temporaire/
     fi
     # on supprime le répertoire install et le lien vers /var/www/
     rm -rf $rep_install
@@ -188,9 +188,9 @@ gerer_repertoires()
         mv /$rep_temporaire/mesapplis-debian-perso.txt $rep_install/
     fi
     # et le répertoire des scripts perso
-    if [ -e "/$rep_temporaire/messcripts_perso/" ]
+    if [ -e "/$rep_temporaire/messcripts_perso" ]
     then
-        mv /$rep_temporaire/messcripts_perso/ $rep_install/
+        mv /$rep_temporaire/messcripts_perso $rep_install/
     fi
     echo ""
 }
@@ -542,7 +542,7 @@ gestion_firmware_debian()
 transfert_repertoire_install()
 {
     # on met en place les fichiers dans le répertoire install sans écraser ni la liste des applis perso, ni le répertoire des scripts perso
-    cp -n ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/messcripts_perso/ ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_debian.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    cp -n -r ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/messcripts_perso ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_debian.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
     # les fichiers gdm3 et lightdm serviront lors de la post-installation
     printf '#!/bin/sh\nwhile true\ndo\n    sleep 10\ndone\n' >$rep_lien/gdm3
     cp $rep_lien/gdm3 $rep_lien/lightdm
@@ -572,7 +572,7 @@ gestion_cles_publiques()
     rm -f /var/www/paquet_cles_pub_ssh.tar.gz
     if [ ! -e "/var/www/paquet_cles_pub_ssh.tar.gz" ]
     then
-        echo "Génération d'un paquet de clés pub ssh d'aprés vos authorized_keys" | tee -a $compte_rendu
+        echo "génération d'un paquet de clés pub ssh d'aprés vos authorized_keys" | tee -a $compte_rendu
         cd /root/.ssh
         for fich_authorized_keys in authorized_keys authorized_keys2 $rep_lien/id_rsa.pub
         do
@@ -663,6 +663,7 @@ END
         # pour être certain que le service est disponible suite à une éventuelle mise à jour de se3-clonage
         echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
         service apt-cacher-ng restart
+        echo ""
         echo "correction des fichiers de preseed ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
         do
