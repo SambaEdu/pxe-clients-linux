@@ -273,7 +273,7 @@ recuperer_somme_controle_depot()
     # on télécharge MD5SUMS
     eval url_dists='$'url_$1
     eval version='$'version_$1
-    wget http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
+    wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
     if [ $? = "0" ]
     then
         # on récupère la somme de contrôle concernant l'archive netboot.tar.gz
@@ -410,7 +410,7 @@ menage_netboot()
 
 recuperer_somme_controle_firmware_depot_debian()
 {
-    wget http://$depot_firmware_debian/$version_debian/current/MD5SUMS
+    wget -q http://$depot_firmware_debian/$version_debian/current/MD5SUMS
     if [ $? = "0" ]
     then
         # on récupère la somme de contrôle concernant les firmwares

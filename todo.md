@@ -5,9 +5,17 @@
 * modifier le fichier install.menu pour qu'il ne comporte plus de référence à jessie ou trusty afin d'être indépendant du futur paquet pxe-clients-linux.
 * compléter la doc pour la partie mise en place.
 * compléter la doc pour le choix du nom du client (partie post-installation).
-* mettre en fonctions les scripts pour Ubuntu.
-* permettre des commentaires dans les fichiers "mesapplis".
-* permettre la possibilité d'installer des paquets une fois l'installation effectuée. Par ex avec /home/netlogon/clients-linux/lanceparc. A voir si cela doit être mis en place par ce dispositif ou bien se3-clients-linux 
+* mettre en fonctions les scripts mise en place et post-installation pour Ubuntu.
+* mettre en place une liste perso d'applis pour ubuntu
+* permettre la possibilité d'installer des paquets une fois l'installation effectuée. Par ex avec /home/netlogon/clients-linux/lanceparc. A voir si cela doit être mis en place par ce dispositif ou bien se3-clients-linux
+* gestion des erreurs dans les scripts mise en place et post-installation
+
+
+# liste de évolutions réalisées
+
+* permettre des commentaires dans les fichiers "mesapplis" pour debian
+* mise en place d'une liste perso des applis pour debian
+* incorporation des firmwares debian dans le fichier initrd.gz
 
 
 # Quelques remarques
