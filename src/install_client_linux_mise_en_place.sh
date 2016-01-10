@@ -790,13 +790,13 @@ gestion_profil_skel()
     if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ]
     then
         echo "skel : mise en place de .config"
-        cp -r ${src}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
+        cp -r ${src}/${archive_tftp}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
     fi
     # même remarque que ci-dessus… sauf si présence de update-mozilla-profile
     if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ]
     then
         echo "skel : mise en place de .mozilla"
-        cp -r ${src}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
+        cp -r ${src}/${archive_tftp}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
         prefsjs="/etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js"
         if [ -e $prefsjs ]
         then
