@@ -128,6 +128,7 @@ extraire_archive_tftp()
     then
         echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz." | tee -a $compte_rendu
         echo "${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
         exit 1
     fi
     echo ""
@@ -272,7 +273,7 @@ recuperer_somme_controle_depot()
     # on télécharge MD5SUMS
     eval url_dists='$'url_$1
     eval version='$'version_$1
-    wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
+    wget http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
     if [ $? = "0" ]
     then
         # on récupère la somme de contrôle concernant l'archive netboot.tar.gz
@@ -281,6 +282,7 @@ recuperer_somme_controle_depot()
         rm -f MD5SUMS
     else
         echo -e "${rouge}échec de la récupération de MD5SUMS $1 $2${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
         sleep 2s
     fi
 }
@@ -326,7 +328,7 @@ telecharger_archives()
     # téléchargement des archives debian/ubuntu 32 bits/64 bits
     eval url_dists='$'url_$1
     eval version='$'version_$1
-    wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/netboot/netboot.tar.gz -O netboot_${version}_${2}.tar.gz
+    wget http://$url_dists/dists/$version/main/installer-$2/current/images/netboot/netboot.tar.gz -O netboot_${version}_${2}.tar.gz
 }
 
 extraire_archives_netboot()
@@ -383,6 +385,7 @@ placer_se3_archives()
             [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
         else
             echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
+            # [gestion de cette erreur ? TODO]
             sleep 2s
         fi
     else
@@ -406,7 +409,7 @@ menage_netboot()
 
 recuperer_somme_controle_firmware_depot_debian()
 {
-    wget -q http://$depot_firmware_debian/$version_debian/current/MD5SUMS
+    wget http://$depot_firmware_debian/$version_debian/current/MD5SUMS
     if [ $? = "0" ]
     then
         # on récupère la somme de contrôle concernant les firmwares
@@ -415,6 +418,7 @@ recuperer_somme_controle_firmware_depot_debian()
         rm -f MD5SUMS
     else
         echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
         sleep 2s
     fi
 }
@@ -445,10 +449,11 @@ supprimer_firmware_debian()
 telecharger_firmware_debian()
 {
     # on télécharge les firmwares : aussi bien pour i386 que amd64
-    wget -q http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O /${rep_tftp}/debian-installer/firmware.cpio.gz
+    wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O /${rep_tftp}/debian-installer/firmware.cpio.gz
     if [ $? != "0" ]
     then
         echo -e "${rouge}échec du téléchargement des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
         return 1
     fi
 }
@@ -466,6 +471,7 @@ incorporer_firmware_debian()
         echo -e "firmwares incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
         echo -e "${rouge}il manque le fichier initrd.gz ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
     fi
     
 }
@@ -492,6 +498,7 @@ gerer_firmware_debian()
         [ "$drapeau_initrd_amd64" != "" ] && incorporer_firmware_debian amd64
         [ "$drapeau_initrd_i386" = "" ] && [ "$drapeau_initrd_amd64" = "" ] && echo -e "firmwares déjà en place pour ${version_debian}" | tee -a $compte_rendu
     fi
+    echo ""
 }
 
 gestion_firmware_debian()
@@ -561,14 +568,14 @@ gestion_fichiers_tftp()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
-    echo "correction des fichiers TFTP inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3" | tee -a $compte_rendu
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    echo "correction des fichiers TFTP inst_debian.cfg pour ajout version debian" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_debian.cfg pour ajout version debian" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    echo "correction des fichiers TFTP inst_debian.cfg pour ajout domaine" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_debian.cfg pour ajout domaine" | tee -a $compte_rendu
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
