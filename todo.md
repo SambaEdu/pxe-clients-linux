@@ -17,6 +17,8 @@
 * permettre des commentaires dans les fichiers "mesapplis" pour debian
 * mise en place d'une liste perso des applis pour debian
 * incorporation des firmwares debian dans le fichier initrd.gz
+* mise en place d'un répertoire contenant des scripts perso préservé des mises à jour du paquet pxe-clients-linux
+* possibilité de lancer des scripts perso à la fin de la post-installation
 
 
 # Quelques remarques
