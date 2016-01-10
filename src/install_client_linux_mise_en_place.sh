@@ -367,10 +367,11 @@ placer_se3_archives()
     # $2 → i386 ou amd64
     #
     # si les 2 sommes sont différentes, on supprime les anciens fichiers et on télécharge la nouvelle archive
+    # de même si les répertoires amd64 ou i386 sont absents
     eval version='$'version_$1
     eval a='$'somme_netboot_se3_${version}_$2
     eval b='$'somme_netboot_depot_${version}_$2
-    if [ "$a" != "$b" ]
+    if [ "$a" != "$b" -o ! -e /${rep_tftp}/${1}-installer/$2 ]
     then
         supprimer_fichiers $1 $2
         echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
