@@ -410,8 +410,8 @@ menage_netboot()
 gestion_netboot()
 {
     echo -e "début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
-    echo -e "    * ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
-    echo -e "    * les versions précédentes seront supprimées"
+    echo -e "→ ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
     # on se met dans un répertoire temporaire
     [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
