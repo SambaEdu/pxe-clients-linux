@@ -105,16 +105,20 @@ configurer_proxy()
     if [ -n "$ip_proxy" -a -n "$port_proxy" ]
     then
         echo "configuration du proxy…" | tee -a $compte_rendu
-        echo "
+        cat > /etc/proxy.sh <<END
+
 export https_proxy=\"http://$ip_proxy:$port_proxy\"
-" > /etc/proxy.sh
+
+END
         chmod +x /etc/proxy.sh
-        echo '
-if [ -e /etc/proxy.sh ]
+        cat >> /etc/profile <<END
+
+if [ -e "/etc/proxy.sh" ]
 then
-. /etc/proxy.sh
+    . /etc/proxy.sh
 fi
-' >> /etc/profile
+
+END
     else
         echo "${rouge}IP proxy ou port_proxy non trouvés…${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
@@ -124,14 +128,15 @@ fi
 configurer_vim()
 {
     echo "configuration de vim…" | tee -a $compte_rendu
-    echo 'filetype plugin indent on
+    cat > /root/.vimrc <<END
+filetype plugin indent on
 set autoindent
 set ruler
 if &t_Co > 2 || has("gui_running")
-  syntax on
-  set hlsearch
-endif' > /root/.vimrc
-    
+    syntax on
+    set hlsearch
+endif
+END
     cp /root/.vimrc /etc/skel/.vimrc
 }
 
@@ -140,12 +145,14 @@ configurer_ldap()
     if [ -n "${ip_ldap}" -a -n "${ldap_base_dn}" ]
     then
         echo "configuration de LDAP…" | tee -a $compte_rendu
-        echo "HOST $ip_ldap
+        cat > /etc/ldap/ldap.conf <<END
+HOST $ip_ldap
 BASE $ldap_base_dn
 # TLS_REQCERT never
 # TLS_CACERTDIR /etc/ldap/
 # TLS_CACERT /etc/ldap/slapd.pem
-" > /etc/ldap/ldap.conf
+
+END
     else
         echo "${rouge}IP ldap ou ldap_base_dn non trouvés…${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
@@ -156,13 +163,15 @@ configurer_ssmtp()
 {
     echo "configuration de SSMTP…"
     cp /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf.${ladate}
-    echo "
+    cat > /etc/ssmtp/ssmtp.conf <<END
+
 root=$email
 #mailhub=mail
 mailhub=$mailhub
 rewriteDomain=$rewriteDomain
 hostname=$nom_machine.$nom_domaine
-" > /etc/ssmtp/ssmtp.conf
+
+END
     sleep 2
 }
 
@@ -277,13 +286,46 @@ integrer_domaine()
         echo -e "====="
         echo -e "Intégration au domaine SE3"
         echo -e "=====${neutre}"
-        echo -e "voulez-vous intégrer la machine au domaine SE3 ?"
+        echo -e "voulez-vous intégrer la machine $nom_machine au domaine SE3 ?"
         echo -e "sinon répondre n (attente de 10s…)"
         read -t 10 rep
-        [ "$rep" != "n" ] && echo "la machine sera mise au domaine dans quelques temps…" && sleep 1 | tee -a $compte_rendu
+        echo ""
     else
-        echo "script d'intégration non présent…" | tee -a $compte_rendu
+        echo -e "${rouge}$script d'intégration non présent…${neutre}$" | tee -a $compte_rendu
     fi
+}
+
+lancer_integration()
+{
+    echo "intégration du client-linux $nom_machine au domaine géré par le se3" | tee -a $compte_rendu
+    cd /root/bin/
+    ./integration_###_DEBIAN_###.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu
+    cd - >/dev/null
+}
+
+renommer_machine()
+{
+    echo "on n'intègre pas au domaine… mais renommage du poste → $nom_machine" | tee -a $compte_rendu 
+    echo "$nom_machine" > "/etc/hostname"
+    invoke-rc.d hostname.sh stop >/dev/null 2>&1
+    invoke-rc.d hostname.sh start >/dev/null 2>&1
+    cat > "/etc/hosts" <<END
+    
+    127.0.0.1    localhost
+    127.0.1.1    $nom_machine
+    
+    # The following lines are desirable for IPv6 capable hosts
+    ::1      ip6-localhost ip6-loopback
+    fe00::0  ip6-localnet
+    ff00::0  ip6-mcastprefix
+    ff02::1  ip6-allnodes
+    ff02::2  ip6-allrouters
+    
+END
+    echo "renommage terminé" | tee -a $compte_rendu
+    echo "pour intégrer le poste plus tard :
+    cd /root/bin/
+    ./integration_###_DEBIAN_###.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu
 }
 
 installer_un_paquet()
@@ -370,37 +412,6 @@ installer_liste_paquets()
     echo ""
 }
 
-lancer_integration()
-{
-    echo "intégration du client-linux $nom_machine au domaine géré par le se3" | tee -a $compte_rendu
-    cd /root/bin/
-    ./integration_###_DEBIAN_###.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu
-    cd - >/dev/null
-}
-
-renommer_machine()
-{
-    echo "on n'intègre pas au domaine… mais renommage du poste → $nom_machine" | tee -a $compte_rendu 
-    echo "$nom_machine" > "/etc/hostname"
-    invoke-rc.d hostname.sh stop >/dev/null 2>&1
-    invoke-rc.d hostname.sh start >/dev/null 2>&1
-    echo "
-    127.0.0.1    localhost
-    127.0.1.1    $nom_machine
-    
-    # The following lines are desirable for IPv6 capable hosts
-    ::1      ip6-localhost ip6-loopback
-    fe00::0  ip6-localnet
-    ff00::0  ip6-mcastprefix
-    ff02::1  ip6-allnodes
-    ff02::2  ip6-allrouters
-    " > "/etc/hosts"
-    echo "renommage terminé" | tee -a $compte_rendu
-    echo "pour intégrer le poste plus tard :
-    cd /root/bin/
-    ./integration_###_DEBIAN_###.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu
-}
-
 configurer_grub()
 {
     echo "configuration de grub…" | tee -a $compte_rendu
@@ -477,9 +488,9 @@ configurer_ocs
 recuperer_script_integration
 recuperer_nom_client
 integrer_domaine
-installer_liste_paquets
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
+installer_liste_paquets
 configurer_grub
 menage_script
 activer_gdm
