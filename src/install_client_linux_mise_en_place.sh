@@ -45,6 +45,7 @@ rep_tftp="tftpboot"
 rep_temporaire="root/temp-linux"
 archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
+mdp_ens_defaut="enseignant"
 rep_client_linux="/home/netlogon/clients-linux"
 # répertoire install et lien
 rep_install="${rep_client_linux}/install"
@@ -102,7 +103,7 @@ recuperer_variables_se3()
     
     . /usr/share/se3/includes/functions.inc.sh 
     
-    [ -e /root/debug ] && DEBUG="yes"
+    [ -e "/root/debug" ] && DEBUG="yes"
     
     # Lire la valeur de MIROIR_LOCAL et MIROIR_IP et CHEMIN_MIROIR dans la base MySQL ?
     MIROIR_LOCAL=$(echo "SELECT value FROM params WHERE name='MiroirAptCliLin';" | mysql -N $dbname -u$dbuser -p$dbpass)
@@ -121,7 +122,7 @@ extraire_archive_tftp()
 {
     # ces archives comprennent les fichiers nécessaires à l'installation automatique : preseed,…
     # on supprime le répertoire ${archive_tftp} avant de décompresser l'archive
-    [ -e ${archive_tftp} ] && rm -rf ${archive_tftp}
+    [ -e "${archive_tftp}" ] && rm -rf ${archive_tftp}
     echo "extraction de ${archive_tftp}.tar.gz" | tee -a $compte_rendu
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
@@ -208,7 +209,7 @@ mise_en_place_tftpboot()
 {
     echo "vérification du répertoire /tftpboot…"
     # cas des anciennes versions : suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
-    [ -e /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
+    [ -e "/${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg" ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     # On vérifie si le menu Install fait référence ou non à debian-installer
     t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
@@ -238,7 +239,7 @@ LABEL Installation Ubuntu et xubuntu
 END
     fi
     
-    if [ -e /${rep_tftp}/pxelinux.cfg/install.menu ]
+    if [ -e "/${rep_tftp}/pxelinux.cfg/install.menu" ]
     then
         t1=$(grep "Installation Debian" /${rep_tftp}/pxelinux.cfg/install.menu)
         t2=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
@@ -293,7 +294,7 @@ calculer_somme_controle_se3()
     # $2 → i386 ou amd64
     #
     eval version='$'version_$1
-    if [ -e /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz ]
+    if [ -e "/${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz" ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle de l'archive précédemment sauvegardée
@@ -311,7 +312,7 @@ supprimer_fichiers()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ -e /${rep_tftp}/${1}-installer/$2 ]
+    if [ -e "/${rep_tftp}/${1}-installer/$2" ]
     then
         # on supprime le répertoire en place
         find /${rep_tftp}/${1}-installer/$2/ -delete
@@ -398,8 +399,8 @@ menage_netboot()
     # on revient dans le répertoire précédent
     # puis on supprime le répertoire temporaire
     rm -f pxe* ldl* ver*
-    [ -e /${rep_temporaire}/debian-installer/ ] && find /${rep_temporaire}/debian-installer/ -delete
-    [ -e /${rep_temporaire}/ubuntu-installer/ ] && find /${rep_temporaire}/ubuntu-installer/ -delete
+    [ -e "/${rep_temporaire}/debian-installer/" ] && find /${rep_temporaire}/debian-installer/ -delete
+    [ -e "/${rep_temporaire}/ubuntu-installer/" ] && find /${rep_temporaire}/ubuntu-installer/ -delete
     cd - >/dev/null
     find /${rep_temporaire}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
@@ -455,7 +456,7 @@ recuperer_somme_controle_firmware_depot_debian()
 
 calculer_somme_controle_firmware_se3_debian()
 {
-    if [ -e /${rep_tftp}/debian-installer/firmware.cpio.gz ]
+    if [ -e "/${rep_tftp}/debian-installer/firmware.cpio.gz" ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle concernant les firmwares en place
@@ -469,7 +470,7 @@ calculer_somme_controle_firmware_se3_debian()
 
 supprimer_firmware_debian()
 {
-    if [ -e /${rep_tftp}/debian-installer/firmware.cpio.gz ]
+    if [ -e "/${rep_tftp}/debian-installer/firmware.cpio.gz" ]
     then
         # on supprime l'archive en place
         find /${rep_tftp}/debian-installer/firmware.cpio.gz -delete
@@ -492,7 +493,7 @@ incorporer_firmware_debian()
 {
     # 1 argument :
     # $1 → i386 ou amd64
-    if [ -e /${rep_tftp}/debian-installer/$1/initrd.gz ]
+    if [ -e "/${rep_tftp}/debian-installer/$1/initrd.gz" ]
     then
         # méthode valable à partir de jessie
         cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initrd.gz.orig
@@ -599,11 +600,10 @@ gestion_fichiers_tftp()
     # les mots de passe des comptes locaux des clients-linux
     CRYPTPASS_root="$(echo "$xppass" | mkpasswd -s -m md5)"
     # [en attendant d'avoir la variable venant de l'interface du se3 TODO]
-    if [ -z "$enspass" ]
-    then
-        enspass="enseignant"
-    fi
+    [ -z "$enspass" ] && enspass="$mdp_ens_defaut"
     CRYPTPASS_enseignant="$(echo "$enspass" | mkpasswd -s -m md5)"
+    
+    # le serveur de temps
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
     echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg → IP du Se3" | tee -a $compte_rendu
@@ -765,7 +765,7 @@ END
 gestion_scripts_unefois()
 {
     # voir la doc du paquet se3-clients-linux pour le rôle du fichier PAUSE
-    [ -e ${rep_client_linux}/unefois/PAUSE ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
+    [ -e "${rep_client_linux}/unefois/PAUSE" ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
     
     # l'archive contient des scripts unefois à mettre en place pour tous les clients
     # sont-ils nécessaires ? Voir les fonctions cles_publiques_ssh et configurer_ocs du script de post-installation
@@ -782,7 +782,7 @@ gestion_scripts_unefois()
         rm -rf ${rep_client_linux}/unefois/all
     fi 
     # gestion du répertoire ^* : remplacé par ^.
-    [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
+    [ -e "${rep_client_linux}/unefois/\^\*" ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
     rm -rf ${rep_client_linux}/unefois/\^\*
 }
 
