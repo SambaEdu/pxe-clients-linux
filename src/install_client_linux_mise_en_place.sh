@@ -41,8 +41,8 @@ depot_firmware_debian="cdimage.debian.org/cdimage/unofficial/non-free/firmware"
 #####
 # variables
 #
-rep_tftp="tftpboot"
-rep_temporaire="root/temp-linux"
+rep_tftp="/tftpboot"
+rep_temporaire="/root/temp-linux"
 archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 mdp_ens_defaut="enseignant"
@@ -164,16 +164,16 @@ gerer_repertoires()
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
     chmod 777 /tmp  # [à supprimer ? TODO]
-    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
+    [ ! -e "${rep_temporaire}" ] && mkdir ${rep_temporaire}
     # on préserve la liste des applis perso
     if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
     then
-        mv $rep_install/mesapplis-debian-perso.txt /$rep_temporaire/
+        mv $rep_install/mesapplis-debian-perso.txt $rep_temporaire/
     fi
     # on préserve le répertoire des scripts perso
     if [ -e "$rep_install/messcripts_perso" ]
     then
-        mv $rep_install/messcripts_perso /$rep_temporaire/
+        mv $rep_install/messcripts_perso $rep_temporaire/
     fi
     # on supprime le répertoire install et le lien vers /var/www/
     rm -rf $rep_install
@@ -184,14 +184,14 @@ gerer_repertoires()
     chown root $rep_install
     ln -s $rep_install $rep_lien
     # on remet en place la liste des applis perso
-    if [ -e "/$rep_temporaire/mesapplis-debian-perso.txt" ]
+    if [ -e "$rep_temporaire/mesapplis-debian-perso.txt" ]
     then
-        mv /$rep_temporaire/mesapplis-debian-perso.txt $rep_install/
+        mv $rep_temporaire/mesapplis-debian-perso.txt $rep_install/
     fi
     # et le répertoire des scripts perso
-    if [ -e "/$rep_temporaire/messcripts_perso" ]
+    if [ -e "$rep_temporaire/messcripts_perso" ]
     then
-        mv /$rep_temporaire/messcripts_perso $rep_install/
+        mv $rep_temporaire/messcripts_perso $rep_install/
     fi
     echo ""
 }
@@ -209,13 +209,13 @@ mise_en_place_tftpboot()
 {
     echo "vérification du répertoire /tftpboot…"
     # cas des anciennes versions : suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
-    [ -e "/${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg" ] && rm -f /${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
+    [ -e "${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg" ] && rm -f ${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     # On vérifie si le menu Install fait référence ou non à debian-installer
-    t1=$(grep "Installation Debian" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t1=$(grep "Installation Debian" ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t1" ]
     then
         echo "on rajoute une entrée pour l'installation de Debian via pxe" | tee -a $compte_rendu
-        cat >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
+        cat >> ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
 
 LABEL Installation Debian
     MENU LABEL ^Installation Debian
@@ -225,11 +225,11 @@ LABEL Installation Debian
 END
     fi
     
-    t2=$(grep "Installation Ubuntu" /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
+    t2=$(grep "Installation Ubuntu" ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu)
     if [ -z "$t2" ]
     then
         echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe" | tee -a $compte_rendu
-        cat >> /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
+        cat >> ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
 
 LABEL Installation Ubuntu et xubuntu
     MENU LABEL ^Installation Ubuntu
@@ -239,17 +239,17 @@ LABEL Installation Ubuntu et xubuntu
 END
     fi
     
-    if [ -e "/${rep_tftp}/pxelinux.cfg/install.menu" ]
+    if [ -e "${rep_tftp}/pxelinux.cfg/install.menu" ]
     then
-        t1=$(grep "Installation Debian" /${rep_tftp}/pxelinux.cfg/install.menu)
-        t2=$(grep "Installation Ubuntu" /${rep_tftp}/pxelinux.cfg/install.menu)
+        t1=$(grep "Installation Debian" ${rep_tftp}/pxelinux.cfg/install.menu)
+        t2=$(grep "Installation Ubuntu" ${rep_tftp}/pxelinux.cfg/install.menu)
         if [ -z "$t1" -o -z "$t2" ]
         then
-            cp /${rep_tftp}/pxelinux.cfg/install.menu /${rep_tftp}/pxelinux.cfg/install.menu.$ladate
-            cp /${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu /${rep_tftp}/pxelinux.cfg/
+            cp ${rep_tftp}/pxelinux.cfg/install.menu ${rep_tftp}/pxelinux.cfg/install.menu.$ladate
+            cp ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu ${rep_tftp}/pxelinux.cfg/
         fi
     else
-        if [ ! -e "/${rep_tftp}/pxelinux.cfg/maintenance.menu" ]
+        if [ ! -e "${rep_tftp}/pxelinux.cfg/maintenance.menu" ]
         then
             echo "le menu d'installation Debian n'est proposée qu'avec le menu tftp semi-graphique." | tee -a $compte_rendu
             echo "configuration du mode semi-graphique"
@@ -260,7 +260,7 @@ END
             /usr/share/se3/scripts/set_password_menu_tftp.sh Linux
         fi
     fi
-    cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg /${rep_tftp}/pxelinux.cfg/
+    cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg ${rep_tftp}/pxelinux.cfg/
     echo ""
 }
 
@@ -294,11 +294,11 @@ calculer_somme_controle_se3()
     # $2 → i386 ou amd64
     #
     eval version='$'version_$1
-    if [ -e "/${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz" ]
+    if [ -e "${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz" ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle de l'archive précédemment sauvegardée
-        eval somme_netboot_se3_${version}_$2=$(md5sum /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz | cut -f1 -d" ")
+        eval somme_netboot_se3_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz | cut -f1 -d" ")
     else
         # il manque l'archive précédente : on remettra $1-installer en place
         mise="mise en place"
@@ -312,10 +312,10 @@ supprimer_fichiers()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ -e "/${rep_tftp}/${1}-installer/$2" ]
+    if [ -e "${rep_tftp}/${1}-installer/$2" ]
     then
         # on supprime le répertoire en place
-        find /${rep_tftp}/${1}-installer/$2/ -delete
+        find ${rep_tftp}/${1}-installer/$2/ -delete
     fi
 }
 
@@ -341,7 +341,7 @@ extraire_archives_netboot()
     eval version='$'version_$1
     tar -xzf netboot_${version}_${2}.tar.gz
     # on sauvegarde l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
-    mv netboot_${version}_${2}.tar.gz /${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
+    mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
 }
 
 mise_en_place_pxe()
@@ -350,14 +350,14 @@ mise_en_place_pxe()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ ! -e /${rep_tftp}/${1}-installer ]
+    if [ ! -e ${rep_tftp}/${1}-installer ]
     then
-        # le répertoire /${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
-        echo -e "on crée le répertoire /${rep_tftp}/${1}-installer" | tee -a $compte_rendu
-        mkdir -p /${rep_tftp}/${1}-installer
+        # le répertoire ${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
+        echo -e "on crée le répertoire ${rep_tftp}/${1}-installer" | tee -a $compte_rendu
+        mkdir -p ${rep_tftp}/${1}-installer
     fi
-    # on déplace le répertoire $2 de $1-installer vers /${rep_tftp}/$1-installer/
-    mv ${1}-installer/$2/ /${rep_tftp}/${1}-installer/
+    # on déplace le répertoire $2 de $1-installer vers ${rep_tftp}/$1-installer/
+    mv ${1}-installer/$2/ ${rep_tftp}/${1}-installer/
 }
 
 placer_se3_archives()
@@ -371,7 +371,7 @@ placer_se3_archives()
     eval version='$'version_$1
     eval a='$'somme_netboot_se3_${version}_$2
     eval b='$'somme_netboot_depot_${version}_$2
-    if [ "$a" != "$b" -o ! -e /${rep_tftp}/${1}-installer/$2 ]
+    if [ "$a" != "$b" -o ! -e ${rep_tftp}/${1}-installer/$2 ]
     then
         supprimer_fichiers $1 $2
         echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
@@ -399,10 +399,10 @@ menage_netboot()
     # on revient dans le répertoire précédent
     # puis on supprime le répertoire temporaire
     rm -f pxe* ldl* ver*
-    [ -e "/${rep_temporaire}/debian-installer/" ] && find /${rep_temporaire}/debian-installer/ -delete
-    [ -e "/${rep_temporaire}/ubuntu-installer/" ] && find /${rep_temporaire}/ubuntu-installer/ -delete
+    [ -e "${rep_temporaire}/debian-installer/" ] && find ${rep_temporaire}/debian-installer/ -delete
+    [ -e "${rep_temporaire}/ubuntu-installer/" ] && find ${rep_temporaire}/ubuntu-installer/ -delete
     cd - >/dev/null
-    find /${rep_temporaire}/ -delete
+    find ${rep_temporaire}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
     echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
     echo -e ""
@@ -415,8 +415,8 @@ gestion_netboot()
     echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
     # on se met dans un répertoire temporaire
-    [ ! -e /${rep_temporaire} ] && mkdir /${rep_temporaire}
-    cd /${rep_temporaire}
+    [ ! -e ${rep_temporaire} ] && mkdir ${rep_temporaire}
+    cd ${rep_temporaire}
     # sommes de contrôle des fichiers des dépôts
     # i386 → 32 bits
     # amd64 → 64 bits
@@ -456,11 +456,11 @@ recuperer_somme_controle_firmware_depot_debian()
 
 calculer_somme_controle_firmware_se3_debian()
 {
-    if [ -e "/${rep_tftp}/debian-installer/firmware.cpio.gz" ]
+    if [ -e "${rep_tftp}/debian-installer/firmware.cpio.gz" ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle concernant les firmwares en place
-        eval somme_firmware_se3_${version_debian}=$(md5sum /${rep_tftp}/debian-installer/firmware.cpio.gz | cut -f1 -d" ")
+        eval somme_firmware_se3_${version_debian}=$(md5sum ${rep_tftp}/debian-installer/firmware.cpio.gz | cut -f1 -d" ")
     else
         # il manque firmware.cpio.gz : à mettre en place
         mise="mise en place"
@@ -470,17 +470,17 @@ calculer_somme_controle_firmware_se3_debian()
 
 supprimer_firmware_debian()
 {
-    if [ -e "/${rep_tftp}/debian-installer/firmware.cpio.gz" ]
+    if [ -e "${rep_tftp}/debian-installer/firmware.cpio.gz" ]
     then
         # on supprime l'archive en place
-        find /${rep_tftp}/debian-installer/firmware.cpio.gz -delete
+        find ${rep_tftp}/debian-installer/firmware.cpio.gz -delete
     fi
 }
 
 telecharger_firmware_debian()
 {
     # on télécharge les firmwares : aussi bien pour i386 que amd64
-    wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O /${rep_tftp}/debian-installer/firmware.cpio.gz
+    wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O ${rep_tftp}/debian-installer/firmware.cpio.gz
     if [ $? != "0" ]
     then
         echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
@@ -493,12 +493,12 @@ incorporer_firmware_debian()
 {
     # 1 argument :
     # $1 → i386 ou amd64
-    if [ -e "/${rep_tftp}/debian-installer/$1/initrd.gz" ]
+    if [ -e "${rep_tftp}/debian-installer/$1/initrd.gz" ]
     then
         # méthode valable à partir de jessie
-        cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initrd.gz.orig
-        cat /${rep_tftp}/debian-installer/$1/initrd.gz.orig /${rep_tftp}/debian-installer/firmware.cpio.gz > /${rep_tftp}/debian-installer/$1/initrd.gz
-        rm -f /${rep_tftp}/debian-installer/$1/initrd.gz.orig
+        cp -p ${rep_tftp}/debian-installer/$1/initrd.gz ${rep_tftp}/debian-installer/$1/initrd.gz.orig
+        cat ${rep_tftp}/debian-installer/$1/initrd.gz.orig ${rep_tftp}/debian-installer/firmware.cpio.gz > ${rep_tftp}/debian-installer/$1/initrd.gz
+        rm -f ${rep_tftp}/debian-installer/$1/initrd.gz.orig
         echo -e "firmwares Debian incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
         echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
@@ -607,26 +607,26 @@ gestion_fichiers_tftp()
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
     echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg → IP du Se3" | tee -a $compte_rendu
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
-    sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    sed -i "s|###_IP_SE3_###|$se3ip|g" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
     echo "correction des fichiers tftp inst_debian.cfg → version Debian ${version_debian}" | tee -a $compte_rendu
-    sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    sed -i "s|###_DEBIAN_###|${version_debian}|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
     echo "correction des fichiers tftp inst_debian.cfg → nom du domaine" | tee -a $compte_rendu
-    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
-    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
-    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    [ "$CliLinXfce64" = "yes" ] && sed -i "s|^#XFCE64||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
-    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    [ "$CliLinLXDE" = "yes" ] && sed -i "s|^#LXDE||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
-    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    [ "$CliLinGNOME" = "yes" ] && sed -i "s|^#GNOME||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     echo ""
 }
 
@@ -782,7 +782,7 @@ gestion_scripts_unefois()
         rm -rf ${rep_client_linux}/unefois/all
     fi 
     # gestion du répertoire ^* : remplacé par ^.
-    [ -e "${rep_client_linux}/unefois/\^\*" ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
+    [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
     rm -rf ${rep_client_linux}/unefois/\^\*
 }
 
@@ -797,13 +797,13 @@ gestion_profil_skel()
         echo  "modif install_client_linux_archive - $ladate" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
     fi
     # normalement, si le paquet se3-clients-linux est installé, on devrait avoir .config dans le skel
-    if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ]
+    if [ ! -e "${rep_client_linux}/distribs/${version_debian}/skel/.config" ]
     then
         echo "skel : mise en place de .config pour Debian ${version_debian}"
         cp -r ${src}/${archive_tftp}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
     fi
     # même remarque que ci-dessus… sauf si présence de update-mozilla-profile
-    if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ]
+    if [ ! -e "${rep_client_linux}/distribs/${version_debian}/skel/.mozilla" ]
     then
         echo "skel : mise en place de .mozilla Debian ${version_debian}"
         cp -r ${src}/${archive_tftp}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
