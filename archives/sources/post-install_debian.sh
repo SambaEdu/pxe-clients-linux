@@ -380,7 +380,7 @@ lancer_integration()
 
 renommer_machine()
 {
-    echo "on n'intègre pas au domaine… mais renommage du poste pour $nom_machine" | tee -a $compte_rendu 
+    echo "on n'intègre pas au domaine… mais renommage du poste → $nom_machine" | tee -a $compte_rendu 
     echo "$nom_machine" > "/etc/hostname"
     invoke-rc.d hostname.sh stop >/dev/null 2>&1
     invoke-rc.d hostname.sh start >/dev/null 2>&1
@@ -411,6 +411,7 @@ configurer_grub()
 
 menage_script()
 {
+    [ "$rep" != "n" ] && mv /root/bin/integration_###_DEBIAN_###.bash /root/bin/integration_###_DEBIAN_###.bash.$ladate
     mv /root/bin/post-install_debian.sh /root/bin/post-install_debian.sh.$ladate
 }
 
@@ -429,6 +430,7 @@ annuler_autologin()
 {
     echo "annulation de l'autologin…" | tee -a $compte_rendu
     rm -rf /etc/systemd/system/getty@tty1.service.d
+    echo ""
 }
 
 lancer_script_perso()
