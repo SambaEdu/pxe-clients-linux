@@ -71,16 +71,16 @@ verifier_version_serveur()
 {
     if egrep -q "^6.0" /etc/debian_version
     then
-        echo "la version de votre serveur est Debian Squeeze" | tee -a $compte_rendu
+        echo "la version de votre serveur se3 est Debian Squeeze" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
         echo ""
     elif egrep -q "^7.0" /etc/debian_version
     then
-        echo "la version de votre serveur est Debian Wheezy" | tee -a $compte_rendu
+        echo "la version de votre serveur se3 est Debian Wheezy" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
         echo ""
     else
-        echo "${rouge}votre serveur n'est pas en version Squeeze ou Wheezy." | tee -a $compte_rendu
+        echo "${rouge}votre serveur se3 n'est pas en version Squeeze ou Wheezy." | tee -a $compte_rendu
         echo "opération annulée !${neutre}" | tee -a $compte_rendu
         echo ""
         exit 1
@@ -409,8 +409,8 @@ menage_netboot()
 
 gestion_netboot()
 {
-    echo -e "début de la mise en place ou de la mise à jour des fichiers netboot pour Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
-    echo -e "→ ce script concerne Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
+    echo -e "début de la mise en place ou de la mise à jour des fichiers netboot" | tee -a $compte_rendu
+    echo -e "→ distributions disponibles : Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
     # on se met dans un répertoire temporaire
@@ -447,7 +447,7 @@ recuperer_somme_controle_firmware_depot_debian()
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
-        echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         sleep 2s
     fi
@@ -482,7 +482,7 @@ telecharger_firmware_debian()
     wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O /${rep_tftp}/debian-installer/firmware.cpio.gz
     if [ $? != "0" ]
     then
-        echo -e "${rouge}échec du téléchargement des firmwares ${version_debian}{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         return 1
     fi
@@ -498,9 +498,9 @@ incorporer_firmware_debian()
         cp -p /${rep_tftp}/debian-installer/$1/initrd.gz /${rep_tftp}/debian-installer/$1/initrd.gz.orig
         cat /${rep_tftp}/debian-installer/$1/initrd.gz.orig /${rep_tftp}/debian-installer/firmware.cpio.gz > /${rep_tftp}/debian-installer/$1/initrd.gz
         rm -f /${rep_tftp}/debian-installer/$1/initrd.gz.orig
-        echo -e "firmwares incorporés à initrd.gz $1" | tee -a $compte_rendu
+        echo -e "firmwares Debian incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
-        echo -e "${rouge}il manque le fichier initrd.gz ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
     fi
     
@@ -513,7 +513,7 @@ gerer_firmware_debian()
     if [ "$a" != "$b" ]
     then
         supprimer_firmware_debian
-        echo -e "téléchargement des firmwares pour debian ${version_debian}" | tee -a $compte_rendu
+        echo -e "téléchargement des firmwares pour Debian ${version_debian}" | tee -a $compte_rendu
         telecharger_firmware_debian
         if [ $? = "0" ]
         then
@@ -526,7 +526,7 @@ gerer_firmware_debian()
         # les fichiers initrd.gz ont-ils changé ?
         [ "$drapeau_initrd_i386" != "" ] && incorporer_firmware_debian i386
         [ "$drapeau_initrd_amd64" != "" ] && incorporer_firmware_debian amd64
-        [ "$drapeau_initrd_i386" = "" ] && [ "$drapeau_initrd_amd64" = "" ] && echo -e "firmwares déjà en place pour ${version_debian}" | tee -a $compte_rendu
+        [ "$drapeau_initrd_i386" = "" ] && [ "$drapeau_initrd_amd64" = "" ] && echo -e "firmwares déjà en place pour Debian ${version_debian}" | tee -a $compte_rendu
     fi
     echo ""
 }
@@ -581,7 +581,8 @@ gestion_cles_publiques()
                 while read A
                 do
                     comment=$(echo "$A" | cut -d" " -f3)
-                    if [ -n "$comment" -a ! -e "$comment.pub" ]; then
+                    if [ -n "$comment" -a ! -e "$comment.pub" ]
+                    then
                         echo "$A" > $comment.pub
                     fi
                 done < $fich_authorized_keys
@@ -598,14 +599,14 @@ gestion_fichiers_tftp()
     CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
-    echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg pour ajout IP du Se3" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg → IP du Se3" | tee -a $compte_rendu
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     sed -i "s|###_IP_SE3_###|$se3ip|g" /${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
-    echo "correction des fichiers tftp inst_debian.cfg pour ajout version debian" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_debian.cfg → version Debian ${version_debian}" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|${version_debian}|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
-    echo "correction des fichiers tftp inst_debian.cfg pour ajout domaine" | tee -a $compte_rendu
+    echo "correction des fichiers tftp inst_debian.cfg → nom du domaine" | tee -a $compte_rendu
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" /${rep_tftp}/pxelinux.cfg/inst_debian.cfg
@@ -664,7 +665,7 @@ END
         echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
         service apt-cacher-ng restart
         echo ""
-        echo "correction des fichiers de preseed ${version_debian}" | tee -a $compte_rendu
+        echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
@@ -682,7 +683,7 @@ END
             read CHEMIN_MIROIR
         fi
         echo ""
-        echo "correction des fichiers de preseed debian ${version_debian}" | tee -a $compte_rendu
+        echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         
         for i in $(ls $rep_lien/preseed*.cfg)
         do
@@ -695,7 +696,7 @@ END
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
-    echo "correction des fichiers post-install $version_debian" | tee -a $compte_rendu
+    echo "correction des fichiers post-install Debian $version_debian" | tee -a $compte_rendu
     for i in $(ls $rep_lien/post-install*)
     do
         sed -i "s|###_DEBIAN_###|$version_debian|g" $i
@@ -782,25 +783,25 @@ gestion_profil_skel()
     # d'où vient la présence éventuelle de ce fichier ?
     if [ -e ${src}/update-mozilla-profile ]
     then
-        echo "gestion du profil skel de la distribution"
+        echo "gestion du profil skel de la distribution Debian ${version_debian}"
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
         echo  "modif install_client_linux_archive - $ladate" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
     fi
     # normalement, si le paquet se3-clients-linux est installé, on devrait avoir .config dans le skel
     if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.config ]
     then
-        echo "skel : mise en place de .config"
+        echo "skel : mise en place de .config pour Debian ${version_debian}"
         cp -r ${src}/${archive_tftp}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
     fi
     # même remarque que ci-dessus… sauf si présence de update-mozilla-profile
     if [ ! -e ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla ]
     then
-        echo "skel : mise en place de .mozilla"
+        echo "skel : mise en place de .mozilla Debian ${version_debian}"
         cp -r ${src}/${archive_tftp}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
         prefsjs="/etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js"
         if [ -e $prefsjs ]
         then
-            echo "skel : utilisation de $prefsjs"
+            echo "skel : utilisation du $prefsjs du skel se3 pour Debian ${version_debian}"
             rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
             mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$ladate
             cp $prefsjs ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
