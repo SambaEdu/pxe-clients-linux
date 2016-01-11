@@ -373,7 +373,9 @@ installer_liste_paquets()
 lancer_integration()
 {
     echo "intégration du client-linux $nom_machine au domaine géré par le se3" | tee -a $compte_rendu
+    cd /root/bin/
     ./integration_###_DEBIAN_###.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu
+    cd - >/dev/null
 }
 
 renommer_machine()
@@ -431,16 +433,17 @@ annuler_autologin()
 
 lancer_script_perso()
 {
+    cd /root/bin/
     wget -q http://${ip_se3}/install/messcripts_perso/monscript-perso.sh
     if [ "$?" = "0" ]
     then
         echo "lancement des scripts perso" | tee -a $compte_rendu
         bash monscript-perso.sh | tee -a $compte_rendu
-        cd - >/dev/null
     else
         echo "${rouge}échec du téléchargement des scripts perso${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
     fi
+    cd - >/dev/null
 }
 
 message_fin()
