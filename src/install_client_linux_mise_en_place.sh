@@ -596,7 +596,14 @@ gestion_cles_publiques()
 
 gestion_fichiers_tftp()
 {
-    CRYPTPASS="$(echo "$xppass" | mkpasswd -s -m md5)"
+    # les mots de passe des comptes locaux des clients-linux
+    CRYPTPASS_root="$(echo "$xppass" | mkpasswd -s -m md5)"
+    # [en attendant d'avoir la variable venant de l'interface du se3 TODO]
+    if [ -z "$enspass" ]
+    then
+        enspass="enseignant"
+    fi
+    CRYPTPASS_enseignant="$(echo "$enspass" | mkpasswd -s -m md5)"
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
     echo "correction des fichiers tftp inst_buntu.cfg et inst_debian.cfg → IP du Se3" | tee -a $compte_rendu
@@ -669,7 +676,8 @@ END
         for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
-            sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
+            sed -i "s|###_PASS_ROOT_###|$CRYPTPASS_root|g" $i
+            sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
@@ -690,7 +698,8 @@ END
             sed -i "s|###_IP_SE3_###:9999|$MIROIR_IP|g" $i
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
             sed -i "s|/debian|$CHEMIN_MIROIR|g" $i
-            sed -i "s|###_PASS_ROOT_###|$CRYPTPASS|g" $i
+            sed -i "s|###_PASS_ROOT_###|$CRYPTPASS_root|g" $i
+            sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
@@ -781,7 +790,7 @@ gestion_profil_skel()
 {
     # pourquoi ce test concernant update-mozilla-profile ? [TODO]
     # d'où vient la présence éventuelle de ce fichier ?
-    if [ -e ${src}/update-mozilla-profile ]
+    if [ -e "${src}/update-mozilla-profile" ]
     then
         echo "gestion du profil skel de la distribution Debian ${version_debian}"
         rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
@@ -799,7 +808,7 @@ gestion_profil_skel()
         echo "skel : mise en place de .mozilla Debian ${version_debian}"
         cp -r ${src}/${archive_tftp}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
         prefsjs="/etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js"
-        if [ -e $prefsjs ]
+        if [ -e "$prefsjs" ]
         then
             echo "skel : utilisation du $prefsjs du skel se3 pour Debian ${version_debian}"
             rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
