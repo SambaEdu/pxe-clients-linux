@@ -612,9 +612,15 @@ gestion_fichiers_tftp()
     
     echo "correction des fichiers tftp inst_debian.cfg → version Debian ${version_debian}" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|${version_debian}|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    # [en prévision d'une évolution TODO : il faudra décommenter]
+    #echo "correction des fichiers tftp inst_ubuntu.cfg → version Ubuntu ${version_ubuntu}" | tee -a $compte_rendu
+    sed -i "s|###_UBUNTU_###|${version_ubuntu}|g" ${rep_tftp}/pxelinux.cfg/inst_ubuntu.cfg
     
     echo "correction des fichiers tftp inst_debian.cfg → nom du domaine" | tee -a $compte_rendu
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
+    # [en prévision d'une évolution TODO : il faudra décommenter]
+    #echo "correction des fichiers tftp inst_ubuntu.cfg → nom du domaine" | tee -a $compte_rendu
+    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_ubuntu.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
@@ -673,6 +679,8 @@ END
         service apt-cacher-ng restart
         echo ""
         echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
+        # [en prévision d'une évolution TODO : il faudra décommenter]
+        #echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         for i in $(ls $rep_lien/preseed*.cfg)
         do
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
@@ -680,6 +688,7 @@ END
             sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+            sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     else
@@ -702,13 +711,17 @@ END
             sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+            sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
             sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" $i
         done
     fi
     echo "correction des fichiers post-install Debian $version_debian" | tee -a $compte_rendu
+    # [en prévision d'une évolution TODO : il faudra décommenter]
+    #echo "correction des fichiers post-install Ubuntu $version_ubuntu" | tee -a $compte_rendu
     for i in $(ls $rep_lien/post-install*)
     do
         sed -i "s|###_DEBIAN_###|$version_debian|g" $i
+        sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
     done
     echo "correction du fichier bashrc" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
