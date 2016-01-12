@@ -42,11 +42,11 @@ depot_firmware_debian="cdimage.debian.org/cdimage/unofficial/non-free/firmware"
 # variables
 #
 rep_tftp="/tftpboot"
-rep_temporaire="/root/temp-linux"
 archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 mdp_ens_defaut="enseignant"
 rep_client_linux="/home/netlogon/clients-linux"
+rep_temporaire="${rep_client_linux}/temp-linux"
 # répertoire install et lien
 rep_install="${rep_client_linux}/install"
 rep_lien="/var/www/install"
