@@ -222,7 +222,7 @@ hostname=$nom_machine.$nom_domaine
 sleep 2
 
 
-if [ $ISCRIPT != "erreur" ]; then
+if [ "$ISCRIPT" != "erreur" ]; then
 	echo -e "${jaune}"
 	echo -e "==========================================="
 	echo -e "Intégration au domaine SE3"
