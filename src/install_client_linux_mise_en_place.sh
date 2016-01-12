@@ -231,7 +231,7 @@ END
         echo "on rajoute une entrée pour l'installation d'Ubuntu via pxe" | tee -a $compte_rendu
         cat >> ${rep_tftp}/tftp_modeles_pxelinux.cfg/menu/install.menu << END
 
-LABEL Installation Ubuntu et xubuntu
+LABEL Installation Ubuntu
     MENU LABEL ^Installation Ubuntu
     KERNEL menu.c32
     APPEND pxelinux.cfg/inst_buntu.cfg
@@ -613,14 +613,14 @@ gestion_fichiers_tftp()
     echo "correction des fichiers tftp inst_debian.cfg → version Debian ${version_debian}" | tee -a $compte_rendu
     sed -i "s|###_DEBIAN_###|${version_debian}|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     # [en prévision d'une évolution TODO : il faudra décommenter]
-    #echo "correction des fichiers tftp inst_ubuntu.cfg → version Ubuntu ${version_ubuntu}" | tee -a $compte_rendu
-    sed -i "s|###_UBUNTU_###|${version_ubuntu}|g" ${rep_tftp}/pxelinux.cfg/inst_ubuntu.cfg
+    #echo "correction des fichiers tftp inst_buntu.cfg → version Ubuntu ${version_ubuntu}" | tee -a $compte_rendu
+    sed -i "s|###_UBUNTU_###|${version_ubuntu}|g" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
     echo "correction des fichiers tftp inst_debian.cfg → nom du domaine" | tee -a $compte_rendu
     sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     # [en prévision d'une évolution TODO : il faudra décommenter]
-    #echo "correction des fichiers tftp inst_ubuntu.cfg → nom du domaine" | tee -a $compte_rendu
-    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_ubuntu.cfg
+    #echo "correction des fichiers tftp inst_buntu.cfg → nom du domaine" | tee -a $compte_rendu
+    sed -i "s|###_DOMAINE_###|$dhcp_domain_name|g" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
     
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_debian.cfg
     [ "$CliLinNoPreseed" = "yes" ] && sed -i "s|^#INSTALL_LIBRE_SANS_PRESEED||" ${rep_tftp}/pxelinux.cfg/inst_buntu.cfg
@@ -801,7 +801,9 @@ gestion_scripts_unefois()
 
 gestion_profil_skel()
 {
-    # pourquoi ce test concernant update-mozilla-profile ? [TODO]
+    # [ faut-il adapter à Ubuntu cette fonction ? TODO]
+    
+    # [ pourquoi ce test concernant update-mozilla-profile ? TODO]
     # d'où vient la présence éventuelle de ce fichier ?
     if [ -e "${src}/update-mozilla-profile" ]
     then
