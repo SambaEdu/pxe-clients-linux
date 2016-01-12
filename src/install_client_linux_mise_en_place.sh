@@ -274,7 +274,7 @@ recuperer_somme_controle_depot()
     eval url_dists='$'url_$1
     eval version='$'version_$1
     wget -q http://$url_dists/dists/$version/main/installer-$2/current/images/MD5SUMS
-    if [ $? = "0" ]
+    if [ "$?" = "0" ]
     then
         # on récupère la somme de contrôle concernant l'archive netboot.tar.gz
         eval somme_netboot_depot_${version}_$2=$(cat MD5SUMS | grep "./netboot/netboot.tar.gz" | cut -f1 -d" ")
@@ -350,7 +350,7 @@ mise_en_place_pxe()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    if [ ! -e ${rep_tftp}/${1}-installer ]
+    if [ ! -e "${rep_tftp}/${1}-installer" ]
     then
         # le répertoire ${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
         echo -e "on crée le répertoire ${rep_tftp}/${1}-installer" | tee -a $compte_rendu
@@ -371,12 +371,12 @@ placer_se3_archives()
     eval version='$'version_$1
     eval a='$'somme_netboot_se3_${version}_$2
     eval b='$'somme_netboot_depot_${version}_$2
-    if [ "$a" != "$b" -o ! -e ${rep_tftp}/${1}-installer/$2 ]
+    if [ "$a" != "$b" -o ! -e "${rep_tftp}/${1}-installer/$2" ]
     then
         supprimer_fichiers $1 $2
         echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
         telecharger_archives $1 $2
-        if [ $? = "0" ]
+        if [ "$?" = "0" ]
         then
             echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
             extraire_archives_netboot $1 $2
@@ -415,7 +415,7 @@ gestion_netboot()
     echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
     # on se met dans un répertoire temporaire
-    [ ! -e ${rep_temporaire} ] && mkdir ${rep_temporaire}
+    [ ! -e "${rep_temporaire}" ] && mkdir ${rep_temporaire}
     cd ${rep_temporaire}
     # sommes de contrôle des fichiers des dépôts
     # i386 → 32 bits
@@ -441,7 +441,7 @@ gestion_netboot()
 recuperer_somme_controle_firmware_depot_debian()
 {
     wget -q http://$depot_firmware_debian/$version_debian/current/MD5SUMS
-    if [ $? = "0" ]
+    if [ "$?" = "0" ]
     then
         # on récupère la somme de contrôle concernant les firmwares
         eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware.cpio.gz" | cut -f1 -d" ")
@@ -481,7 +481,7 @@ telecharger_firmware_debian()
 {
     # on télécharge les firmwares : aussi bien pour i386 que amd64
     wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O ${rep_tftp}/debian-installer/firmware.cpio.gz
-    if [ $? != "0" ]
+    if [ "$?" != "0" ]
     then
         echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
@@ -516,7 +516,7 @@ gerer_firmware_debian()
         supprimer_firmware_debian
         echo -e "téléchargement des firmwares pour Debian ${version_debian}" | tee -a $compte_rendu
         telecharger_firmware_debian
-        if [ $? = "0" ]
+        if [ "$?" = "0" ]
         then
             # les firmwares ayant changés, on incorpore les firmwares aux fichiers initrd.gz
             incorporer_firmware_debian i386
@@ -634,7 +634,7 @@ gestion_miroir()
 {
     if [ "$MIROIR_LOCAL" != "yes" ]
     then
-        if [ ! -e /etc/apt-cacher-ng ]
+        if [ ! -e "/etc/apt-cacher-ng" ]
         then
             echo "installation et configuration de apt-cacher-ng pour se3" | tee -a $compte_rendu
             echo "Le cache sera dans /var/se3/apt-cacher-ng"
@@ -661,7 +661,7 @@ END
             # config propre ubuntu
             echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
             
-            if [ ! -e /var/se3/apt-cacher-ng ]
+            if [ ! -e "/var/se3/apt-cacher-ng" ]
             then 
                 mv /var/cache/apt-cacher-ng /var/se3/
             fi
