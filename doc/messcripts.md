@@ -14,7 +14,7 @@ Ce script perso se nomme `monscript-perso.sh` et il se trouve dans le répertoir
 Le contenu de ce script perso peut être adapté par l'administrateur du `se3` afin de lancer les opérations de son choix sur le `client-linux` lors de la phase de post-installation.
 
 
-**Remarque :** lors des mises à jour du dispositif `pxe-clients-linux`, ce répertoire `/home/netlogon/clients-linux/install/messcripts_perso/` est préservé, en ce sens que la mise à jour le laise tel qu'il était.
+**Remarque :** lors des mises à jour du dispositif `pxe-clients-linux`, le contenu de ce répertoire `/home/netlogon/clients-linux/install/messcripts_perso/` est préservé, en ce sens que la mise à jour le laise tel qu'il était lors de la dernière modification de son contenu par l'administrateur du serveur `se3`.
 
 
 ## Fonctions disponibles

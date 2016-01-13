@@ -34,6 +34,8 @@ Durant la **phase 2** (post-installation et intégration), les paquets installé
 * liste concernant `l'environnement de Bureau`
 * liste perso à la discrétion de l'administrateur du serveur `se3`
 
+Les listes se trouvent dans le répertoire `/home/netlogon/clients-linux/install/`.
+
 
 ## Liste pour la distribution
 
@@ -50,4 +52,8 @@ Selon l'environnement de Bureau choisi, Gnome, Ldce ou Xfce, cette liste se nomm
 
 Enfin, une liste perso permettra à l'administrateur de rajouter des paquets à sa convenance. Cette liste se nomme `mesapplis-debian-perso.txt`.
 
+Vous pourrez écrire **des commentaires** comme pour l'écriture de scripts `Bash` : il suffit de commencer vos commentaires par un `#` ; la partie de la ligne située à droite du commentaire ne sera pas prise en compte.
 
+Nous vous recommendons **de mettre un paquet par ligne** et d'éventuellement **laisser des lignes vides** pour améliorer la lisibilité de votre liste.
+
+**Remarque :** lors des mises à jour du dispositif `pxe-clients-linux`, ce fichier `/home/netlogon/clients-linux/install/mesapplis-debian-perso.txt` est préservé, en ce sens que la mise à jour le laise tel qu'il était lors de sa dernière modification par l'administrateur du serveur `se3`.
