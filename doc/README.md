@@ -11,6 +11,7 @@
 * [Mise en place du dispositif](misenplace.md)
 * [Utilisation du dispositif](utilisation.md)
 * [Les listes des applications installées](listeapplis.md)
+* [Utilisation du script perso](messcripts.md)
 * [Annexes](#annexes)
 * [Ressources externes](#ressources-externes)
 
