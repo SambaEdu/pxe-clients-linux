@@ -11,6 +11,9 @@
         * [Mode `PXE`](#mode-pxe)
         * [Présence éventuelle d'autres systèmes d'exploitation](#présence-éventuelle-d-autres-systèmes-dexploitation)
 * [Configuration du serveur `TFTP`](#configuration-du-serveur-tftp)
+    * [Le mot de passe](#le-mot-de-passe)
+    * [Les environnements de Bureau](#les-environnements-de-bureau)
+    * [Le miroir local](#le-miroir-local)
 
 
 ## Prérequis
@@ -68,6 +71,33 @@ Dans le second cas, il faudra laisser **un espace libre** à côté des partitio
 
 ## Configuration du serveur TFTP
 
+### Le mot de passe
+
+Nous en avons déjà parlé dans les prérequis : indispensable !
 
 
+### Les environnements de Bureau
+
+Choisissez votre environnement de Bureau parmi ceux proposés dans l'interface web du `se3` :
+
+* `Gnome`
+* `Lxde`
+* `Xfce`
+
+Vous pouvez en choisir plusieurs mais nous vous conseillons de n'en choisir qu'un seul. La plus utilisée est `Gnome`, les autres étant plus légères : votre choix tiendra compte du matériel sur lequel vous faite l'installation et de votre familiarité avec l'un ou l'autre de ces environnements de Bureau. Vous pourrez bien entendu revenir sur ce choix.
+
+Vous pouvez aussi choisir **une installation manuelle** : il faudra alors répondre aux questions posées lors de l'installation du système d'exploitation.
+
+**Remarque :** le choix de la distribution, `Debian` ou `Ubuntu`, sera fait lors de l'utilisation du dispositif, devant le `client-linux` à installer, via le mode `PXE`.
+
+La validation du ou des choix effectués déclenchera la mise en place du dispositif.
+
+
+### Le miroir local
+
+Le serveur `se3`, s'il est à jour, propose un miroir local par le biais du paquet `apt-cacher-ng`.
+
+Ce système permet une gestion souple et efficace des paquets.
+
+Cependant, si vous désirez gérer votre propre miroir local sur un autre serveur, cela est possible en cochant la case correspondante, en indiquant son adresse `IP` et le chemin du miroir sur ce serveur distant. Dans ce cas là, il faudra redéclencher la mise en place du dispositif comme cela est indiqué ci-dessus.
 
