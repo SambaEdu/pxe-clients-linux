@@ -5,7 +5,7 @@
 * [Prérequis](#prérequis)
     * [Côté serveur `se3`](#côté-serveur-se3)
         * [Serveur `se3` à jour](#serveur-se3-à-jour)
-        * [Module `TFTP` installé](#module-TFTP-installé)
+        * [Module `TFTP` installé](#module-tftp-installé)
         * [Module `se3-clients-linux` installé](#module-se3-clients-linux-installé)
     * [Côté `client linux`](#côté-client-linux)
         * [Mode `PXE`](#mode-pxe)
