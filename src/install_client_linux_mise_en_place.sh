@@ -75,7 +75,7 @@ verifier_version_serveur()
         echo "la version de votre serveur se3 est Debian Squeeze" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
         echo ""
-    elif egrep -q "^7.0" /etc/debian_version
+    elif egrep -q "^7." /etc/debian_version
     then
         echo "la version de votre serveur se3 est Debian Wheezy" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
