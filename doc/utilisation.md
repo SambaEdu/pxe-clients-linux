@@ -1,7 +1,7 @@
 # Utilisation du dispositif d'installation de clients `Gnu/Linux`
 
 * [Vue d'ensemble](#vue-densemble)
-* [Démarrage en `pxe`](#démarrage-en-pxe)
+* [Démarrage en `PXE`](#démarrage-en-pxe)
 * [Menus pxe disponibles](#menus-pxe-disponibles)
 * [Installation du système `phase 1`](#installation-du-système-phase-1)
     * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
@@ -15,7 +15,7 @@ Une fois le dispositif en place, son utilisation est relativement simple.
 
 Voici les étapes à suivre :
 
-* démarrer une machine en `pxe` (touche `F12`)
+* démarrer une machine en `PXE` (touche `F12`)
 * choisir une des installations proposées
 
 Ensuite, tout se déroulera de façon automatique, sans intervention de votre part :
@@ -28,21 +28,17 @@ Ensuite, tout se déroulera de façon automatique, sans intervention de votre pa
 On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session avec un des comptes disponibles dans l'annuaire du `se3`.
 
 
-## Démarrage en `pxe`
+## Démarrage en `PXE`
 
-Pour amorcer une machine via le réseau, avec `pxe`, appuyez sur la touche `F12` lors du démarrage de cet ordinateur.
+Pour amorcer une machine via le réseau, avec `PXE`, appuyez sur la touche `F12` lors du démarrage de cet ordinateur.
 ![menu pxe demmarage](/doc/images/menu_pxe_demarrage.png)
 
-**Remarque :** il faut que le mode `pxe` soit activé dans le `Bios` de l'ordinateur.
-
-Selon les ordinateurs, l'activation de ce mode `pxe` est plus ou moins aisé.
-
-Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est possible que si auparavant on a activé le mode `Low power`. On se demande bien pourquoi ces constructeurs s'ingénient à cacher ces fonctions, dans le genre "pourquoi faire simple quand on peut faire compliqué…".
+**Remarque :** il faut que le mode `PXE` soit activé dans le `Bios` de l'ordinateur. Voir [les prérequis](misenplace.md) concernant les clients linux.
 
 
-## Menus `pxe` disponibles
+## Menus `PXE` disponibles
 
-**Remarque :** la navigation dans les menus `pxe` se fait à l'aide des touches `↑` et `↓` ; pour sélectionner une des entrées du menu, il suffit d'utiliser la touche `Entrée`.
+**Remarque :** la navigation dans les menus `PXE` se fait à l'aide des touches `↑` et `↓` ; pour sélectionner une des entrées du menu, il suffit d'utiliser la touche `Entrée`.
 
 Une 1ère étape est proposée afin de sécuriser ce mode de fonctionnement : après avoir choisi l'entrée `Maintenance`…
 ![menu pxe entrée](/doc/images/menu_pxe_entree.png)
