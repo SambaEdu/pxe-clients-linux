@@ -9,7 +9,7 @@
         * [Module `se3-clients-linux` installé](#module-se3-clients-linux-installé)
     * [Côté `client linux`](#côté-client-linux)
         * [Mode `PXE`](#mode-pxe)
-        * [Présence éventuelle d'autres systèmes d'exploitation](#présence-éventuelle-d-autres-systèmes-dexploitation)
+        * [Présence éventuelle d'autres systèmes d'exploitation](#présence-éventuelle-dautres-systèmes-dexploitation)
 * [Configuration du serveur `TFTP`](#configuration-du-serveur-tftp)
     * [Le mot de passe](#le-mot-de-passe)
     * [Les environnements de Bureau](#les-environnements-de-bureau)
