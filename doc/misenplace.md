@@ -1,6 +1,5 @@
 # Mise en place du dispositif d'installation de clients `Gnu/Linux`
 
-…documentation en cours d'écriture…
 
 * [Prérequis](#prérequis)
     * [Côté serveur `se3`](#côté-serveur-se3)
