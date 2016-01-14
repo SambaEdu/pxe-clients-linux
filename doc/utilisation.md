@@ -4,8 +4,8 @@
 * [Démarrage en `pxe`](#démarrage-en-pxe)
 * [Menus pxe disponibles](#menus-pxe-disponibles)
 * [Installation du système `phase 1`](#installation-du-système-phase-1)
-    [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
-    [Les firmwares pour la carte réseau](#les-firmwares-pour-la-carte-réseau)
+    * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
+    * [Les firmwares pour la carte réseau](#les-firmwares-pour-la-carte-réseau)
 * [Post-installation `phase 2`](#post-installation-phase-2)
 
 
