@@ -76,7 +76,7 @@ Les micro-programmes (ou `firmwares`) pour la carte réseau ne sont plus à four
 check missing firmware, installing package /firmware/firmare-linux-nonfree_0.43_all.deb
 check missing firmware : removing and loading kernel module tg3
 ```
-C'est donc un problème concernant un des firmwares à fournir qui est pourtant bien dans les firmwares incorporés.
+C'est donc un problème concernant un des firmwares à fournir qui est pourtant bien un des firmwares incorporés.
 
 
 **Solution :** En passant sur la fenêtre principale (à l'aide de la combinaison de touches `Ctrl+c`), le script est relancé et ça passe....Ce doit être un bug de l'installeur AMHA, donc pas grand chose à faire…
