@@ -44,6 +44,15 @@ S'il est déjà installé, vérifiez qu'il est bien dans la dernière version : 
 Sinon installez le module puis activez le mode graphique via l'interface web du serveur `se3`.
 
 
+#### Un coup d'œil dans le répertoire `/tftpboot/clients_linux/`
+
+Sur le serveur `se3`, le répertoire `/tftpboot/clients_linux/` contient un certain nombre de fichiers, d'archives ou de répertoires.
+
+Nous vous conseillons de supprimer le contenu de ce répertoire pour repartir sur des bases propres, le dispositif ayant été modifié de façon importante pour les clients `Debian/Jessie`.
+
+La mise en place de ce dispositif utilisera ce répertoire qui contiendra, une fois la mise en place terminée, le script de mise en place, une archive `tar.gz` et le répertoire obtenu à partir de cette archive.
+
+
 ### Côté `client linux`
 
 #### Mode `PXE`
