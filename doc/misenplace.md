@@ -6,6 +6,7 @@
         * [Serveur `se3` à jour](#serveur-se3-à-jour)
         * [Module `TFTP` installé](#module-tftp-installé)
         * [Module `se3-clients-linux` installé](#module-se3-clients-linux-installé)
+        * [Un coup d'œil dans le répertoire `/tftpboot/clients_linux/`](#un-coup-dœil-dans-le-répertoire-tftpbootclients_linux)
     * [Côté `client linux`](#côté-client-linux)
         * [Mode `PXE`](#mode-pxe)
         * [Présence éventuelle d'autres systèmes d'exploitation](#présence-éventuelle-dautres-systèmes-dexploitation)
@@ -13,6 +14,7 @@
     * [Le mot de passe](#le-mot-de-passe)
     * [Les environnements de Bureau](#les-environnements-de-bureau)
     * [Le miroir local](#le-miroir-local)
+
 
 
 ## Prérequis
