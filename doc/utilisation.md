@@ -32,7 +32,7 @@ Ensuite, tout se déroulera de façon automatique, sans intervention de votre pa
 * post-installation et intégration au domaine `se3` (**phase 2**)
 * 2ème redémarrage
 
-On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session avec un des comptes disponibles dans l'annuaire `Ldap` du `se3`.
+On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session avec un des comptes disponibles dans [l'annuaire `Ldap`](https://fr.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol) du serveur `se3`.
 
 **Remarque 1 :** à la fin de la post-installation (**phase 2**), il est lancé un [script perso](messcripts.md) que vous pouvez utiliser pour apporter votre touche personnelle au `client-linux` ;-)
 
