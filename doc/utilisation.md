@@ -11,6 +11,9 @@
     * [Cas d'une nouvelle machine](#cas-dune-nouvelle-machine)
     * [Cas d'une machine ayant une réservation](#cas-dune-machine-ayant-une-réservation)
 * [Post-installation `phase 2`](#post-installation-phase-2)
+    * [Après le 1er redémmarage](#après-le-redémmarage)
+    * [Fichiers de log de la phase 2](#fichiers-de-log-de-la-phase-2)
+    * [Cas d'une intégration différée](#cas-dune-intégration-différée)
 
 
 ## Vue d'ensemble
@@ -29,7 +32,11 @@ Ensuite, tout se déroulera de façon automatique, sans intervention de votre pa
 * post-installation et intégration au domaine `se3` (**phase 2**)
 * 2ème redémarrage
 
-On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session avec un des comptes disponibles dans l'annuaire du `se3`.
+On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session avec un des comptes disponibles dans l'annuaire `Ldap` du `se3`.
+
+**Remarque 1 :** à la fin de la post-installation (**phase 2**), il est lancé un [script perso](messcripts.md) que vous pouvez utiliser pour apporter votre touche personnelle au `client-linux` ;-)
+
+**Remarque 2 :** de même, une [liste de paquets perso](listeapplis.md) à installer lors de cette phase de post-installation est à votre disposition. Sinon, il est toujours possible de le faire par la suite à l'aide des scripts `unefois`.
 
 
 ## Démarrage en `PXE`
@@ -138,3 +145,4 @@ Un compte-rendu de cette `phase 2` est disponible avec le fichier `/root/compte_
 Si vous ne désirez pas intégré la machine installée au domaine géré par le serveur `se3`, il suffira de répondre`n` quand la question sera posée au cours de la phase 2.
 
 Vous pourrez le faire par la suite, comme cela est indiqué à la fin de la post-installation.
+
