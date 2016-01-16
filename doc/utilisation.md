@@ -109,7 +109,7 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 
 ### Cas d'une nouvelle machine
 
-Pendant que le `client-linux` est en train de s'installer, vous avez le temps (de 20 min à 30 min environ) de lui réserver une adresse `IP` (Internet Protocole) par l'intermédiaire de l'interface web du serveur `se3` avec le module `Serveur dhcp`.
+Pendant que le `client-linux` est en train de s'installer, vous avez le temps (de 20 min à 30 min environ) de lui réserver une adresse `IP` [Internet Protocol](https://fr.wikipedia.org/wiki/Adresse_IP) par l'intermédiaire de l'interface web du serveur `se3` avec le module `Serveur dhcp`.
 
 Cette réservation est indispensable car lors de la post-intallation (**Phase 2** décrite ci-dessous), c'est par l'intermédiaire de l'annuaire `Ldap` du serveur `se3` que le mécanisme récupère le nom du `client-linux`.
 
