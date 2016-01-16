@@ -30,7 +30,7 @@ Mettre à jour le serveur `se3`. Ce dernier doit impérativement être en versio
 
 #### Module `TFTP` installé
 
-Il faut que le module `se3-clonage`, dit `TFTP`, soit installé.
+Il faut que le module `se3-clonage`, dit [`TFTP`](https://fr.wikipedia.org/wiki/Trivial_File_Transfer_Protocol), soit installé.
 
 Si c'est le cas vérifiez qu'il est bien dans la dernière version : 0.66 au minimum (le mettre à jour si nécessaire).
 
