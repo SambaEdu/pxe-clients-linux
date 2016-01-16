@@ -4,8 +4,9 @@
 * [Démarrage en `PXE`](#démarrage-en-pxe)
 * [Menus pxe disponibles](#menus-pxe-disponibles)
 * [Installation du système `phase 1`](#installation-du-système-phase-1)
-    * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
     * [Les firmwares pour la carte réseau](#les-firmwares-pour-la-carte-réseau)
+    * [Fichiers de log de la phase 1](#fichiers-de-log-de-la-phase-1)
+    * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
 * [Post-installation `phase 2`](#post-installation-phase-2)
 
 
@@ -60,9 +61,17 @@ Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les a
 L'installation du système choisi se fait automatiquement.
 ![menu pxe preseed](/doc/images/menu_pxe_preseed.png)
 
+
 ### Les firmwares pour la carte réseau
 
-Les micro-programmes (ou `firmwares`) pour la carte réseau ne sont plus à fournir via une clé `usb` : ils ont été incorporés au fichier d'amorçage `initrd.gz`. Cependant, vous pourrez trouver ces `firmwares` sur [le site de Debian dédié à la diffusion des images d'installation](http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/jessie/current/).
+Les micro-programmes (ou `firmwares`) pour la carte réseau ne sont plus à fournir via une clé `usb` : ils ont été incorporés au fichier d'amorçage `initrd.gz`.
+
+Cependant, vous pourrez trouver ces `firmwares` sur [le site de Debian dédié à la diffusion des images d'installation](http://cdimage.debian.org/cdimage/unofficial/non-free/firmware/jessie/current/).
+
+
+### Fichiers de log de la phase 1
+
+Des fichiers de log de la phase 1 sont disponibles dans `/var/log/installer/syslog`.
 
 
 ### Problèmes éventuels lors de la phase 1
@@ -75,12 +84,13 @@ check missing firmware : removing and loading kernel module tg3
 C'est donc un problème concernant un des firmwares à fournir qui est pourtant bien un des firmwares incorporés.
 
 
-**Solution :** En passant sur la fenêtre principale (à l'aide de la combinaison de touches `Ctrl+c`), le script est relancé et ça passe....Ce doit être un bug de l'installeur AMHA, donc pas grand chose à faire…
+**Solution :** en passant sur la fenêtre principale (à l'aide de la combinaison de touches `Ctrl+c`), le script est relancé et ça passe....Ce doit être un bug de l'installeur AMHA, donc pas grand chose à faire…
 
 
-### Fichiers de log de la phase 1
+**Problème :** sur certaines machines (Dell Optiplex 330), l'installation se fige à l'amorce et si on relance l'installation, elle se fige à un autre moment.
 
-Des fichiers de log de la phase 1 sont disponibles dans `/var/log/installer/syslog`.
+
+**Solution :** configurer le `Bios` de la machine pour accepter le mode `WoL` (Wake On Line). Relancer ensuite l'installation.
 
 
 ## Post-installation (phase 2)
