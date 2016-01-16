@@ -6,9 +6,11 @@ dans la branche `se3testing` pendant quelques jours avant de
 le mettre dans la branche `se3`, qui est la branche stable.
 
 Ci-dessous, nous vous expliquons comment installer la
-version du paquet `se3-clients-linux` issue de la branche
+version du paquet `pxe-clients-linux` issue de la branche
 `se3testing` sur votre serveur en toute sécurité, en évitant
 de mettre à jour d'autres paquets issus de cette branche.
+
+Il est à noter que, pour l'instant, le paquet `pxe-client-linux` est une composante du paquet `se3-clonage` : c'est donc ce paquet que l'on va mettre à jour.
 
 La méthode est la même que celle décrite pour le paquet `se3-clients-linux` : pour plus de détails, vous pourrez lire [l'article concernant ce paquet](https://github.com/flaf/se3-clients-linux/blob/master/doc/upgrade-via-se3testing.md).
 
