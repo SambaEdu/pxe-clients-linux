@@ -102,7 +102,7 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 **Problème :** sur certaines machines (Dell Optiplex 330), l'installation se fige à l'amorce et si on relance l'installation, elle se fige à un autre moment.
 
 
-**Solution :** configurer le `Bios` de la machine pour accepter le mode `WoL` (Wake On Line). Relancer ensuite l'installation.
+**Solution :** configurer le `Bios` de la machine pour accepter le mode `WoL` ([Wake On Line](https://fr.wikipedia.org/wiki/Wake-on-LAN)). Relancer ensuite l'installation.
 
 
 ## Réservation de l'`IP` du `client-linux`
