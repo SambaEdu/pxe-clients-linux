@@ -13,6 +13,8 @@
 * [Configuration du serveur `TFTP`](#configuration-du-serveur-tftp)
     * [Le mot de passe](#le-mot-de-passe)
     * [Les environnements de Bureau](#les-environnements-de-bureau)
+    * [Mise en place du mécanisme](#mise-en-place-du-mécanisme)
+    * [Mise à jour](#mise-à-jour)
     * [Le miroir local](#le-miroir-local)
 
 
@@ -101,8 +103,15 @@ Vous pouvez aussi choisir **une installation manuelle** : il faudra alors répon
 
 **Remarque :** le choix de la distribution, `Debian` ou `Ubuntu`, sera fait lors de l'utilisation du dispositif, devant le `client-linux` à installer, via le mode `PXE`.
 
-La validation du ou des choix effectués **déclenchera la mise en place du dispositif**.
 
+### Mise en place du mécanisme
+
+La validation du ou des choix effectués déclenchera la mise en place du dispositif : **cliquez sur le bouton `Valider`** de la partie concernant le choix de l'environnement de Bureau.'
+
+
+### Mise à jour
+
+Si une nouvelle version du paquet `pxe-client-linux` est proposée, il suffira de cliquer à nouveau sur ce bouton pour effectuer la mise à jour sur votre serveur `se3`.
 
 ### Le miroir local
 
