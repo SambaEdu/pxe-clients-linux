@@ -7,6 +7,9 @@
     * [Les firmwares pour la carte réseau](#les-firmwares-pour-la-carte-réseau)
     * [Fichiers de log de la phase 1](#fichiers-de-log-de-la-phase-1)
     * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
+* [Réservation de l'`IP` du `client-linux`](#réservation-de-lIP-du-client-linux)
+    * [Cas d'une nouvelle machine](#cas-dune-nouvelle-machine)
+    * [Cas d'une machine ayant une réservation](#cas-dune-machine-ayant-une-réservation)
 * [Post-installation `phase 2`](#post-installation-phase-2)
 
 
@@ -61,6 +64,8 @@ Vous pourrez alors choisir `l'environnement de Bureau` à installer, selon les a
 L'installation du système choisi se fait automatiquement.
 ![menu pxe preseed](/doc/images/menu_pxe_preseed.png)
 
+**Remarque :** la première utilisation de ce mécanisme peut être assez longue mais les installations suivantes seront nettement plus rapides. En effet, l'installation utilise le miroir local géré par le paquet `apt-caher-ng` du serveur `se3` qui doit récupérer (et par la suite mettre à jour si nécessaire) les paquets utiles à l'installation via les dépôts officiels. Une fois ces paquets récupérés, ils sont alors disponibles localement et on profite alors du débit du réseau interne qui est nettement plus rapide.
+
 
 ### Les firmwares pour la carte réseau
 
@@ -91,6 +96,24 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 
 
 **Solution :** configurer le `Bios` de la machine pour accepter le mode `WoL` (Wake On Line). Relancer ensuite l'installation.
+
+
+## Réservation de l'`IP` du `client-linux`
+
+### Cas d'une nouvelle machine
+
+Pendant que le `client-linux` est en train de s'installer, vous avez le temps (de 20 min à 30 min environ) de lui réserver une adresse `IP` (Internet Protocole) par l'intermédiaire de l'interface web du serveur `se3` avec le module `Serveur dhcp`.
+
+Cette réservation est indispensable car lors de la post-intallation (**Phase 2** décrite ci-dessous), c'est par l'intermédiaire de l'annuaire `Ldap` du serveur `se3` que le mécanisme récupère le nom du `client-linux`.
+
+Sinon, la post-installation vous demandera d'attribuer un nom au `client-linux`, sans toutefois inclure ce nom à l'annuaire du `se3`.
+
+
+### Cas d'une machine ayant une réservation
+
+Si vous installez une machine qui a une réservation, vous pouvez directement lancer l'installation. Le `client-linux` aura la même adresse `IP` et le même nom que celui qui est inscrit dans l'annuaire `Ldap` du serveur `se3`.
+
+Si vous voulez changer le nom ou l'`IP` inscrits dans l'annuaire `Ldap` du serveur `se3`, le mieux est de supprimer cette réservation, de supprimer son éventuelle appartenance à un ou des parcs et, enfin, de supprimer aussi son entrée dans l'annuaire `Ldap` du serveur `se3`.
 
 
 ## Post-installation (phase 2)
