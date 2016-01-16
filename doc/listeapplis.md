@@ -52,8 +52,8 @@ Selon l'environnement de Bureau choisi, Gnome, Ldce ou Xfce, cette liste se nomm
 
 Enfin, une liste perso permettra à l'administrateur de rajouter des paquets à sa convenance. Cette liste se nomme `mesapplis-debian-perso.txt`.
 
+Nous vous recommendons **de mettre un paquet par ligne** et d'éventuellement **laisser des lignes vides** et des **commentaires** pour améliorer la lisibilité de votre liste.
+
 Vous pourrez écrire **des commentaires** comme pour l'écriture de scripts `Bash` : il suffit de commencer vos commentaires par un `#` ; la partie de la ligne située à droite du commentaire ne sera pas prise en compte.
 
-Nous vous recommendons **de mettre un paquet par ligne** et d'éventuellement **laisser des lignes vides** pour améliorer la lisibilité de votre liste.
-
-**Remarque :** lors des mises à jour du dispositif `pxe-clients-linux`, ce fichier `/home/netlogon/clients-linux/install/mesapplis-debian-perso.txt` est préservé, en ce sens que la mise à jour le laise tel qu'il était lors de sa dernière modification par l'administrateur du serveur `se3`.
+**Remarque :** lors des mises à jour du dispositif `pxe-clients-linux`, ce fichier `/home/netlogon/clients-linux/install/mesapplis-debian-perso.txt` est préservé, en ce sens que la mise à jour le laisse tel qu'il était lors de sa dernière modification par l'administrateur du serveur `se3`.
