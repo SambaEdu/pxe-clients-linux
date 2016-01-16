@@ -7,7 +7,7 @@
     * [Les firmwares pour la carte réseau](#les-firmwares-pour-la-carte-réseau)
     * [Fichiers de log de la phase 1](#fichiers-de-log-de-la-phase-1)
     * [Problèmes éventuels lors de la phase 1](#problèmes-éventuels-lors-de-la-phase-1)
-* [Réservation de l'`IP` du `client-linux`](#réservation-de-lIP-du-client-linux)
+* [Réservation de l'`IP` du `client-linux`](#réservation-de-lip-du-client-linux)
     * [Cas d'une nouvelle machine](#cas-dune-nouvelle-machine)
     * [Cas d'une machine ayant une réservation](#cas-dune-machine-ayant-une-réservation)
 * [Post-installation `phase 2`](#post-installation-phase-2)
