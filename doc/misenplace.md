@@ -63,11 +63,13 @@ La mise en place de ce dispositif utilisera ce répertoire qui contiendra, une f
 
 Le client doit pouvoir démarrer en mode `PXE`. Ce mode est lancé au démarrage en utilisant la touche `F12`.
 
-Il faut que le mode `PXE` soit activé dans le `Bios` de l'ordinateur. Selon les ordinateurs, l'activation de ce mode `PXE` est plus ou moins aisé.
+Il faut que le mode `PXE` soit activé dans le [`Bios`](https://fr.wikipedia.org/wiki/Basic_Input_Output_System) de l'ordinateur. Selon les ordinateurs, l'activation de ce mode `PXE` est plus ou moins aisé.
+
+Sur certains ordinateurs, ce mode peut être nommé à l'aide d''une expression contenant l'abréviation `NIC` ou le mot `Network`.
+
+En en profitera pour activer aussi le [`WoL`](https://fr.wikipedia.org/wiki/Wake-on-LAN) qui vous sera utile pour la gestion des clients-linux (allumage et extension à distance : voir le module de gestion dans l'interface web du `se3`).
 
 Ainsi sur certains ordinateurs de la marque `Fujitsu`, son activation n'est possible que si auparavant on a activé le mode `Low power`. On se demande bien pourquoi ces constructeurs s'ingénient à cacher ces fonctions, dans le genre "pourquoi faire simple quand on peut faire compliqué…".
-
-Sur d'autres ordinateurs, ce mode peut être nommé à l'aide d''une expression contenant l'abréviation `NIC`.
 
 
 #### Présence éventuelle d'autres systèmes d'exploitation
