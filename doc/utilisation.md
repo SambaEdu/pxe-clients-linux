@@ -36,7 +36,7 @@ On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session ave
 
 **Remarque 1 :** à la fin de la post-installation (**phase 2**), il est lancé un [script perso](messcripts.md) que vous pouvez utiliser pour apporter votre touche personnelle au `client-linux` ;-)
 
-**Remarque 2 :** de même, une [liste de paquets perso](listeapplis.md) à installer lors de cette phase de post-installation est à votre disposition. Sinon, il est toujours possible de le faire par la suite à l'aide des scripts `unefois`.
+**Remarque 2 :** de même, une [liste de paquets perso](listeapplis.md#la-liste-perso) à installer lors de cette phase de post-installation est à votre disposition. Sinon, il est toujours possible de le faire par la suite à l'aide des scripts `unefois`.
 
 
 ## Démarrage en `PXE`
