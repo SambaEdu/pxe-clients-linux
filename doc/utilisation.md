@@ -44,7 +44,7 @@ On obtient ainsi un client `Gnu/Linux` sur lequel on peut ouvrir une session ave
 Pour amorcer une machine via le réseau, avec `PXE`, appuyez sur la touche `F12` lors du démarrage de cet ordinateur.
 ![menu pxe demmarage](/doc/images/menu_pxe_demarrage.png)
 
-**Remarque :** il faut que le mode `PXE` soit activé dans le `Bios` de l'ordinateur. Voir [les prérequis](misenplace.md) concernant les clients linux.
+**Remarque :** il faut que le mode `PXE` soit activé dans le `Bios` de l'ordinateur. Voir [les prérequis](misenplace.md#prérequis) concernant les clients linux.
 
 
 ## Menus `PXE` disponibles
