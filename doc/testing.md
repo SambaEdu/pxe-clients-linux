@@ -53,5 +53,5 @@ apt-get update
 Et voilà, c'est fini. Vous bénéficiez des paquets `se3-clients-linux` et `se3-clonage`
 dans leurs versions disponibles dans la branche `se3testing`.
 
-Reprenez alors les opérations de [mise en place du mécanisme](misenplace.md).
+Reprenez alors les opérations de [mise en place du mécanisme](misenplace.md#mise-à-jour).
 
