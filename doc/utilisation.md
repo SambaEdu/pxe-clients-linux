@@ -118,11 +118,23 @@ Si vous voulez changer le nom ou l'`IP` inscrits dans l'annuaire `Ldap` du serve
 
 ## Post-installation (phase 2)
 
+### Après le redémmarage
+
 Une fois le système installé, la machine redémarre et la post-installation est lancée automatiquement.
 ![menu pxe post-installation](/doc/images/menu_pxe_post_installation.png)
 
 Au redémarrage suivant, le client `GNU∕Linux` est prêt ;-) et son administration se fait via le paquet `se3-clients-linux`.
 
+**Remarque :** si vous n'avez pas réservé une `IP` [voir ci-dessus](#réservation-de-lip-du-client-linux), la post-installation sera interrompue pour demander un nom pour le `client linux`. Cependant, ce nom ne sera pas inscrit dans l'annuaire `Ldap` du serveur `se3`.
+
+
+### Fichiers de log de la phase 2
+
 Un compte-rendu de cette `phase 2` est disponible avec le fichier `/root/compte_rendu_post-install_ladate.txt`.
 
 
+### Cas d'une intégration différée
+
+Si vous ne désirez pas intégré la machine installée au domaine géré par le serveur `se3`, il suffira de répondre`n` quand la question sera posée au cours de la phase 2.
+
+Vous pourrez le faire par la suite, comme cela est indiqué à la fin de la post-installation.
