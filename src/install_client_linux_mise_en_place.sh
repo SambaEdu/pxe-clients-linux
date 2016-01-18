@@ -82,8 +82,8 @@ verifier_version_serveur()
         echo "le script peut se poursuivre"
         echo ""
     else
-        echo "${rouge}votre serveur se3 n'est pas en version Squeeze ou Wheezy." | tee -a $compte_rendu
-        echo "opération annulée !${neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}votre serveur se3 n'est pas en version Squeeze ou Wheezy.${neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}opération annulée !${neutre}" | tee -a $compte_rendu
         echo ""
         exit 1
     fi
@@ -128,8 +128,8 @@ extraire_archive_tftp()
     tar -xzf ./${archive_tftp}.tar.gz
     if [ "$?" != "0" ]
     then
-        echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz" | tee -a $compte_rendu
-        echo "${neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz${neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}opération annulée${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         exit 2
     fi
@@ -422,20 +422,20 @@ gestion_netboot()
     # sommes de contrôle des fichiers des dépôts
     # i386 → 32 bits
     # amd64 → 64 bits
-    [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian i386
-    [ $option_debian = "oui" ] && recuperer_somme_controle_depot debian amd64
-    [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu i386
-    [ $option_ubuntu = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
+    [ "$option_debian" = "oui" ] && recuperer_somme_controle_depot debian i386
+    [ "$option_debian" = "oui" ] && recuperer_somme_controle_depot debian amd64
+    [ "$option_ubuntu" = "oui" ] && recuperer_somme_controle_depot ubuntu i386
+    [ "$option_ubuntu" = "oui" ] && recuperer_somme_controle_depot ubuntu amd64
     # sommes de contrôle des fichiers en place sur le se3 (vides la première fois)
-    [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian i386
-    [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian amd64
-    [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
-    [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
+    [ "$option_debian" = "oui" ] && calculer_somme_controle_se3 debian i386
+    [ "$option_debian" = "oui" ] && calculer_somme_controle_se3 debian amd64
+    [ "$option_ubuntu" = "oui" ] && calculer_somme_controle_se3 ubuntu i386
+    [ "$option_ubuntu" = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
     # on met à jour si nécessaire (mise en place la première fois) et s'il n'y a pas d'erreur de téléchargement
-    [ $option_debian = "oui" ] && [ $erreur_md5sums_debian_i386 = "" ] && placer_se3_archives debian i386
-    [ $option_debian = "oui" ] && [ $erreur_md5sums_debian_amd64 = "" ] && placer_se3_archives debian amd64
-    [ $option_ubuntu = "oui" ] && [ $erreur_md5sums_ubuntu_i386 = "" ] && placer_se3_archives ubuntu i386
-    [ $option_ubuntu = "oui" ] && [ $erreur_md5sums_ubuntu_amd64 = "" ] && placer_se3_archives ubuntu amd64
+    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_i386" = "" ] && placer_se3_archives debian i386
+    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_amd64" = "" ] && placer_se3_archives debian amd64
+    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_i386" = "" ] && placer_se3_archives ubuntu i386
+    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_amd64" = "" ] && placer_se3_archives ubuntu amd64
     # on supprime le répertoire temporaire
     menage_netboot
 }
@@ -450,7 +450,7 @@ recuperer_somme_controle_firmware_depot_debian()
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
-        echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares Debian ${version_debian}${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         return 1
     fi
@@ -485,7 +485,7 @@ telecharger_firmware_debian()
     wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O ${rep_tftp}/debian-installer/firmware.cpio.gz
     if [ "$?" != "0" ]
     then
-        echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         return 1
     fi
@@ -503,7 +503,7 @@ incorporer_firmware_debian()
         rm -f ${rep_tftp}/debian-installer/$1/initrd.gz.orig
         echo -e "firmwares Debian incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
-        echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
         return 1
     fi
