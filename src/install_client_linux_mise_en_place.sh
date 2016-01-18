@@ -46,7 +46,8 @@ archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 mdp_ens_defaut="enseignant"
 rep_client_linux="/home/netlogon/clients-linux"
-rep_temporaire="${rep_client_linux}/temp-linux"
+rep_temp="${rep_client_linux}/temp-linux"
+rep_temporaire_depot="$rep_tftp/temp-depot"
 # répertoire install et lien
 rep_install="${rep_client_linux}/install"
 rep_lien="/var/www/install"
@@ -164,16 +165,16 @@ gerer_repertoires()
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
     chmod 777 /tmp  # [à supprimer ? TODO]
-    [ ! -e "${rep_temporaire}" ] && mkdir ${rep_temporaire}
+    [ ! -e "${rep_temp}" ] && mkdir ${rep_temp}
     # on préserve la liste des applis perso
     if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
     then
-        mv $rep_install/mesapplis-debian-perso.txt $rep_temporaire/
+        mv $rep_install/mesapplis-debian-perso.txt ${rep_temp}/
     fi
     # on préserve le répertoire des scripts perso
     if [ -e "$rep_install/messcripts_perso" ]
     then
-        mv $rep_install/messcripts_perso $rep_temporaire/
+        mv $rep_install/messcripts_perso ${rep_temp}/
     fi
     # on supprime le répertoire install et le lien vers /var/www/
     rm -rf $rep_install
@@ -184,16 +185,18 @@ gerer_repertoires()
     chown root $rep_install
     ln -s $rep_install $rep_lien
     # on remet en place la liste des applis perso
-    if [ -e "$rep_temporaire/mesapplis-debian-perso.txt" ]
+    if [ -e "${rep_temp}/mesapplis-debian-perso.txt" ]
     then
-        mv $rep_temporaire/mesapplis-debian-perso.txt $rep_install/
+        mv ${rep_temp}/mesapplis-debian-perso.txt $rep_install/
     fi
     # et le répertoire des scripts perso
-    if [ -e "$rep_temporaire/messcripts_perso" ]
+    if [ -e "${rep_temp}/messcripts_perso" ]
     then
-        mv $rep_temporaire/messcripts_perso $rep_install/
+        mv ${rep_temp}/messcripts_perso $rep_install/
     fi
     echo ""
+    # on supprime le répertoire temporaire
+    find ${rep_temp}/ -delete
 }
 
 verifier_presence_mkpasswd()
@@ -399,10 +402,10 @@ menage_netboot()
     # on revient dans le répertoire précédent
     # puis on supprime le répertoire temporaire
     rm -f pxe* ldl* ver*
-    [ -e "${rep_temporaire}/debian-installer/" ] && find ${rep_temporaire}/debian-installer/ -delete
-    [ -e "${rep_temporaire}/ubuntu-installer/" ] && find ${rep_temporaire}/ubuntu-installer/ -delete
+    [ -e "${rep_temporaire_depot}/debian-installer/" ] && find ${rep_temporaire_depot}/debian-installer/ -delete
+    [ -e "${rep_temporaire_depot}/ubuntu-installer/" ] && find ${rep_temporaire_depot}/ubuntu-installer/ -delete
     cd - >/dev/null
-    find ${rep_temporaire}/ -delete
+    find ${rep_temporaire_depot}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
     echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
     echo -e ""
@@ -415,8 +418,8 @@ gestion_netboot()
     echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
     # on se met dans un répertoire temporaire
-    [ ! -e "${rep_temporaire}" ] && mkdir ${rep_temporaire}
-    cd ${rep_temporaire}
+    [ ! -e "${rep_temporaire_depot}" ] && mkdir ${rep_temporaire_depot}
+    cd ${rep_temporaire_depot}
     # sommes de contrôle des fichiers des dépôts
     # i386 → 32 bits
     # amd64 → 64 bits
