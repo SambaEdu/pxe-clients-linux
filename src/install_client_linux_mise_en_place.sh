@@ -548,6 +548,8 @@ transfert_repertoire_install()
     printf '#!/bin/sh\nwhile true\ndo\n    sleep 10\ndone\n' >$rep_lien/gdm3
     cp $rep_lien/gdm3 $rep_lien/lightdm
     chmod 755 $rep_lien/preseed* $rep_lien/post-install_debian.sh $rep_lien/gdm3 $rep_lien/lightdm
+    # et le script mise_en_place_win_on_linux_se3.sh
+    cp ${src}/${archive_tftp}/mise_en_place_win_on_linux_se3.sh $rep_tftp/client_linux/
 }
 
 gestion_script_integration()
@@ -873,7 +875,7 @@ gestion_fichiers_tftp
 gestion_miroir
 fichier_parametres
 gestion_scripts_unefois
-gestion_profil_skel
+#gestion_profil_skel
 reconfigurer_module
 message_fin
 #
