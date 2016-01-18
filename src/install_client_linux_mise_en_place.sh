@@ -812,40 +812,6 @@ gestion_scripts_unefois()
     rm -rf ${rep_client_linux}/unefois/\^\*
 }
 
-gestion_profil_skel()
-{
-    # [ faut-il adapter à Ubuntu cette fonction ? TODO]
-    
-    # [ pourquoi ce test concernant update-mozilla-profile ? TODO]
-    # d'où vient la présence éventuelle de ce fichier ?
-    if [ -e "${src}/update-mozilla-profile" ]
-    then
-        echo "gestion du profil skel de la distribution Debian ${version_debian}"
-        rm -rf ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla
-        echo  "modif install_client_linux_archive - $ladate" > ${rep_client_linux}/distribs/${version_debian}/skel/.VERSION | tee -a $compte_rendu
-    fi
-    # normalement, si le paquet se3-clients-linux est installé, on devrait avoir .config dans le skel
-    if [ ! -e "${rep_client_linux}/distribs/${version_debian}/skel/.config" ]
-    then
-        echo "skel : mise en place de .config pour Debian ${version_debian}"
-        cp -r ${src}/${archive_tftp}/.config ${rep_client_linux}/distribs/${version_debian}/skel/
-    fi
-    # même remarque que ci-dessus… sauf si présence de update-mozilla-profile
-    if [ ! -e "${rep_client_linux}/distribs/${version_debian}/skel/.mozilla" ]
-    then
-        echo "skel : mise en place de .mozilla Debian ${version_debian}"
-        cp -r ${src}/${archive_tftp}/.mozilla ${rep_client_linux}/distribs/${version_debian}/skel/
-        prefsjs="/etc/skel/user/profil/appdata/Mozilla/Firefox/Profiles/default/prefs.js"
-        if [ -e "$prefsjs" ]
-        then
-            echo "skel : utilisation du $prefsjs du skel se3 pour Debian ${version_debian}"
-            rm -f ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save*
-            mv ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/prefs.js-save-$ladate
-            cp $prefsjs ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
-        fi
-    fi
-    echo ""
-}
 
 reconfigurer_module()
 {
@@ -887,7 +853,6 @@ gestion_fichiers_tftp
 gestion_miroir
 fichier_parametres
 gestion_scripts_unefois
-#gestion_profil_skel
 reconfigurer_module
 message_fin
 #
