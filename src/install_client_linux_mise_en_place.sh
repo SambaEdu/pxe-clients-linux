@@ -406,7 +406,11 @@ menage_netboot()
     cd - >/dev/null
     find ${rep_temporaire_depot}/ -delete
     # mise → "mise en place" ou "mise à jour" selon le cas : cf la fonction calculer_somme_controle_se3
-    echo -e "fin de la $mise des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
+    echo -e "fin de la gestion des fichiers netboot pour Debian/${version_debian} et Ubuntu/${version_ubuntu}" | tee -a $compte_rendu
+    if [ "$erreur_md5sums_debian_i386" = "1" ] || [ "$erreur_md5sums_debian_adm64" = "1" ] || [ "$erreur_md5sums_ubuntu_i386" = "1" ] || [ "$erreur_md5sums_ubuntu_adm64" = "1" ]
+    then
+        echo "cependant, des erreurs de téléchargements ont été rencontrées…" | tee -a $compte_rendu
+    fi
     echo -e ""
 }
 
@@ -452,6 +456,7 @@ recuperer_somme_controle_firmware_depot_debian()
     else
         echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares Debian ${version_debian}${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
+        echo ""
         return 1
     fi
 }
@@ -839,6 +844,7 @@ gestion_profil_skel()
             cp $prefsjs ${rep_client_linux}/distribs/${version_debian}/skel/.mozilla/firefox/default/
         fi
     fi
+    echo ""
 }
 
 reconfigurer_module()
