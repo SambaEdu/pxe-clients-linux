@@ -131,7 +131,7 @@ extraire_archive_tftp()
         echo "${rouge}erreur lors de l'extraction de l'archive tftp ${archive_tftp}.tar.gz" | tee -a $compte_rendu
         echo "${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
-        exit 1
+        exit 2
     fi
     echo ""
 }
@@ -285,7 +285,7 @@ recuperer_somme_controle_depot()
     else
         echo -e "${rouge}échec de la récupération de MD5SUMS $1 $2${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
-        sleep 2s
+        eval erreur_md5sums_$1_$2="1"
     fi
 }
 
@@ -389,7 +389,7 @@ placer_se3_archives()
         else
             echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
             # [gestion de cette erreur ? TODO]
-            sleep 2s
+            return 1
         fi
     else
         echo -e "fichiers linux et initrd.gz en place pour $1 $version $2" | tee -a $compte_rendu
@@ -431,11 +431,11 @@ gestion_netboot()
     [ $option_debian = "oui" ] && calculer_somme_controle_se3 debian amd64
     [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu i386
     [ $option_ubuntu = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
-    # on met à jour si nécessaire (mise en place la première fois)
-    [ $option_debian = "oui" ] && placer_se3_archives debian i386
-    [ $option_debian = "oui" ] && placer_se3_archives debian amd64
-    [ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu i386
-    [ $option_ubuntu = "oui" ] && placer_se3_archives ubuntu amd64
+    # on met à jour si nécessaire (mise en place la première fois) et s'il n'y a pas d'erreur de téléchargement
+    [ $option_debian = "oui" ] && [ $erreur_md5sums_debian_i386 = "" ] && placer_se3_archives debian i386
+    [ $option_debian = "oui" ] && [ $erreur_md5sums_debian_amd64 = "" ] && placer_se3_archives debian amd64
+    [ $option_ubuntu = "oui" ] && [ $erreur_md5sums_ubuntu_i386 = "" ] && placer_se3_archives ubuntu i386
+    [ $option_ubuntu = "oui" ] && [ $erreur_md5sums_ubuntu_amd64 = "" ] && placer_se3_archives ubuntu amd64
     # on supprime le répertoire temporaire
     menage_netboot
 }
@@ -452,7 +452,7 @@ recuperer_somme_controle_firmware_depot_debian()
     else
         echo -e "${rouge}échec de la récupération de MD5SUMS des firmwares Debian ${version_debian}{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
-        sleep 2s
+        return 1
     fi
 }
 
@@ -505,6 +505,7 @@ incorporer_firmware_debian()
     else
         echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?{neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
+        return 1
     fi
     
 }
@@ -538,8 +539,11 @@ gestion_firmware_debian()
 {
     # pour debian uniquement
     recuperer_somme_controle_firmware_depot_debian
-    calculer_somme_controle_firmware_se3_debian
-    gerer_firmware_debian
+    if [ "$?" = "0" ]
+    then
+        calculer_somme_controle_firmware_se3_debian
+        gerer_firmware_debian
+    fi
 }
 
 transfert_repertoire_install()
