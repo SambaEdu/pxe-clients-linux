@@ -164,7 +164,6 @@ gerer_repertoires()
     # rights fix and directories
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
-    chmod 777 /tmp  # [à supprimer ? TODO]
     [ ! -e "${rep_temp}" ] && mkdir ${rep_temp}
     # on préserve la liste des applis perso
     if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
