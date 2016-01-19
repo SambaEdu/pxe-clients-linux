@@ -154,7 +154,7 @@ Un compte-rendu de cette `phase 2` est disponible avec le fichier `/root/compte_
 
 ### Cas d'une intégration différée
 
-Si vous ne désirez pas intégré la machine installée au domaine géré par le serveur `se3`, il suffira de répondre`n` quand la question sera posée au cours de la phase 2.
+Si vous ne désirez pas intégrer la machine installée au domaine géré par le serveur `se3`, il suffira de répondre`n` quand la question sera posée au cours de la phase 2. **Toute autre réponse déclenchera l'intégration**.
 
 Vous pourrez le faire par la suite, comme cela est indiqué à la fin de la post-installation.
 
