@@ -98,22 +98,25 @@ Choisissez votre environnement de Bureau parmi ceux proposés dans l'interface w
 * `Lxde`
 * `Xfce`
 
-Vous pouvez en choisir plusieurs mais nous vous conseillons de n'en choisir qu'un seul. La plus utilisée est `Gnome`, les autres étant plus légères : votre choix tiendra compte du matériel sur lequel vous faite l'installation et de votre familiarité avec l'un ou l'autre de ces environnements de Bureau. Vous pourrez bien entendu revenir sur ce choix.
+Vous pouvez en choisir plusieurs mais nous vous conseillons de n'en choisir qu'un seul. La plus utilisée est `Gnome`, les autres étant plus légères : votre choix tiendra compte du matériel sur lequel vous faite l'installation et de votre familiarité avec l'un ou l'autre de ces environnements de Bureau. Vous pourrez bien entendu revenir sur ce choix autant de fois que vous le désirez, en n'oubliant pas de valider.
 ![module tftp mot de passe](/doc/images/pxe_tftp_02.png)
 
-Vous pouvez aussi choisir **une installation manuelle** : il faudra alors répondre aux questions posées lors de l'installation du système d'exploitation.
+Vous pouvez aussi choisir **une installation manuelle** : il faudra alors répondre aux questions posées lors de l'installation du système d'exploitation ; l'intégration et la post-installation ne sera pas faite non plus dans ce cas-là.
 
 **Remarque :** le choix de la distribution, `Debian` ou `Ubuntu`, sera fait lors de l'utilisation du dispositif, devant le `client-linux` à installer, via le mode `PXE`.
 
 
 ### Mise en place du mécanisme
 
-La validation du ou des choix effectués déclenchera la mise en place du dispositif : **cliquez sur le bouton `Valider`** de la partie concernant le choix de l'environnement de Bureau.'
+La validation du ou des choix effectués déclenchera la mise en place du dispositif : **cliquez sur le bouton `Valider`** de la partie concernant le choix de l'environnement de Bureau.
 
 
 ### Mise à jour
 
-Si une nouvelle version du paquet `pxe-client-linux` est proposée, il suffira de cliquer à nouveau sur ce bouton pour effectuer la mise à jour sur votre serveur `se3`.
+Si une nouvelle version du paquet `pxe-client-linux` est proposée, il suffira de cliquer à nouveau sur ce bouton de la partie concernant le choix de l'environnement de Bureau pour effectuer la mise à jour sur votre serveur `se3`.
+
+De même, si les archives netboot `Ubuntu` ou `Debian` ont changé, cliquez à nouveau sur ce bouton de la partie concernant le choix de l'environnement de Bureau pour mettre à jour les fichiers d'amorce de l'installation via le mode `PXE`.
+
 
 ### Le miroir local
 
