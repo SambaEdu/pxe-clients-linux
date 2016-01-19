@@ -105,6 +105,18 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 **Solution :** configurer le `Bios` de la machine pour accepter le mode `WoL` ([Wake On Line](https://fr.wikipedia.org/wiki/Wake-on-LAN)). Relancer ensuite l'installation.
 
 
+**Problème :** l'installation s'arrête sur un message d'erreur : `Pas de système de fichiers racines. Aucun système de fichiers n'a été choisi comme fichier racine`.
+
+
+**Solution :** une clé usb ou un lecteur de disquette usb sont branchés : les enlever et relancer l'installation.
+
+
+**Problème :** l'installation s'arrête sur un message d'erreur au sujet de la non détection des disques.
+
+
+**Solution :** mettre à jour les archives netboot `Ubuntu` ou `Debian`, qui ont dû changer lors d'une évolution de version, en revalidant le choix de l'environnement du Bureau (Voir le module `Serveur TFTP` de l'interface du `se3`).
+
+
 ## Réservation de l'`IP` du `client-linux`
 
 ### Cas d'une nouvelle machine
