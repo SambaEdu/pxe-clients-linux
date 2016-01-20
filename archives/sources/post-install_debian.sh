@@ -49,7 +49,7 @@ test_se3()
     if [ -n "${ip_se3}" ]
     then
         TEST_CLIENT=$(ifconfig | grep ":$ip_se3 ")
-        if [ -e /var/www/se3 ]
+        if [ -e "/var/www/se3" ]
         then
             echo -e "${rouge}Malheureux… Ce script est à exécuter sur les clients Linux, pas sur le serveur !${neutre}"
             echo ""
@@ -341,15 +341,16 @@ installer_un_paquet()
         echo -e "==========${neutre}" | tee -a $compte_rendu
     else
         # on vérifie si le paquet est déjà installé
-        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1)
-        # si la variable ne contient pas i, le paquet n'est pas installé : il faut donc l'installer
-        if [ "$verification_installation" != "i" ]
+        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep i)
+        # si la variable est vide, le paquet n'est pas installé : il faut donc l'installer
+        if [ -z "$verification_installation" ]
         then
             echo -e "${vert}On installe $paquet" | tee -a $compte_rendu
             echo -e "==========${neutre}" | tee -a $compte_rendu
             aptitude install -y "$paquet" >/dev/null #2>&1
             # on vérifie si l'installation s'est bien déroulée
-            if [ $? != "0" ]; then
+            if [ "$?" != "0" ]
+            then
                 echo -e "${rouge}"
                 echo -e "Un problème a eu lieu lors de l'installation de $paquet" | tee -a $compte_rendu
                 echo -e "==========${neutre}" | tee -a $compte_rendu
@@ -393,7 +394,7 @@ installer_liste_paquets()
     echo -e "==========${neutre}" | tee -a $compte_rendu
     sleep 2
     # on s'assure de l'utilisation du proxy
-    if [ -e /etc/proxy.sh ]
+    if [ -e "/etc/proxy.sh" ]
     then
         . /etc/proxy.sh
     fi
@@ -402,9 +403,9 @@ installer_liste_paquets()
     aptitude -q2 update
     # traitement des 3 listes de paquets
     test_applis=""
-    [ -e /root/bin/mesapplis-debian.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian.txt
-    [ -e /root/bin/mesapplis-debian-eb.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian-eb.txt
-    [ -e /root/bin/mesapplis-debian-perso.txt ] && test_applis="1" && gerer_mesapplis mesapplis-debian-perso.txt
+    [ -e "/root/bin/mesapplis-debian.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-debian.txt
+    [ -e "/root/bin/mesapplis-debian-eb.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-debian-eb.txt
+    [ -e "/root/bin/mesapplis-debian-perso.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-debian-perso.txt
     if [ "$test_applis" = "" ]
     then
         echo -e "${rouge}aucune liste de paquets ?${neutre}" | tee -a $compte_rendu
