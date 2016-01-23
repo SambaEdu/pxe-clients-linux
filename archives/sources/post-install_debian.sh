@@ -100,6 +100,13 @@ cles_publiques_ssh()
     cd - >/dev/null
 }
 
+permettre_ssh_root()
+{
+    echo "permettre la connexion en ssh sur root…" | tee -a $compte_rendu
+    # on remplace without-password par yes dans le fichier de configuration de ssh
+    sed -i "/^PermitRootLogin/ s/without-password/yes/" /etc/ssh/sshd_config
+}
+
 configurer_proxy()
 {
     if [ -n "$ip_proxy" -a -n "$port_proxy" ]
@@ -481,6 +488,7 @@ recuperer_parametres
 test_se3
 message_debut
 cles_publiques_ssh
+permettre_ssh_root
 configurer_proxy
 configurer_vim
 configurer_ldap
