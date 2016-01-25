@@ -26,6 +26,7 @@ Durant la **phase 1** (installation de la distribution), les paquets suivants so
 `distribution Debian` :
 openssh-server  | zip       | geogebra
 mc              | unzip     | vlc
+
 tofrodos        |           |
 conky           |           |
 sqlite3         |           |
