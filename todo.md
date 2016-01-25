@@ -3,7 +3,6 @@
 * rendre indépendant le module pxe-clients-linux du module se3-clonage.
 * Reste à transposer pour les SE3 wheezy. Pour toute la partie PXE et client linux c'est exactement la même chose donc pas de pb. En revanche pour la partie se3-clonage, il y a des histoires d'encodages différents donc le paquet est à refaire en tenant compte de ces quelques modifs. Je regarderai ça et je pourrai tester car serveur d'établissement est en wheezy.
 * modifier le fichier install.menu pour qu'il ne comporte plus de référence à jessie ou trusty afin d'être indépendant du futur paquet pxe-clients-linux.
-* compléter la doc pour la partie mise en place.
 * compléter la doc pour le choix du nom du client (partie post-installation).
 * mettre en fonctions les scripts mise en place et post-installation pour Ubuntu.
 * mettre en place une liste perso d'applis pour ubuntu

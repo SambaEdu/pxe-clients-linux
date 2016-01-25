@@ -8,5 +8,7 @@ Pour modifier cette partie il faut donc :
 * recréer l'archive
 * Mettre la date et les bonnes sommes md5 du script de mise en place et de l'archive dans versions.txt
 
+N'hésitez pas à contribuer à ce projet aussi bien au niveau du code que de la documentation.
 
+La documentation se trouve [ici](doc/README.md).
 
