@@ -25,30 +25,33 @@ Durant la **phase 1** (installation de la distribution), les paquets suivants so
 
 `distribution Debian` :
 
-openssh-server  | zip       | geogebra
-mc              | unzip     | vlc
-
-tofrodos        |           |
-conky           |           |
-sqlite3         |           |
-ldap-utils      |           |
-tree            |           |
-screen          |           |
-vim             |           |
-ssmtp           |           |
-ntp             |           |
-gnome-tweak-tool|           |
+administration  | utilisateur
+----------------|---------------
+openssh-server  | zip
+mc              | unzip
+tofrodos        | geogebra
+conky           | vlc
+sqlite3         |
+ldap-utils      |
+tree            |
+screen          |
+vim             |
+ssmtp           |
+ntp             |
+gnome-tweak-tool|
 
 
 `distribution Ubuntu` :
 
-openssh-server  | zip       | geogebra  |
-ldap-utils      | unzip     | vlc       |
-tree            |           |evince     |
-screen          |           |           |
-vim             |           |           |
-ssmtp           |           |           |
-ntp             |           |           |
+administration  | utilisateur
+----------------|---------------
+openssh-server  | zip
+ldap-utils      | unzip
+tree            | geogebra
+screen          | vlc
+vim             | evince
+ssmtp           |
+ntp             |
 
 
 Durant la **phase 2** (post-installation et intégration), les paquets installés sont issus de 3 listes :
