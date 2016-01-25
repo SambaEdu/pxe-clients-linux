@@ -111,7 +111,8 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 **Solution :** une clé usb ou un lecteur de disquette usb sont branchés : les enlever et relancer l'installation.
 
 
-**Problème :** l'installation s'arrête sur un message d'erreur au sujet de la non détection des disques.
+**Problème :** l'installation s'arrête sur le message d'erreur suivant :
+![probleme-installation](/doc/images/probleme_netboot.png)
 
 
 **Solution :** mettre à jour les archives netboot `Ubuntu` ou `Debian`, qui ont dû changer lors d'une évolution de version, en revalidant le choix de l'environnement du Bureau (Voir le module `Serveur TFTP` de l'interface du `se3`).
