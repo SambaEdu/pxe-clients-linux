@@ -25,20 +25,15 @@ Durant la **phase 1** (installation de la distribution), les paquets suivants so
 
 `distribution Debian` :
 
-administration  | utilisateur
-----------------|---------------
-openssh-server  | zip
-mc              | unzip
-tofrodos        | geogebra
-conky           | vlc
-sqlite3         |
-ldap-utils      |
-tree            |
-screen          |
-vim             |
-ssmtp           |
-ntp             |
-gnome-tweak-tool|
+administration  | administration  | utilisation
+----------------|-----------------|------------
+openssh-server  | screen          | zip
+mc              | vim             | unzip
+tofrodos        | ssmtp           | geogebra
+conky           | ntp             | vlc
+sqlite3         | tree
+gnome-tweak-tool| ldap-utils
+|
 
 
 `distribution Ubuntu` :
