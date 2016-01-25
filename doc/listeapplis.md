@@ -33,20 +33,20 @@ tofrodos        | ssmtp           | geogebra
 conky           | ntp             | vlc
 sqlite3         | tree
 gnome-tweak-tool| ldap-utils
-|
+
 
 
 `distribution Ubuntu` :
 
-administration  | utilisateur
+administration  | utilisation
 ----------------|---------------
 openssh-server  | zip
 ldap-utils      | unzip
 tree            | geogebra
 screen          | vlc
 vim             | evince
-ssmtp           |
-ntp             |
+ssmtp
+ntp
 
 
 Durant la **phase 2** (post-installation et intégration), les paquets installés sont issus de 3 listes :
