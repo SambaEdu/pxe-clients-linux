@@ -24,18 +24,18 @@ Les applications sont installées à plusieurs moments du processus.
 Durant la **phase 1** (installation de la distribution), les paquets suivants sont installés :
 
 `distribution Debian` :
-openssh-server  | zip       | geogebra  |
-mc              | unzip     | vlc       |
-tofrodos        |           |           |
-conky           |           |           |
-sqlite3         |           |           |
-ldap-utils      |           |           |
-tree            |           |           |
-screen          |           |           |
-vim             |           |           |
-ssmtp           |           |           |
-ntp             |           |           |
-gnome-tweak-tool|           |           |
+openssh-server  | zip       | geogebra
+mc              | unzip     | vlc
+tofrodos        |           |
+conky           |           |
+sqlite3         |           |
+ldap-utils      |           |
+tree            |           |
+screen          |           |
+vim             |           |
+ssmtp           |           |
+ntp             |           |
+gnome-tweak-tool|           |
 
 
 `distribution Ubuntu` :
