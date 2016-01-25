@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# version 20151222
+# version 20160125
 #
 
 ladate=$(date +%Y%m%d%H%M%S)
