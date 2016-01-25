@@ -45,8 +45,8 @@ ldap-utils      | unzip
 tree            | geogebra
 screen          | vlc
 vim             | evince
-ssmtp
-ntp
+ssmtp           |
+ntp             |
 
 
 Durant la **phase 2** (post-installation et intégration), les paquets installés sont issus de 3 listes :
