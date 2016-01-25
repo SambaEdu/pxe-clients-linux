@@ -24,6 +24,7 @@ Les applications sont installées à plusieurs moments du processus.
 Durant la **phase 1** (installation de la distribution), les paquets suivants sont installés :
 
 `distribution Debian` :
+
 openssh-server  | zip       | geogebra
 mc              | unzip     | vlc
 
@@ -40,6 +41,7 @@ gnome-tweak-tool|           |
 
 
 `distribution Ubuntu` :
+
 openssh-server  | zip       | geogebra  |
 ldap-utils      | unzip     | vlc       |
 tree            |           |evince     |
