@@ -1,26 +1,35 @@
 # liste de paquets à installer pour Debian lors de la post-installation
 firmware-linux
 flashplugin-nonfree
+# capture d'écran
 shutter
+# gestion des applications windows
 wine
+ttf-mscorefonts-installer
 gocr
 grsync
+icedtea-plugin
+myspell-fr-gut
+# gestion vidéo et audio
 otf-stix
 sox
 twolame
 vorbis-tools
 lame
 faad
-ttf-mscorefonts-installer
-icedtea-plugin
-myspell-fr-gut
 gstreamer0.10-fluendo-mp3
+# pour réaliser des cartes mentales
+freeplane
+# pour les extensions Lirecouleur et Vox (pico)
+python-tk
+libttspico0
+libttspico-utils
 
 # paquets déjà installés lors de l'installation en preseed de Debian
-geogebra
+#geogebra
 
-# les paquets suivants ne pourront être installés qu'avec le dépôt
-# → à prévoir pour des scripts unefois
-gstreamer0.10-ffmpeg
-ffmpeg
-libdvdcss2
+# les paquets suivants ne pourront être installés qu'avec le dépôt des backports
+# → à prévoir pour des scripts unefois ou dans le répertoire messcripts (voir doc)
+#gstreamer0.10-ffmpeg
+#ffmpeg
+#libdvdcss2
