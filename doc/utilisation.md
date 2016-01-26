@@ -108,7 +108,7 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 **Problème :** l'installation s'arrête sur un message d'erreur : `Pas de système de fichiers racines. Aucun système de fichiers n'a été choisi comme fichier racine`.
 
 
-**Solution :** une clé usb ou un lecteur de disquette usb sont branchés : les enlever et relancer l'installation.
+**Solution :** une clé usb ou un lecteur de disquette usb sont branchés sur le client : les enlever et relancer l'installation.
 
 
 **Problème :** l'installation s'arrête sur le message d'erreur suivant :
@@ -116,6 +116,12 @@ C'est donc un problème concernant un des firmwares à fournir qui est pourtant 
 
 
 **Solution :** mettre à jour les archives netboot `Ubuntu` ou `Debian`, qui ont dû changer lors d'une évolution de version, en revalidant le choix de l'environnement du Bureau (Voir le module `Serveur TFTP` de l'interface du `se3`).
+
+
+**Problème :** l'installation s'arrête sur un message de corruption du miroir
+![probleme-miroir](/doc/images/probleme_miroir.png)
+
+**Solution :** rétablir la connexion avec l'internet soit du `se3`, soit de la `passerelle` puis relancer l'installation.
 
 
 ## Réservation de l'`IP` du `client-linux`
