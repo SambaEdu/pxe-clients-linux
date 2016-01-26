@@ -3,4 +3,6 @@ nautilus-image-converter
 nautilus-open-terminal
 gnome-shell-extension-suspend-button
 gdebi
+
+# paquet déjà installé (à vérifier)
 gksu
