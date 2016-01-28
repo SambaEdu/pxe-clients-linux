@@ -24,7 +24,18 @@ de votre choix (par ex sur votre se3 de test lui même dans /var/www/)
 Ensuite pour  tester depuis le se3 en console lancer la commande suivante :
 /usr/share/se3/scripts/se3_get_install_client_linux.sh http://ip-ou-url
 "
+
 rm -fr ./$archive_name
+
+echo "Copie sur wawadeb ? (o/n)"
+read -t 5 rep
+
+if [ "$rep" = "o" ]; then
+	scp -P 2222 versions.txt $archive_name.tar.gz $script_name root@193.49.66.9:/var/www/iso/client_linux_ng/ 
+fi
+
+echo "deplacement dans le dossier archives"
+mv versions.txt $archive_name.tar.gz ../archives/
 
 exit 0
 
