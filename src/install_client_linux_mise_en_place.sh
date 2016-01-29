@@ -569,14 +569,14 @@ gestion_script_integration()
     if [ -e "${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash" ]
     then
         rm -f $rep_lien/integration_${version_debian}.bash
-        ln ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash $rep_lien/
+        ln -s ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash $rep_lien/
         chmod 755 $rep_lien/integration_${version_debian}.bash
     fi
     # la version pour ubuntu
     if [ -e "${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash" ]
     then
         rm -f $rep_lien/integration_${version_ubuntu}.bash
-        ln ${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash $rep_lien/
+        ln -s ${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash $rep_lien/
         chmod 755 $rep_lien/integration_${version_ubuntu}.bash
     fi
 }
