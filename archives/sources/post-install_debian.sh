@@ -425,6 +425,12 @@ configurer_grub()
     echo "configuration de grub…" | tee -a $compte_rendu
     # Virer l'entrée "mode de dépannage"
     sed -i '/GRUB_DISABLE_RECOVERY/ s/^#//' /etc/default/grub
+    # resolution
+    sed -i "/^GRUB_GFXMODE/ s/=.*/=1024x768 800x600 640x480/" /etc/default/grub 
+    
+    # dernier os lancé par défaut
+    sed -i "/^GRUB_DEFAULT/ s/=.*/=saved/" /etc/default/grub 
+    sed -i "/^GRUB_DEFAULT=saved/a\GRUB_SAVEDEFAULT=true" /etc/default/grub 
     update-grub
 }
 
