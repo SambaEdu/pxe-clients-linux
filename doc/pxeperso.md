@@ -8,6 +8,7 @@
             * [Télécharger l'archive](#télécharger-larchive)
             * [Copier les fichiers d'amorçage](#copier-les-fichiers-damorçage)
             * [Copier le fichier de fonctionnement de `GParted`](#copier-le-fichier-de-fonctionnement-de-gparted)
+            * [Gestion du répertoire temporaire](#gestion-du-répertoire-temporaire)
         * [Mise en place du menu pxe](#mise-en-place-du-menu-pxe)
         * [Utilisation](#utilisation)
     * [Installer `Debian Stretch`](#installer-debian-stretch)
@@ -113,6 +114,14 @@ mkdir -p /home/netlogon/clients-linux/install/messcripts_perso/gparted
 cp /tftpboot/tempgparted/gparted/live/filesystem.squashfs /var/www/install/messcripts_perso/gparted/
 ```
 
+##### Gestion du répertoire temporaire
+
+Une fois les fichiers en place, on peut supprimer quelques éléments dans le répertoire temporaire `/tftpboot/tempgparted`. On pourrait le supprimer mais il est intéressant de le garder avec l'archive téléchargée pour se souvenir de la version de `Gparted` mise en place.
+
+```ssh
+
+```
+
 
 #### Mise en place du menu pxe
 
@@ -123,7 +132,7 @@ LABEL GParted
     kernel gparted/vmlinuz
     append initrd=gparted/initrd.img boot=live config components union=overlay username=user noswap noeject ip= vga=788 fetch=http://IP-du-se3/install/messcripts_perso/gparted/filesystem.squashfs
     TEXT HELP
-    Utilisation de Gparted par le réseau
+    Utilisation de Gparted par le reseau
     ENDTEXT
 ```
 
