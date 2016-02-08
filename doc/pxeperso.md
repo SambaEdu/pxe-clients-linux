@@ -80,11 +80,11 @@ Pour utiliser `GParted` via le réseau, il faut mettre en place les commandes d'
 
 #### Mise en place des fichiers de `GParted`
 
-Les indications qui suivent sont issues de [la documentation `gpartedlive`](http://gparted.sourceforge.net/livepxe.php). Nous vous recommendons de suivre cette documentation si des changements sont nécessaires lors de mises à jour ultérieures de `GParted`.
+Les indications qui suivent sont issues de [la documentation `GParted live on PXE Server`](http://gparted.sourceforge.net/livepxe.php). Nous vous recommendons de suivre cette documentation si des changements sont nécessaires lors de mises à jour ultérieures de `GParted`.
 
 ##### Télécharger l'archive
 
-Téléchargez l'archive (dans la commande, on apris celle correspondant à l'architecture `amd64` mais on pourra utiliser aussi celle correspondant à `i686` ou à `i686-pae`) contenant le nécessaire dans un répertoire temporaire et décompressez-la :
+Téléchargez l'archive (dans la commande, on a pris celle correspondant à l'architecture `amd64` mais on pourra utiliser aussi celle correspondant à `i686` ou à `i686-pae`) contenant le nécessaire dans un répertoire temporaire et décompressez-la :
 ```ssh
 mkdir /tftpboot/tempgparted
 wget -P /tftpboot/tempgparted http://sourceforge.net/projects/gparted/files/gparted-live-stable/0.25.0-1/gparted-live-0.25.0-1-amd64.zip
@@ -137,22 +137,22 @@ Il suffit de démarrer le client via le mode `pxe` (touche `F12`) et ensuite de 
 Lors de la mise en place de `GParted`, il est demandé quelques précisions :
 
 * le clavier
-![gparted keymap](/doc/images/garted_01.png)
+![gparted keymap](/doc/images/gparted_01.png)
 
 Il suffira de taper sur la touche `Entrée`.
 
 * la langue d'usage
-![gparted langue](/doc/images/garted_02.png)
+![gparted langue](/doc/images/gparted_02.png)
 
 Pour le français, indiquez `08`.
 
 * mode d'utilisation
-![gparted mode](/doc/images/garted_03.png)
+![gparted mode](/doc/images/gparted_03.png)
 
 Il suffira de taper sur la touche `Entrée`.
 
 Enfin, on obtient l'interface de gestion des partitions du client.
-![gparted interface](/doc/images/garted_04.png)
+![gparted interface](/doc/images/gparted_04.png)
 
 
 ### Installer `Debian Stretch`
