@@ -137,21 +137,25 @@ Il suffit de démarrer le client via le mode `pxe` (touche `F12`) et ensuite de 
 Lors de la mise en place de `GParted`, il est demandé quelques précisions :
 
 * le clavier
+
 ![gparted keymap](/doc/images/gparted_01.png)
 
 Il suffira de taper sur la touche `Entrée`.
 
 * la langue d'usage
+
 ![gparted langue](/doc/images/gparted_02.png)
 
 Pour le français, indiquez `08`.
 
 * mode d'utilisation
+
 ![gparted mode](/doc/images/gparted_03.png)
 
 Il suffira de taper sur la touche `Entrée`.
 
 Enfin, on obtient l'interface de gestion des partitions du client.
+
 ![gparted interface](/doc/images/gparted_04.png)
 
 
