@@ -10,5 +10,5 @@ Pour modifier cette partie il faut donc :
 
 N'hésitez pas à contribuer à ce projet aussi bien au niveau du code que de la documentation.
 
-La documentation se trouve [ici](doc/README.md).
+La documentation se trouve [ici](https://github.com/SambaEdu/se3-docs/blob/master/pxe-clients-linux/README.md).
 
