@@ -52,12 +52,20 @@
 ## dans le skel : répertoire .config
 → dconf (qui contient le fichier user, à modifier après tout réglage)
 
-→ user-dirs.dirs
+→ user-dirs.dirs :
+* répertoires à configurer : Documents, Bureau, Images, Téléchargements, Vidéos, Musique
+* répertoires vides dans le skel
+* montage du répertoire Docs de l'utilisateur (voir la doc) dans le répertoire Documents : https://github.com/SambaEdu/se3-docs/blob/master/se3-clients-linux/logon_perso.md#la-fonction-creer_lien
 
 → user-dirs.locale
 
 
 ## profil iceweasel
+→ paramètres réseaux
+
+→ page d'accueil (duckduckgo ?)
+
+→ favoris : interface se3 (accès à l'annuaire)
 
 
 ## enregistrer le skel
