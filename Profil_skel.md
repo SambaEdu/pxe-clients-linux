@@ -1,6 +1,12 @@
 # Mise en forme du skel pour Jessie
 
+
 ## favoris (activités)
+→ Iceweasel
+→ Shutter
+→ Fichiers
+→ Terminal
+→ Afficher les applications
 
 
 ## paramètres
