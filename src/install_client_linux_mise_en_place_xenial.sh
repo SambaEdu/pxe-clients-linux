@@ -42,7 +42,7 @@ depot_firmware_debian="cdimage.debian.org/cdimage/unofficial/non-free/firmware"
 # variables
 #
 rep_tftp="/tftpboot"
-archive_tftp="install_client_linux_archive-tftp"
+archive_tftp="install_client_linux_archive-xenial-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 mdp_ens_defaut="enseignant"
 rep_client_linux="/home/netlogon/clients-linux"
