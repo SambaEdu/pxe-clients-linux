@@ -129,13 +129,13 @@ fi
 
 
 if [ -n "${ip_se3}" ]; then
-	echo "Telechargement de integration_trusty.bash..." | tee -a $compte_rendu
+	echo "Telechargement de integration_xenial.bash..." | tee -a $compte_rendu
 	mkdir -p /root/bin
 	cd /root/bin
-	wget http://${ip_se3}/install/integration_trusty.bash >/dev/null 2>&1
+	wget http://${ip_se3}/install/integration_xenial.bash >/dev/null 2>&1
 	if [ "$?" = "0" ]; then
 		echo "Telechargement reussi." | tee -a $compte_rendu
-		chmod +x integration_trusty.bash
+		chmod +x integration_xenial.bash
 	else
 		echo "Echec du telechargement." | tee -a $compte_rendu
 		echo "Le poste ne pourra pas être intégré au domaine" | tee -a $compte_rendu 
@@ -268,7 +268,7 @@ echo -e "===========================================${neutre}"
 
 
 if [ "$rep" != "n" ]; then
-	./integration_trusty.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu 
+	./integration_xenial.bash --nom-client="$nom_machine" --is --ivl | tee -a $compte_rendu 
 	
 else
 	
@@ -292,7 +292,7 @@ else
 	echo "Renommage termine."| tee -a $compte_rendu 
 	echo "pour intégrer le poste plus tard : 
 	cd /root/bin/
-	./integration_trusty.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu 
+	./integration_xenial.bash --nom-client=\"$nom_machine\" --is --ivl" | tee -a $compte_rendu 
 fi
 
 
