@@ -338,7 +338,7 @@ installer_un_paquet()
     # $1 → le nom du paquet à installer
     paquet="$1"
     # on vérifie si le paquet est disponible dans les dépôts
-    verification_depot=$(aptitude search ^$paquet$)
+    verification_depot=$(apt-cache search ^$paquet$)
     # si la variable est vide, le paquet n'est pas dans les dépôts
     if [ "$verification_depot" = "" ]
     then
@@ -346,13 +346,13 @@ installer_un_paquet()
         echo -e "==========${neutre}" | tee -a $compte_rendu
     else
         # on vérifie si le paquet est déjà installé
-        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep i)
+        verification_installation=$(apt-cache search ^$paquet$ | cut -d" " -f1 | grep i)
         # si la variable est vide, le paquet n'est pas installé : il faut donc l'installer
         if [ -z "$verification_installation" ]
         then
             echo -e "${vert}On installe $paquet" | tee -a $compte_rendu
             echo -e "==========${neutre}" | tee -a $compte_rendu
-            aptitude install -y "$paquet" >/dev/null #2>&1
+            apt-get install -y "$paquet" >/dev/null #2>&1
             # on vérifie si l'installation s'est bien déroulée
             if [ "$?" != "0" ]
             then
@@ -405,7 +405,7 @@ installer_liste_paquets()
     fi
     # on recharge la liste des paquets
     echo "on recharge la liste des paquets"
-    aptitude -q2 update
+    apt-get -q update
     # traitement des 3 listes de paquets
     test_applis=""
     [ -e "/root/bin/mesapplis-ubuntu.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-ubuntu.txt
