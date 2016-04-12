@@ -1,6 +1,4 @@
 flashplugin-installer
-nautilus-image-converter
-nautilus-open-terminal
 shutter
 wine
 geogebra
