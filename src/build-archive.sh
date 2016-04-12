@@ -7,8 +7,8 @@ echo "--------------         creation archive PXE    ----------------"
 echo "------------------------------------------------- -------------------"
 
 
-archive_name="install_client_linux_archive-xenial-tftp"
-script_name="install_client_linux_mise_en_place_xenial.sh"
+archive_name="install_client_linux_archive-tftp"
+script_name="install_client_linux_mise_en_place.sh"
 
 
 cp -r ../archives/sources $archive_name
