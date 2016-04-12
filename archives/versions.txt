@@ -1,2 +1,2 @@
-20160412;9678288e527a9e893356f9c3c303a1fd;install_client_linux_archive-xenial-tftp.tar.gz
-20160412;53894fe88eae06fa238eb41278297201;install_client_linux_mise_en_place_xenial.sh
+20160412;b28d6496a4e8feaf54752ea4c7702616;install_client_linux_archive-tftp.tar.gz
+20160412;53894fe88eae06fa238eb41278297201;install_client_linux_mise_en_place.sh
