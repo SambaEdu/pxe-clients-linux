@@ -13,8 +13,3 @@ twolame
 vorbis-tools
 lame
 faad
-openjdk-7-jre
-icedtea-plugin
-icedtea-7-plugin
-sqlite3
-conky

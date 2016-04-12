@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# Script lancé au redémarrage qui suit l'installation preseed Debian ###_DEBIAN_###
+# Script lancé au redémarrage qui suit l'installation preseed Ubuntu Xenial
 # pour finaliser la config  et intégrer au domaine le client linux
 #
 # 
@@ -73,7 +73,7 @@ message_debut()
     
     echo -e "${bleu}"
     echo -e "------------------------------"
-    echo -e "Post-configuration du client-linux Debian ###_DEBIAN_###"
+    echo -e "Post-configuration du client-linux Ubuntu Xenial"
     echo -e "------------------------------"
     echo -e "${neutre}"
     echo -e "appuyez sur Entrée pour continuer (sinon, attendre 10s…)"
@@ -429,6 +429,8 @@ configurer_grub()
     # dernier os lancé par défaut
     sed -i "/^GRUB_DEFAULT/ s/=.*/=saved/" /etc/default/grub 
     sed -i "/^GRUB_DEFAULT=saved/a\GRUB_SAVEDEFAULT=true" /etc/default/grub 
+    
+    sed 's|GRUB_CMDLINE_LINUX_DEFAULT="text"|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' -i /etc/default/grub
     update-grub
 }
 
