@@ -1,9 +1,13 @@
 #!/bin/bash
 
-mkdir -p /etc/ocsinventory
-echo "server=$SE3:909" > /etc/ocsinventory/ocsinventory-agent.cfg 
+debconf-set-selections <<EOF
+ocsinventory-agent	ocsinventory-agent/method	select	http
+ocsinventory-agent	ocsinventory-agent/server	string	$SE3:909
+# Action souhaitée pour le fichier de configuration modifié ocsinventory-agent.cfg :
+ocsinventory-agent	ocsinventory-agent/tag	string
+EOF
+
 apt-get install ocsinventory-agent -y
 
 
-# remontee immediate
-ocsinventory-agent 
+exit 0
