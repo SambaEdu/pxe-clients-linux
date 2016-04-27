@@ -45,6 +45,7 @@ rep_tftp="/tftpboot"
 archive_tftp="install_client_linux_archive-tftp"
 ntp_serveur_defaut="ntp.ac-creteil.fr"
 mdp_ens_defaut="enseignant"
+mdp_grub_defaut=""
 rep_client_linux="/home/netlogon/clients-linux"
 rep_temp="${rep_client_linux}/temp-linux"
 rep_temporaire_depot="$rep_tftp/temp-depot"
@@ -616,6 +617,12 @@ gestion_fichiers_tftp()
     [ -z "$enspass" ] && enspass="$mdp_ens_defaut"
     CRYPTPASS_enseignant="$(echo "$enspass" | mkpasswd -s -m md5)"
     
+    # le mot de passe pour Grub
+    # [en attendant d'avoir la variable venant de l'interface du se3 TODO]
+    mdp_grub_defaut="$xppass"
+    [ -z "$grubpass" ] && grubpass="$mdp_grub_defaut"
+    CRYPTPASS_grub="$(echo "$grubpass" | mkpasswd -s -m md5)"
+    
     # le serveur de temps
     [ -z "$ntpserv" ] && ntpserv="$ntp_serveur_defaut"
     
@@ -699,6 +706,7 @@ END
             sed -i "s|###_IP_SE3_###|$se3ip|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS_root|g" $i
             sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
+            sed -i "s|###_PASS_GRUB_###|$CRYPTPASS_grub|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
             sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
@@ -722,6 +730,7 @@ END
             sed -i "s|/debian|$CHEMIN_MIROIR|g" $i
             sed -i "s|###_PASS_ROOT_###|$CRYPTPASS_root|g" $i
             sed -i "s|###_PASS_ENS_###|$CRYPTPASS_enseignant|g" $i
+            sed -i "s|###_PASS_GRUB_###|$CRYPTPASS_grub|g" $i
             sed -i "s|###_NTP_SERV_###|$ntpserv|g" $i
             sed -i "s|###_DEBIAN_###|$version_debian|g" $i
             sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
