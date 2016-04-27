@@ -210,7 +210,7 @@ verifier_presence_mkpasswd()
 
 mise_en_place_tftpboot()
 {
-    echo "vérification du répertoire /tftpboot…"
+    echo "vérification du répertoire ${rep_tftp}…"
     # cas des anciennes versions : suppression de inst.wheezy.cfg (est remplacé par inst_debian.cfg)
     [ -e "${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg" ] && rm -f ${rep_tftp}/pxelinux.cfg/inst_wheezy.cfg
     # On vérifie si le menu Install fait référence ou non à debian-installer
@@ -265,6 +265,21 @@ END
     fi
     cp ${src}/${archive_tftp}/inst_debian.cfg ${src}/${archive_tftp}/inst_buntu.cfg ${rep_tftp}/pxelinux.cfg/
     echo ""
+}
+
+supprimer_anciennes_version()
+{
+    # on supprime les archives des versions qui ne sont pas gérées par le script
+    liste_ubuntu=$(ls ${rep_tftp}/ubuntu-installer/ | grep netboot | grep -v $version_ubuntu)
+    for i in $liste_ubuntu
+    do
+        rm ${rep_tftp}/ubuntu-installer/$i
+    done
+    liste_debian=$(ls ${rep_tftp}/debian-installer/ | grep netboot | grep -v $version_debian)
+    for i in $liste_debian
+    do
+        rm ${rep_tftp}/debian-installer/$i
+    done
 }
 
 recuperer_somme_controle_depot()
@@ -421,6 +436,7 @@ gestion_netboot()
     echo -e "→ distributions disponibles : Debian/${version_debian} et/ou Ubuntu/${version_ubuntu}"
     echo -e "→ les versions précédentes seront supprimées"
     sleep 1s
+    supprimer_anciennes_version
     # on se met dans un répertoire temporaire
     [ ! -e "${rep_temporaire_depot}" ] && mkdir ${rep_temporaire_depot}
     cd ${rep_temporaire_depot}
