@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# version 20160410
+# version 20160427
 #
 
 ladate=$(date +%Y%m%d%H%M%S)
@@ -611,14 +611,18 @@ gestion_cles_publiques()
 
 gestion_fichiers_tftp()
 {
-    # les mots de passe des comptes locaux des clients-linux
+    # le mot de passe du compte local root des clients-linux
+    # c'est celui du compte adminse3
     CRYPTPASS_root="$(echo "$xppass" | mkpasswd -s -m md5)"
+    
+    # le mot de passe du compte local enseignant des clients-linux
     # [en attendant d'avoir la variable venant de l'interface du se3 TODO]
     [ -z "$enspass" ] && enspass="$mdp_ens_defaut"
     CRYPTPASS_enseignant="$(echo "$enspass" | mkpasswd -s -m md5)"
     
-    # le mot de passe pour Grub
+    # le mot de passe pour l'éditeur de Grub
     # [en attendant d'avoir la variable venant de l'interface du se3 TODO]
+    # c'est celui du compte adminse3 par défaut
     mdp_grub_defaut="$xppass"
     [ -z "$grubpass" ] && grubpass="$mdp_grub_defaut"
     CRYPTPASS_grub="$(echo "$grubpass" | mkpasswd -s -m md5)"
