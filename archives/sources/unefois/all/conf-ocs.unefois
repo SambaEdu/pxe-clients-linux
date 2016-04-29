@@ -2,7 +2,7 @@
 
 debconf-set-selections <<EOF
 ocsinventory-agent	ocsinventory-agent/method	select	http
-ocsinventory-agent	ocsinventory-agent/server	string	$SE3:909
+ocsinventory-agent	ocsinventory-agent/server	string	$SE3:###_PORT_OCS_###
 # Action souhaitée pour le fichier de configuration modifié ocsinventory-agent.cfg :
 ocsinventory-agent	ocsinventory-agent/tag	string
 EOF

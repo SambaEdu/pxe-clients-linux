@@ -41,6 +41,7 @@ arret_gdm()
 recuperer_parametres()
 {
     # le fichier des paramètres a été mis en place à la fin de l'installation
+    # et il a été créé lors de la mise en place du mécanisme pxe
     . /root/bin/params.sh
 }
 
@@ -186,9 +187,17 @@ configurer_ocs()
 {
     if [ "$ocs" = "1" ]
     then
+        # L'installation du client ocsinventory nécessite
+        # de préconfigurer des réponses sous peine de "casser" dpkg
+        debconf-set-selections <<EOF
+ocsinventory-agent	ocsinventory-agent/method	select	http
+ocsinventory-agent	ocsinventory-agent/server	string	$SE3:$port_ocs"
+ocsinventory-agent	ocsinventory-agent/tag	string
+EOF
         echo "installation et configuration du client OCS…" | tee -a $compte_rendu
         installer_un_paquet ocsinventory-agent
-        echo "server=$ip_se3:909" > /etc/ocsinventory/ocsinventory-agent.cfg
+        # est-utile vu qu'on utilise debconf ?
+        #echo "server=$ip_se3:$port_ocs" > /etc/ocsinventory/ocsinventory-agent.cfg
     else
         echo "${rouge}le paramètre ocs n'est pas à 1…${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]

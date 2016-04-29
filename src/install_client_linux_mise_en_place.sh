@@ -77,11 +77,15 @@ verifier_version_serveur()
         echo "la version de votre serveur se3 est Debian Squeeze" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
         echo ""
+        # on met en mémoire cette info
+        version_se3="squeeze"
     elif egrep -q "^7." /etc/debian_version
     then
         echo "la version de votre serveur se3 est Debian Wheezy" | tee -a $compte_rendu
         echo "le script peut se poursuivre"
         echo ""
+        # on met en mémoire cette info
+        version_se3="wheezy"
     else
         echo -e "${rouge}votre serveur se3 n'est pas en version Squeeze ou Wheezy.${neutre}" | tee -a $compte_rendu
         echo -e "${rouge}opération annulée !${neutre}" | tee -a $compte_rendu
@@ -582,19 +586,37 @@ transfert_repertoire_install()
 
 gestion_script_integration()
 {
-    # la version pour debian
+    # À priori, les scripts d'intégration (ubuntu et debian) sont en place
+    # ce qui est le cas si le module se3-clients-linux est installé (déjà vérifié) et à jour
+    script_integration="1"
+    # NB : il faudrait faire de la factorisation des 2 parties ci-dessous ;-)
+    # on examine la version pour debian
     if [ -e "${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash" ]
     then
         rm -f $rep_lien/integration_${version_debian}.bash
         ln -s ${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash $rep_lien/
         chmod 755 $rep_lien/integration_${version_debian}.bash
+        script_integration_debian="1"
+    else
+        # le script d'integration n'existe pas
+        # il faut le signaler pour mettre à jour le module se3-clients-linux
+        script_integration_debian="0"
+        # on le signale dans le message de fin
+        script_integration="0"
     fi
-    # la version pour ubuntu
+    # on examine la version pour ubuntu
     if [ -e "${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash" ]
     then
         rm -f $rep_lien/integration_${version_ubuntu}.bash
         ln -s ${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash $rep_lien/
         chmod 755 $rep_lien/integration_${version_ubuntu}.bash
+        script_integration_ubuntu="1"
+    else
+        # le script d'integration n'existe pas
+        # il faut le signaler pour mettre à jour le module se3-clients-linux
+        script_integration_ubuntu="0"
+        # on le signale dans le message de fin
+        script_integration="0"
     fi
 }
 
@@ -718,6 +740,7 @@ END
         echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
         service apt-cacher-ng restart
         echo ""
+        # Paramétrage des fichiers preseed
         echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         # [en prévision d'une évolution TODO : il faudra décommenter]
         #echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
@@ -741,6 +764,7 @@ END
             read CHEMIN_MIROIR
         fi
         echo ""
+        # Paramétrage des fichiers preseed
         echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         
         for i in $(ls $rep_lien/preseed*.cfg)
@@ -769,8 +793,28 @@ END
     sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
 }
 
+gestion_conf_ocs()
+{
+    # le port pour la gestion de l'inventaire dépend de la version du se3
+    # pour squeeze, c'est 909
+    # à partir de wheezy, c'est 80
+    case "version_se3" in
+        squeeze)
+            port_ocs="909"
+        ;;
+        *)
+            port_ocs="80"
+        ;;
+    esac
+    # on paramètre le script conf-ocs.unefois
+    # pour qu'il tienne compte de la version du se3
+    sed -i "s|###_PORT_OCS_###|${port_ocs}|g" ${src}/${archive_tftp}/unefois/all/conf-ocs.unefois
+}
+
 fichier_parametres()
 {
+    # ce fichiers permet de transmettre, au niveau du client-linux,
+    # diverses variables utiles pour les scripts
     email=$(grep "^root=" /etc/ssmtp/ssmtp.conf | cut -d"=" -f2)
     if [ -z "$email" ]
     then
@@ -795,6 +839,7 @@ fichier_parametres()
     
     echo "génération du fichier de paramètres $rep_lien/params.sh" | tee -a $compte_rendu
     cat > $rep_lien/params.sh << END
+# Paramètres messagerie
 email="$email"
 mailhub="$mailhub"
 rewriteDomain="$rewriteDomain"
@@ -804,10 +849,12 @@ ip_proxy="$ip_proxy"
 port_proxy="$port_proxy"
 
 # Parametres SE3 :
+version_se3="$version_se3"
 ip_se3="$se3ip"
 nom_se3="$(hostname)"
 nom_domaine="$dhcp_domain_name"
 ocs="$inventaire"
+port_ocs="$port_ocs"
 
 # Parametres LDAP :
 ip_ldap="$ldap_server"
@@ -853,6 +900,14 @@ message_fin()
     echo -e "${bleu}"
     echo "---------------"
     echo -e "L'installation via pxe/preseed est en place" | tee -a $compte_rendu
+    # cas où le script d'intégration (debian ou ubuntu) n'est pas en place
+    if [ "$script_integration" = "0" ]
+    then
+        echo -e "${jaune}Attention : ${bleu}un des scripts d'intégration n'est pas en place"
+        echo -e "veuillez mettre à jour le module se3-clients-linux"
+        echo -e "et, une fois cela fait,"
+        echo -e "relancer la mise en place du mécanisme d'installation automatique"
+    fi
     echo -e "---------------${neutre}"
     echo "" | tee -a $compte_rendu
 }
@@ -880,6 +935,7 @@ gestion_script_integration
 gestion_cles_publiques
 gestion_fichiers_tftp
 gestion_miroir
+gestion_conf_ocs
 fichier_parametres
 gestion_scripts_unefois
 reconfigurer_module
