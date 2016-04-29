@@ -5,7 +5,7 @@
 # pour finaliser la config  et intégrer au domaine le client linux
 #
 # 
-# version 20160125
+# version 20160429
 #
 #####
 
@@ -196,8 +196,6 @@ ocsinventory-agent	ocsinventory-agent/tag	string
 EOF
         echo "installation et configuration du client OCS…" | tee -a $compte_rendu
         installer_un_paquet ocsinventory-agent
-        # est-utile vu qu'on utilise debconf ?
-        #echo "server=$ip_se3:$port_ocs" > /etc/ocsinventory/ocsinventory-agent.cfg
     else
         echo "${rouge}le paramètre ocs n'est pas à 1…${neutre}" | tee -a $compte_rendu
         # [gestion de cette erreur ? TODO]
