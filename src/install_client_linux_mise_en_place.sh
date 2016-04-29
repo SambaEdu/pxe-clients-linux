@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# version 20160427
+# version 20160429
 #
 
 ladate=$(date +%Y%m%d%H%M%S)
@@ -798,7 +798,7 @@ gestion_conf_ocs()
     # le port pour la gestion de l'inventaire dépend de la version du se3
     # pour squeeze, c'est 909
     # à partir de wheezy, c'est 80
-    case "version_se3" in
+    case "$version_se3" in
         squeeze)
             port_ocs="909"
         ;;
