@@ -584,12 +584,35 @@ transfert_repertoire_install()
     cp ${src}/${archive_tftp}/mise_en_place_win_on_linux_se3.sh $rep_tftp/client_linux/
 }
 
+copier_script_integration()
+{
+    # fonction non testée…
+    # s'il existe, on met en place un lien vers le script d'ntégration
+    # 1 argument : $1 → debian ou ubuntu
+    # la version sera celle de la distribution
+    eval version='$'version_$1
+    # on examine la version pour ${1}
+    if [ -e "${rep_client_linux}/distribs/${version}/integration/integration_${version}.bash" ]
+    then
+        rm -f $rep_lien/integration_${version}.bash
+        ln -s ${rep_client_linux}/distribs/${version}/integration/integration_${version}.bash $rep_lien/
+        chmod 755 $rep_lien/integration_${version}.bash
+        return 1
+    else
+        # le script d'integration n'existe pas
+        # il faut le signaler pour mettre à jour le module se3-clients-linux
+        script_integration="0"
+        return 0
+    fi
+}
+
 gestion_script_integration()
 {
     # À priori, les scripts d'intégration (ubuntu et debian) sont en place
-    # ce qui est le cas si le module se3-clients-linux est installé (déjà vérifié) et à jour
+    # ce qui est le cas si le module se3-clients-linux est installé (déjà vérifié) et à jour (pas vérifié)
     script_integration="1"
     # NB : il faudrait faire de la factorisation des 2 parties ci-dessous ;-)
+    #copier_script_integration debian
     # on examine la version pour debian
     if [ -e "${rep_client_linux}/distribs/${version_debian}/integration/integration_${version_debian}.bash" ]
     then
@@ -604,6 +627,7 @@ gestion_script_integration()
         # on le signale dans le message de fin
         script_integration="0"
     fi
+    #copier_script_integration ubuntu
     # on examine la version pour ubuntu
     if [ -e "${rep_client_linux}/distribs/${version_ubuntu}/integration/integration_${version_ubuntu}.bash" ]
     then
@@ -902,7 +926,7 @@ message_fin()
     # cas où le script d'intégration (debian ou ubuntu) n'est pas en place
     if [ "$script_integration" = "0" ]
     then
-        echo -e "${jaune}Attention : ${bleu}un des scripts d'intégration n'est pas en place"
+        echo -e "${jaune}Attention : ${bleu}un des scripts d'intégration n'est pas en place" | tee -a $compte_rendu
         echo -e "veuillez mettre à jour le module se3-clients-linux"
         echo -e "et, une fois cela fait,"
         echo -e "relancer la mise en place du mécanisme d'installation automatique"
