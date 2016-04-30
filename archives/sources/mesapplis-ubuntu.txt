@@ -1,4 +1,5 @@
-wine 
+wine
+shutter 
 flashplugin-installer 
 ubuntu-restricted-extras 
 libavcodec-extra 
