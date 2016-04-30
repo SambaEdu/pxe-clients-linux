@@ -353,7 +353,7 @@ installer_un_paquet()
         echo -e "==========${neutre}" | tee -a $compte_rendu
     else
         # on vérifie si le paquet est déjà installé
-        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep i)
+        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep ^i)
         # si la variable est vide, le paquet n'est pas installé : il faut donc l'installer
         if [ -z "$verification_installation" ]
         then
