@@ -198,7 +198,7 @@ configurer_ocs()
         # de préconfigurer des réponses sous peine de "casser" dpkg
         debconf-set-selections <<EOF
 ocsinventory-agent	ocsinventory-agent/method	select	http
-ocsinventory-agent	ocsinventory-agent/server	string	$SE3:$port_ocs"
+ocsinventory-agent	ocsinventory-agent/server	string	${ip_se3}:${port_ocs}"
 ocsinventory-agent	ocsinventory-agent/tag	string
 EOF
         echo "installation et configuration du client OCS…" | tee -a $compte_rendu
