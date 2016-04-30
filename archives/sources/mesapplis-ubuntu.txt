@@ -1,6 +1,4 @@
-aptitude 
 wine 
-vlc 
 flashplugin-installer 
 ubuntu-restricted-extras 
 libavcodec-extra 

@@ -338,7 +338,7 @@ installer_un_paquet()
     # $1 → le nom du paquet à installer
     paquet="$1"
     # on vérifie si le paquet est disponible dans les dépôts
-    verification_depot=$(apt-cache search ^$paquet$)
+    verification_depot=$(aptitude search ^$paquet$)
     # si la variable est vide, le paquet n'est pas dans les dépôts
     if [ "$verification_depot" = "" ]
     then
@@ -346,13 +346,13 @@ installer_un_paquet()
         echo -e "==========${neutre}" | tee -a $compte_rendu
     else
         # on vérifie si le paquet est déjà installé
-        verification_installation=$(apt-cache search ^$paquet$ | cut -d" " -f1 | grep i)
+        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep i)
         # si la variable est vide, le paquet n'est pas installé : il faut donc l'installer
         if [ -z "$verification_installation" ]
         then
             echo -e "${vert}On installe $paquet" | tee -a $compte_rendu
             echo -e "==========${neutre}" | tee -a $compte_rendu
-            apt-get install -y "$paquet" >/dev/null #2>&1
+            aptitude install -y "$paquet" >/dev/null #2>&1
             # on vérifie si l'installation s'est bien déroulée
             if [ "$?" != "0" ]
             then
@@ -473,6 +473,20 @@ lancer_script_perso()
     cd - >/dev/null
 }
 
+preconfigurer_ttf()
+{
+
+debconf-set-selections << 'EOF'
+ttf-mscorefonts-installer	msttcorefonts/dldir	string	
+#ttf-mscorefonts-installer	msttcorefonts/error-mscorefonts-eula	error	
+ttf-mscorefonts-installer	msttcorefonts/dlurl	string	
+#ttf-mscorefonts-installer	msttcorefonts/baddldir	error	
+ttf-mscorefonts-installer	msttcorefonts/accepted-mscorefonts-eula	boolean	true
+ttf-mscorefonts-installer	msttcorefonts/present-mscorefonts-eula	note
+EOF
+
+}
+
 message_fin()
 {
     echo -e "${bleu}"
@@ -505,6 +519,7 @@ recuperer_nom_client
 integrer_domaine
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
+preconfigurer_ttf
 installer_liste_paquets
 configurer_grub
 menage_script
