@@ -115,7 +115,7 @@ configurer_proxy()
         echo "configuration du proxy…" | tee -a $compte_rendu
         cat > /etc/proxy.sh <<END
 
-export https_proxy=\"http://$ip_proxy:$port_proxy\"
+export https_proxy="http://$ip_proxy:$port_proxy"
 
 END
         chmod +x /etc/proxy.sh
