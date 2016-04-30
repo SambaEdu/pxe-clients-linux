@@ -575,9 +575,7 @@ gestion_firmware_debian()
 transfert_repertoire_install()
 {
     # on met en place les fichiers dans le répertoire install sans écraser ni la liste des applis perso, ni le répertoire des scripts perso
-    # référence aux fichiers bashrc et tty1.conf : à supprimer ?
-    # ainsi que dans l'archive, y compris le fichier inittab qui ne servent plus depuis jessie et xenial
-    cp -n -r ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/messcripts_perso ${src}/${archive_tftp}/bashrc ${src}/${archive_tftp}/autologin_*.conf ${src}/${archive_tftp}/tty1.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
+    cp -n -r ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/messcripts_perso ${src}/${archive_tftp}/autologin_*.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
     # les fichiers gdm3 et lightdm serviront lors de la post-installation
     printf '#!/bin/sh\nwhile true\ndo\n    sleep 10\ndone\n' >$rep_lien/gdm3
     cp $rep_lien/gdm3 $rep_lien/lightdm
@@ -791,9 +789,6 @@ END
         sed -i "s|###_DEBIAN_###|$version_debian|g" $i
         sed -i "s|###_UBUNTU_###|$version_ubuntu|g" $i
     done
-    # référence au fichier bashrc : à supprimer ?
-    echo "correction du fichier bashrc" | tee -a $compte_rendu
-    sed -i "s|###_DEBIAN_###|$version_debian|g" $rep_lien/bashrc
 }
 
 gestion_conf_ocs()
