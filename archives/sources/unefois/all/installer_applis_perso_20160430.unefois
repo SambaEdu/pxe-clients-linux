@@ -1,0 +1,142 @@
+#!/bin/bash
+
+#####
+# Script lancé avec le mécanisme unefois du paquet se3-clients-linux
+# il installe les applications listées dans le fichier mesapplis-debian-perso.txt
+#
+# 
+# version 20160430
+#
+#####
+
+#####
+# quelques couleurs ;-)
+#
+rouge='\e[0;31m'
+rose='\e[1;31m'
+orange='\e[0;33m'
+jaune='\e[1;33m'
+vert='\e[0;32m'
+bleu='\e[1;34m'
+neutre='\e[0;m'
+
+
+#----- -----
+# les fonctions (début)
+#----- -----
+
+
+recharger_paquets()
+{
+    # on recharge la liste des paquets
+    echo "on recharge la liste des paquets"
+    aptitude -q2 update
+}
+
+
+recuperer_fichier_applis()
+{
+    # distribution : Debian ou Ubuntu ?
+    distribution=$(cat /etc/issue | awk -- '{ print tolower($1) }')
+    # prévoir /mnt/netlogon/install/messcripts_perso/mesapplis-${distribution}-perso.txt ?
+    cp /mnt/netlogon/install/mesapplis-${distribution}-perso.txt mesapplis-perso.txt
+    if [ "$?" = "0" ]
+    then
+        echo "on a récupéré la liste des applis"
+    else
+        # pas de liste ? : script inutile…
+        echo "on n'a pas récupéré la liste des applis"
+        exit 1
+    fi
+}
+
+verifier_tofrodos()
+{
+    # normalement, le paquet tofrodos est installé via l'installation automatique
+    # mais on ne sait jamais, on vérifie…
+    echo "on vérifie la présence du paquet tofrodos"
+    installer_un_paquet tofrodos
+}
+
+gerer_mesapplis()
+{
+    # 1 argument
+    # $1 → le fichier contenant les paquets à installer
+    
+    # le paquet tofrodos pour convertir les formats DOS au format UNIX
+    # ce paquet est déjà installé via le preseed
+    fromdos $1
+    # on élimine les espaces en début de ligne et les commentaires
+    liste_paquet=$(grep -Ev '^[[:space:]]*(#|$)' $1 | cut -d# -f 1)
+    test_liste=$(echo "$liste_paquet")
+    if [ ! -z "$test_liste" ]
+    then
+        echo "installation des paquets définis dans $1"
+        for i in $liste_paquet
+        do
+            installer_un_paquet $i
+        done
+     else
+        echo -e "${rouge}pas de paquets à installé dans $1 ?${neutre}"
+     fi
+    
+}
+
+
+installer_un_paquet()
+{
+    # $1 → le nom du paquet à installer
+    paquet="$1"
+    # on vérifie si le paquet est disponible dans les dépôts
+    verification_depot=$(aptitude search ^$paquet$)
+    # si la variable est vide, le paquet n'est pas dans les dépôts
+    if [ "$verification_depot" = "" ]
+    then
+        echo -e "${rouge}$paquet n'est pas dans les dépôts…"
+        echo -e "==========${neutre}"
+    else
+        # on vérifie si le paquet est déjà installé
+        verification_installation=$(aptitude search ^$paquet$ | cut -d" " -f1 | grep ^i)
+        # si la variable est vide, le paquet n'est pas installé : il faut donc l'installer
+        if [ -z "$verification_installation" ]
+        then
+            echo -e "${vert}On installe $paquet"
+            echo -e "==========${neutre}"
+            aptitude install -y "$paquet" >/dev/null #2>&1
+            # on vérifie si l'installation s'est bien déroulée
+            if [ "$?" != "0" ]
+            then
+                echo -e "${rouge}"
+                echo -e "Un problème a eu lieu lors de l'installation de $paquet"
+                echo -e "==========${neutre}"
+            fi
+        else
+            echo -e "${orange}$paquet est déjà installé…"
+            echo -e "==========${neutre}"
+        fi
+    fi
+}
+
+
+menage()
+{
+    # on supprime la liste des applis
+    rm -f mesapplis-perso.txt
+}
+
+
+#----- -----
+# les fonctions (fin)
+#----- -----
+
+
+#####
+# début du programme
+recharger_paquets
+verifier_tofrodos
+recuperer_fichier_applis
+gerer_mesapplis mesapplis-perso.txt
+menage
+exit 0
+# fin du programme
+#####
