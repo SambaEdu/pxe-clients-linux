@@ -805,8 +805,8 @@ gestion_conf_ocs()
     esac
     # on paramètre le script conf-ocs.unefois
     # pour qu'il tienne compte de la version du se3
-    echo "correction du script conf-ocs.unefois" | tee -a $compte_rendu
-    sed -i "s|###_PORT_OCS_###|${port_ocs}|g" ${src}/${archive_tftp}/unefois/all/conf-ocs.unefois
+    echo "correction du script conf-ocs_20160501.unefois" | tee -a $compte_rendu
+    sed -i "s|###_PORT_OCS_###|${port_ocs}|g" ${src}/${archive_tftp}/unefois/all/conf-ocs_20160501.unefois
 }
 
 fichier_parametres()
@@ -880,6 +880,8 @@ gestion_scripts_unefois()
         # ^. existe : on copie le contenu de all dans ^. puis on supprime all
         cp ${rep_client_linux}/unefois/all/* ${rep_client_linux}/unefois/\^\./
         rm -rf ${rep_client_linux}/unefois/all
+        # on supprime l'ancien script conf-ocs.unefois
+        rm -f ${rep_client_linux}/unefois/\^\./conf-ocs.unefois
     fi 
     # gestion du répertoire ^* : remplacé par ^.
     [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
