@@ -1,0 +1,2 @@
+# liste perso de paquets à installer pour les clients-linux Ubuntu lors de la post-installation
+
