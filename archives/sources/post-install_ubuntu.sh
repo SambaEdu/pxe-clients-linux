@@ -497,7 +497,10 @@ EOF
 # Copie du skel se3 pour le compte local enseignant
 maj_skel_compte_enseignant()
 {
-cp -Rf /etc/se3/skel/* /home/enseignant/
+mkdir -p /home/enseignant/.config/dconf
+cp -f /etc/se3/skel/.config/dconf/user /home/enseignant/.config/dconf/
+chown -R enseignant:enseignant /home/enseignant/.config
+chmod -R 770 /home/enseignant/.config
 }
 
 message_fin()
