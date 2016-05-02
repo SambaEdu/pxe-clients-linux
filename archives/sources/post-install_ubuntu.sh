@@ -416,8 +416,8 @@ installer_liste_paquets()
     # traitement des 3 listes de paquets
     test_applis=""
     [ -e "/root/bin/mesapplis-ubuntu.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-ubuntu.txt
-    #[ -e "/root/bin/mesapplis-debian-eb.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-debian-eb.txt
-    #[ -e "/root/bin/mesapplis-debian-perso.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-debian-perso.txt
+    [ -e "/root/bin/mesapplis-ubuntu-eb.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-ubuntu-eb.txt
+    [ -e "/root/bin/mesapplis-ubuntu-perso.txt" ] && test_applis="1" && gerer_mesapplis mesapplis-ubuntu-perso.txt
     if [ "$test_applis" = "" ]
     then
         echo -e "${rouge}aucune liste de paquets ?${neutre}" | tee -a $compte_rendu
