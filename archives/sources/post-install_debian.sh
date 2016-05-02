@@ -396,7 +396,7 @@ gerer_mesapplis()
     test_liste=$(echo "$liste_paquet")
     if [ ! -z "$test_liste" ]
     then
-        echo "installation des paquets définis dans ${bleu}${1}${neutre}" | tee -a $compte_rendu
+        echo -e "installation des paquets définis dans ${bleu}${1}${neutre}" | tee -a $compte_rendu
         for i in $liste_paquet
         do
             installer_un_paquet $i
