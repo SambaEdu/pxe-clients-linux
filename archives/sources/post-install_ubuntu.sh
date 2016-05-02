@@ -494,6 +494,12 @@ EOF
 
 }
 
+# Copie du skel se3 pour le compte local enseignant
+maj_skel_compte_enseignant()
+{
+cp -Rf /etc/se3/skel/* /home/enseignant/
+}
+
 message_fin()
 {
     echo -e "${bleu}"
@@ -526,6 +532,7 @@ recuperer_nom_client
 integrer_domaine
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
+maj_skel_compte_enseignant
 preconfigurer_ttf
 installer_liste_paquets
 configurer_grub
