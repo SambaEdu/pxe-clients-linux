@@ -817,6 +817,18 @@ gestion_conf_ocs()
     sed -i "s|###_PORT_OCS_###|${port_ocs}|g" ${src}/${archive_tftp}/unefois/all/conf-ocs_20160501.unefois
 }
 
+hacher_mdp_grub()
+{
+    # Fonction qui permet d'obtenir le hachage version Grub2 d'un mot
+    # de passe donné. La fonction prend un argument qui est le mot de
+    # passe en question.
+    #
+    { echo "$1"; echo "$1"; }                                          \
+        | LC_ALL=C grub-mkpasswd-pbkdf2 -c 30 -l 30 -s 30 2>>"$SORTIE" \
+        | grep 'PBKDF2'                                                \
+        | sed 's/^.* is //'
+}
+
 fichier_parametres()
 {
     # ce fichiers permet de transmettre, au niveau du client-linux,
@@ -843,6 +855,9 @@ fichier_parametres()
     ip_proxy=$(echo "$tmp_proxy" | cut -d":" -f1)
     port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
+    # On hache le mot de passe pour Grub
+    mdp_grub_crypt=$(hacher_grub_pwd "$grubpass")
+    
     echo "génération du fichier de paramètres $rep_lien/params.sh" | tee -a $compte_rendu
     cat > $rep_lien/params.sh << END
 # Paramètres messagerie
@@ -853,6 +868,9 @@ rewriteDomain="$rewriteDomain"
 # Parametres Proxy :
 ip_proxy="$ip_proxy"
 port_proxy="$port_proxy"
+
+# Paramètre grub
+mdp_grub_crypt="$mdp_grub_crypt"
 
 # Parametres SE3 :
 version_se3="$version_se3"
