@@ -438,7 +438,38 @@ configurer_grub()
     sed -i "/^GRUB_DEFAULT=saved/a\GRUB_SAVEDEFAULT=true" /etc/default/grub 
     
     sed 's|GRUB_CMDLINE_LINUX_DEFAULT="text"|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|' -i /etc/default/grub
-    update-grub
+    
+    # mise en place du mot de passe crypté
+    # Le fichier /etc/grub.d/40_custom existe déjà,
+    # il faut le rééditer en partant de zéro.
+    printf '#!/bin/sh\n'                                   >/etc/grub.d/40_custom
+    printf 'exec tail -n +3 $0\n'                         >>/etc/grub.d/40_custom
+    printf 'set superusers="admin"\n'                     >>/etc/grub.d/40_custom
+    printf 'password_pbkdf2 admin %s\n' "$mdp_grub_crypt" >>/etc/grub.d/40_custom
+    
+    # Dans le fichier /etc/grub.d/10_linux, il faut chercher une ligne
+    # spécifique qui va générer les entrées de boot Grub dite "simples"
+    # (typiquement l'entrée de boot par défaut qui va lancer Jessie).
+    # Au niveau de cette ligne, il faudra ajouter « --unrestricted ».
+    # En effet, sans cela, par défaut avec seulement le compte "admin"
+    # créé, aucun boot ne sera possible sans les identifiants du compte
+    # admin (par exemple si on laisse le compteur de temps défiler, Grub
+    # lancera le boot par défaut mais il demandera des identifiants pour
+    # autoriser le boot ce qui n'est franchement pas pratique).
+    pattern="'gnulinux-simple-\$boot_device_id'"
+    # Si, au niveau de la ligne, l'option est déjà présente
+    # alors on ne modifie pas le fichier. Sinon on le modifie.
+    if ! grep -- "$pattern" /etc/grub.d/10_linux | grep -q -- '--unrestricted'
+    then
+        # Ajout de l'option « --unrestricted ».
+        sed -i "s/$pattern/& --unrestricted/" /etc/grub.d/10_linux
+    fi
+    
+    # On met à jour la configuration de Grub.
+    if ! update-grub >> /dev/null 2>&1
+    then
+        echo -e "${jaune}Attention : ${neutre}la commande ${bleu}update-grub${neutre} ne s'est pas effectué correctement" | tee -a $compte_rendu
+    fi
 }
 
 menage_script()
