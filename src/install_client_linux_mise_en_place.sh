@@ -856,7 +856,7 @@ fichier_parametres()
     port_proxy=$(echo "$tmp_proxy" | cut -d":" -f2)
     
     # On hache le mot de passe pour Grub
-    mdp_grub_crypt=$(hacher_grub_pwd "$grubpass")
+    mdp_grub_crypt=$(hacher_mdp_grub "$grubpass")
     
     echo "génération du fichier de paramètres $rep_lien/params.sh" | tee -a $compte_rendu
     cat > $rep_lien/params.sh << END
