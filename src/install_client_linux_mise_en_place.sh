@@ -403,22 +403,12 @@ placer_se3_archives()
     # $2 → i386 ou amd64
     #
     supprimer_fichiers $1 $2
-    echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
-    telecharger_archives $1 $2
-    if [ "$?" = "0" ]
-    then
-        echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-        extraire_archives_netboot $1 $2
-        echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-        mise_en_place_pxe $1 $2
-        [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
-        [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
-        return 0
-    else
-        echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
-        # [gestion de cette erreur ? TODO]
-        return 1
-    fi
+    echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
+    extraire_archives_netboot $1 $2
+    echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
+    mise_en_place_pxe $1 $2
+    [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
+    [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
 }
 
 tester_fichiers()
@@ -465,8 +455,18 @@ tester_se3_archives()
     then
         # on supprime l'archive locale
         rm -f ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
-        # il faut (re)mettre en place les fichiers
-        placer_se3_archives $1 $2
+        # on télécharge l'archive
+        echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
+        telecharger_archives $1 $2
+        if [ "$?" = "0" ]
+        then
+            # il faut (re)mettre en place les fichiers
+            placer_se3_archives $1 $2
+        else
+            echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
+            # [gestion de cette erreur ? TODO]
+            return 1
+        fi
     else
         # on déplace l'archive locale dans le répertoire de travail
         mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
