@@ -470,17 +470,21 @@ tester_se3_archives()
     else
         # on déplace l'archive locale dans le répertoire de travail
         mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
-        # on teste si les fichiers initrd.gz et linux sont en place, en fonction de l'archive
+        # on teste si les fichiers initrd.gz et linux en place sont conformes à ceux de l'archive
+        # problème : initrd.gz incorpore les firmware dans le cas debian
         tester_fichiers $1 $2
         if [ "$?" = "0" ]
         then
-            # ils sont en place, on affiche l'information
+            # les fichiers sont conformes, on affiche l'information
             echo -e "fichiers linux et initrd.gz en place pour $1 $version $2" | tee -a $compte_rendu
         else
+            # les fichiers ne sont pas conformes
+            echo -e "fichiers linux et initrd.gz non conformes pour $1 $version $2" | tee -a $compte_rendu
             # on déplace l'archive locale dans le répertoire de travail
             mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
             # on lance la (re)mise en place des fichiers, comme ci-dessus
             # mais sans supprimer l'archive locale
+            echo -e "on les remet en place" | tee -a $compte_rendu
             placer_se3_archives $1 $2
         fi
     fi
