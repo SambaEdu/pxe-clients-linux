@@ -442,7 +442,7 @@ tester_fichiers()
     eval c='$'initrd_en_place_${version}_$2
     eval d='$'initrd_archive_${version}_$2
     # on regarde si les fichiers linux et initrd.gz sont identiques
-    if [ "$a" = "$b" -a "$c" = "$d"]
+    if [ "$a" = "$b" -a "$c" = "$d" ]
     then
         # ils sont identiques, pas besoin de remettre en place ces fichiers
         return 0
