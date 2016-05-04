@@ -282,6 +282,7 @@ END
 supprimer_anciennes_version()
 {
     # on supprime les archives des versions qui ne sont pas gérées par le script
+    # on ne garde que celles mentionnant $version_ubuntu ou $version_debian
     liste_ubuntu=$(ls ${rep_tftp}/ubuntu-installer/ | grep netboot | grep -v $version_ubuntu)
     for i in $liste_ubuntu
     do
@@ -289,6 +290,11 @@ supprimer_anciennes_version()
     done
     liste_debian=$(ls ${rep_tftp}/debian-installer/ | grep netboot | grep -v $version_debian)
     for i in $liste_debian
+    do
+        rm ${rep_tftp}/debian-installer/$i
+    done
+    liste_firmware=$(ls ${rep_tftp}/debian-installer/ | grep firmware | grep -v $version_debian)
+    for i in $liste_firmware
     do
         rm ${rep_tftp}/debian-installer/$i
     done
@@ -479,7 +485,7 @@ recuperer_somme_controle_firmware_depot_debian()
     if [ "$?" = "0" ]
     then
         # on récupère la somme de contrôle concernant les firmwares
-        eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware.cpio.gz" | cut -f1 -d" ")
+        eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware_${version_debian}.cpio.gz" | cut -f1 -d" ")
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
@@ -492,13 +498,13 @@ recuperer_somme_controle_firmware_depot_debian()
 
 calculer_somme_controle_firmware_se3_debian()
 {
-    if [ -e "${rep_tftp}/debian-installer/firmware.cpio.gz" ]
+    if [ -e "${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz" ]
     then
         mise="mise à jour"
         # on calcule la somme de contrôle concernant les firmwares en place
-        eval somme_firmware_se3_${version_debian}=$(md5sum ${rep_tftp}/debian-installer/firmware.cpio.gz | cut -f1 -d" ")
+        eval somme_firmware_se3_${version_debian}=$(md5sum ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz | cut -f1 -d" ")
     else
-        # il manque firmware.cpio.gz : à mettre en place
+        # il manque firmware_${version_debian}.cpio.gz : à mettre en place
         mise="mise en place"
         eval somme_firmware_se3_${version_debian}=""
     fi
@@ -506,17 +512,17 @@ calculer_somme_controle_firmware_se3_debian()
 
 supprimer_firmware_debian()
 {
-    if [ -e "${rep_tftp}/debian-installer/firmware.cpio.gz" ]
+    if [ -e "${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz" ]
     then
         # on supprime l'archive en place
-        find ${rep_tftp}/debian-installer/firmware.cpio.gz -delete
+        find ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz -delete
     fi
 }
 
 telecharger_firmware_debian()
 {
     # on télécharge les firmwares : aussi bien pour i386 que amd64
-    wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O ${rep_tftp}/debian-installer/firmware.cpio.gz
+    wget http://$depot_firmware_debian/$version_debian/current/firmware_${version_debian}.cpio.gz -O ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz
     if [ "$?" != "0" ]
     then
         echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}${neutre}" | tee -a $compte_rendu
@@ -533,7 +539,7 @@ incorporer_firmware_debian()
     then
         # méthode valable à partir de jessie
         cp -p ${rep_tftp}/debian-installer/$1/initrd.gz ${rep_tftp}/debian-installer/$1/initrd.gz.orig
-        cat ${rep_tftp}/debian-installer/$1/initrd.gz.orig ${rep_tftp}/debian-installer/firmware.cpio.gz > ${rep_tftp}/debian-installer/$1/initrd.gz
+        cat ${rep_tftp}/debian-installer/$1/initrd.gz.orig ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz > ${rep_tftp}/debian-installer/$1/initrd.gz
         rm -f ${rep_tftp}/debian-installer/$1/initrd.gz.orig
         echo -e "firmwares Debian incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
