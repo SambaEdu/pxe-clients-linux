@@ -286,17 +286,17 @@ supprimer_anciennes_version()
     liste_ubuntu=$(ls ${rep_tftp}/ubuntu-installer/ | grep netboot | grep -v $version_ubuntu)
     for i in $liste_ubuntu
     do
-        rm ${rep_tftp}/ubuntu-installer/$i
+        rm -f ${rep_tftp}/ubuntu-installer/$i
     done
     liste_debian=$(ls ${rep_tftp}/debian-installer/ | grep netboot | grep -v $version_debian)
     for i in $liste_debian
     do
-        rm ${rep_tftp}/debian-installer/$i
+        rm -f ${rep_tftp}/debian-installer/$i
     done
     liste_firmware=$(ls ${rep_tftp}/debian-installer/ | grep firmware | grep -v $version_debian)
     for i in $liste_firmware
     do
-        rm ${rep_tftp}/debian-installer/$i
+        rm -f ${rep_tftp}/debian-installer/$i
     done
 }
 
@@ -402,6 +402,64 @@ placer_se3_archives()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
+    supprimer_fichiers $1 $2
+    echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
+    telecharger_archives $1 $2
+    if [ "$?" = "0" ]
+    then
+        echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
+        extraire_archives_netboot $1 $2
+        # on sauvegarde l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
+        mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
+        echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
+        mise_en_place_pxe $1 $2
+        [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
+        [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
+        return 0
+    else
+        echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
+        return 1
+    fi
+}
+
+tester_fichiers()
+{
+    # 2 arguments :
+    # $1 → debian ou ubuntu
+    # $2 → i386 ou amd64
+    #
+    extraire_archives_netboot $1 $2
+    # on teste si les fichiers linux et initrd.gz en place correspondent à ceux de l'archive
+    eval linux_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/linux | cut -f1 -d" ")
+    eval linux_archive_${version}_$2=$(md5sum ${1}-installer/$2/linux | cut -f1 -d" ")
+    # on compare les deux linux
+    eval a='$'linux_en_place_${version}_$2
+    eval b='$'linux_archive_${version}_$2
+    eval initrd_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/initrd.gz | cut -f1 -d" ")
+    eval initrd_archive_${version}_$2=$(md5sum ${1}-installer/$2/initrd.gz | cut -f1 -d" ")
+    # on compare les deux initrd.gz
+    eval c='$'initrd_en_place_${version}_$2
+    eval d='$'initrd_archive_${version}_$2
+    # on regarde si les fichiers linux et initrd.gz sont identiques
+    if [ "$a" = "$b" -a "$c" = "$d"]
+    then
+        # ils sont identiques, pas besoin de remettre en place ces fichiers
+        return 0
+    else
+        # une des 2 sortes (linux ou initrd) est différente, on remet tout en place
+        return 1
+    fi
+    # on remet en place l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
+    mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
+}
+
+tester_se3_archives()
+{
+    # 2 arguments :
+    # $1 → debian ou ubuntu
+    # $2 → i386 ou amd64
+    #
     # si les 2 sommes sont différentes, on supprime les anciens fichiers et on télécharge la nouvelle archive
     # de même si les répertoires amd64 ou i386 sont absents
     eval version='$'version_$1
@@ -409,24 +467,26 @@ placer_se3_archives()
     eval b='$'somme_netboot_depot_${version}_$2
     if [ "$a" != "$b" -o ! -e "${rep_tftp}/${1}-installer/$2" ]
     then
-        supprimer_fichiers $1 $2
-        echo -e "téléchargement de l'archive netboot.tar.gz pour $1 $version $2" | tee -a $compte_rendu
-        telecharger_archives $1 $2
+        # on supprime l'archive locale
+        rm -f ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
+        # il faut (re)mettre en place les fichiers
+        placer_se3_archives $1 $2
+    else
+        # on déplace l'archive locale dans le répertoire de travail
+        mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
+        # on teste si les fichiers initrd.gz et linux sont en place, en fonction de l'archive
+        tester_fichiers $1 $2
         if [ "$?" = "0" ]
         then
-            echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-            extraire_archives_netboot $1 $2
-            echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-            mise_en_place_pxe $1 $2
-            [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
-            [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
+            # ils sont en place, on affiche l'information
+            echo -e "fichiers linux et initrd.gz en place pour $1 $version $2" | tee -a $compte_rendu
         else
-            echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
-            # [gestion de cette erreur ? TODO]
-            return 1
+            # on déplace l'archive locale dans le répertoire de travail
+            mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
+            # on lance la (re)mise en place des fichiers, comme ci-dessus
+            # mais sans supprimer l'archive locale
+            placer_se3_archives $1 $2
         fi
-    else
-        echo -e "fichiers linux et initrd.gz en place pour $1 $version $2" | tee -a $compte_rendu
     fi
 }
 
@@ -471,10 +531,10 @@ gestion_netboot()
     [ "$option_ubuntu" = "oui" ] && calculer_somme_controle_se3 ubuntu i386
     [ "$option_ubuntu" = "oui" ] && calculer_somme_controle_se3 ubuntu amd64
     # on met à jour si nécessaire (mise en place la première fois) et s'il n'y a pas d'erreur de téléchargement
-    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_i386" = "" ] && placer_se3_archives debian i386
-    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_amd64" = "" ] && placer_se3_archives debian amd64
-    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_i386" = "" ] && placer_se3_archives ubuntu i386
-    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_amd64" = "" ] && placer_se3_archives ubuntu amd64
+    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_i386" = "" ] && tester_se3_archives debian i386
+    [ "$option_debian" = "oui" ] && [ "$erreur_md5sums_debian_amd64" = "" ] && tester_se3_archives debian amd64
+    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_i386" = "" ] && tester_se3_archives ubuntu i386
+    [ "$option_ubuntu" = "oui" ] && [ "$erreur_md5sums_ubuntu_amd64" = "" ] && tester_se3_archives ubuntu amd64
     # on supprime le répertoire temporaire
     menage_netboot
 }
