@@ -582,7 +582,7 @@ supprimer_firmware_debian()
 telecharger_firmware_debian()
 {
     # on télécharge les firmwares : aussi bien pour i386 que amd64
-    wget http://$depot_firmware_debian/$version_debian/current/firmware_${version_debian}.cpio.gz -O ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz
+    wget http://$depot_firmware_debian/$version_debian/current/firmware.cpio.gz -O ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz
     if [ "$?" != "0" ]
     then
         echo -e "${rouge}échec du téléchargement des firmwares Debian ${version_debian}${neutre}" | tee -a $compte_rendu
