@@ -545,7 +545,7 @@ recuperer_somme_controle_firmware_depot_debian()
     if [ "$?" = "0" ]
     then
         # on récupère la somme de contrôle concernant les firmwares
-        eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware_${version_debian}.cpio.gz" | cut -f1 -d" ")
+        eval somme_firmware_depot_${version_debian}=$(cat MD5SUMS | grep "firmware.cpio.gz" | cut -f1 -d" ")
         # on supprime le fichier récupéré
         rm -f MD5SUMS
     else
