@@ -409,8 +409,6 @@ placer_se3_archives()
     then
         echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
         extraire_archives_netboot $1 $2
-        # on sauvegarde l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
-        mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
         echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
         mise_en_place_pxe $1 $2
         [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
@@ -450,8 +448,6 @@ tester_fichiers()
         # une des 2 sortes (linux ou initrd) est différente, on remet tout en place
         return 1
     fi
-    # on remet en place l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
-    mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
 }
 
 tester_se3_archives()
