@@ -342,19 +342,6 @@ calculer_somme_controle_se3()
     fi
 }
 
-supprimer_fichiers()
-{
-    # 2 arguments :
-    # $1 → debian ou ubuntu
-    # $2 → i386 ou amd64
-    #
-    if [ -e "${rep_tftp}/${1}-installer/$2" ]
-    then
-        # on supprime le répertoire en place
-        find ${rep_tftp}/${1}-installer/$2/ -delete
-    fi
-}
-
 telecharger_archives()
 {
     # 2 arguments :
@@ -376,16 +363,32 @@ extraire_archives_netboot()
     # extraction des archives
     eval version='$'version_$1
     tar -xzf netboot_${version}_${2}.tar.gz
-    # on sauvegarde l'archive pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
+    # on sauvegarde l'archive pour tester sa somme de contrôle
+    # lors d'une prochaine remise en place du dispositif
     mv netboot_${version}_${2}.tar.gz ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz
 }
 
-mise_en_place_pxe()
+supprimer_fichiers()
 {
     # 2 arguments :
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
+    if [ -e "${rep_tftp}/${1}-installer/$2" ]
+    then
+        # on supprime le répertoire en place
+        find ${rep_tftp}/${1}-installer/$2/ -delete
+    fi
+}
+
+placer_fichiers_pxe()
+{
+    # 2 arguments :
+    # $1 → debian ou ubuntu
+    # $2 → i386 ou amd64
+    #
+    supprimer_fichiers $1 $2
+    echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
     if [ ! -e "${rep_tftp}/${1}-installer" ]
     then
         # le répertoire ${rep_tftp}/$1-installer n'étant pas en place, il faut le créer
@@ -394,19 +397,6 @@ mise_en_place_pxe()
     fi
     # on déplace le répertoire $2 de $1-installer vers ${rep_tftp}/$1-installer/
     mv ${1}-installer/$2/ ${rep_tftp}/${1}-installer/
-}
-
-placer_se3_archives()
-{
-    # 2 arguments :
-    # $1 → debian ou ubuntu
-    # $2 → i386 ou amd64
-    #
-    supprimer_fichiers $1 $2
-    echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-    extraire_archives_netboot $1 $2
-    echo -e "mise en place des fichiers netboot $1 $version $2" | tee -a $compte_rendu
-    mise_en_place_pxe $1 $2
     [ "$1" = "debian" ] && [ "$2" = "i386" ] && drapeau_initrd_i386="1"
     [ "$1" = "debian" ] && [ "$2" = "amd64" ] && drapeau_initrd_amd64="1"
 }
@@ -417,18 +407,36 @@ tester_fichiers()
     # $1 → debian ou ubuntu
     # $2 → i386 ou amd64
     #
-    extraire_archives_netboot $1 $2
     # on teste si les fichiers linux et initrd.gz en place correspondent à ceux de l'archive
-    eval linux_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/linux | cut -f1 -d" ")
-    eval linux_archive_${version}_$2=$(md5sum ${1}-installer/$2/linux | cut -f1 -d" ")
-    # on compare les deux linux
-    eval a='$'linux_en_place_${version}_$2
-    eval b='$'linux_archive_${version}_$2
-    eval initrd_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/initrd.gz | cut -f1 -d" ")
-    eval initrd_archive_${version}_$2=$(md5sum ${1}-installer/$2/initrd.gz | cut -f1 -d" ")
-    # on compare les deux initrd.gz
-    eval c='$'initrd_en_place_${version}_$2
-    eval d='$'initrd_archive_${version}_$2
+    # on teste si le fichier linux est bien présent
+    if [ -e ${rep_tftp}/${1}-installer/$2/linux ]
+    then
+        eval linux_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/linux | cut -f1 -d" ")
+        eval linux_archive_${version}_$2=$(md5sum ${1}-installer/$2/linux | cut -f1 -d" ")
+        # on compare les deux linux
+        eval a='$'linux_en_place_${version}_$2
+        eval b='$'linux_archive_${version}_$2
+    else
+        # cas où le fichier linux n'est pas en présent
+        a=""
+        eval b='$'linux_archive_${version}_$2
+    fi
+    # le fichier initrd.gz en place incorpore les firmwares dans le cas debian
+    # on prend plutôt le fichier initrd.gz original
+    # qui a été conservé sous le nom initrd.gz.orig (voir fonction gestion_firmware_debian)
+    # on teste quand même s'il est présent
+    if [ -e ${rep_tftp}/${1}-installer/$2/initrd.gz.orig ]
+    then
+        eval initrd_en_place_${version}_$2=$(md5sum ${rep_tftp}/${1}-installer/$2/initrd.gz.orig | cut -f1 -d" ")
+        eval initrd_archive_${version}_$2=$(md5sum ${1}-installer/$2/initrd.gz | cut -f1 -d" ")
+        # on compare les deux initrd.gz
+        eval c='$'initrd_en_place_${version}_$2
+        eval d='$'initrd_archive_${version}_$2
+    else
+        # cas où le fichier initrd.gz.orig n'est pas en présent
+        c=""
+        eval d='$'initrd_archive_${version}_$2
+    fi
     # on regarde si les fichiers linux et initrd.gz sont identiques
     if [ "$a" = "$b" -a "$c" = "$d" ]
     then
@@ -460,8 +468,10 @@ tester_se3_archives()
         telecharger_archives $1 $2
         if [ "$?" = "0" ]
         then
+            echo -e "extraction des fichiers netboot $1 $version $2" | tee -a $compte_rendu
+            extraire_archives_netboot $1 $2
             # il faut (re)mettre en place les fichiers
-            placer_se3_archives $1 $2
+            placer_fichiers_pxe $1 $2
         else
             echo -e "${rouge}échec de la récupération de l'archive netboot.tar.gz pour $1 $version $2${neutre}" | tee -a $compte_rendu
             # [gestion de cette erreur ? TODO]
@@ -471,7 +481,7 @@ tester_se3_archives()
         # on déplace l'archive locale dans le répertoire de travail
         mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
         # on teste si les fichiers initrd.gz et linux en place sont conformes à ceux de l'archive
-        # problème : initrd.gz incorpore les firmware dans le cas debian
+        extraire_archives_netboot $1 $2
         tester_fichiers $1 $2
         if [ "$?" = "0" ]
         then
@@ -480,12 +490,10 @@ tester_se3_archives()
         else
             # les fichiers ne sont pas conformes
             echo -e "fichiers linux et initrd.gz non conformes pour $1 $version $2" | tee -a $compte_rendu
-            # on déplace l'archive locale dans le répertoire de travail
-            mv ${rep_tftp}/${1}-installer/netboot_${version}_${2}.tar.gz netboot_${version}_${2}.tar.gz
             # on lance la (re)mise en place des fichiers, comme ci-dessus
-            # mais sans supprimer l'archive locale
+            # mais en utilisant l'archive locale qui est conforme
             echo -e "on les remet en place" | tee -a $compte_rendu
-            placer_se3_archives $1 $2
+            placer_fichiers_pxe $1 $2
         fi
     fi
 }
@@ -600,7 +608,8 @@ incorporer_firmware_debian()
         # méthode valable à partir de jessie
         cp -p ${rep_tftp}/debian-installer/$1/initrd.gz ${rep_tftp}/debian-installer/$1/initrd.gz.orig
         cat ${rep_tftp}/debian-installer/$1/initrd.gz.orig ${rep_tftp}/debian-installer/firmware_${version_debian}.cpio.gz > ${rep_tftp}/debian-installer/$1/initrd.gz
-        rm -f ${rep_tftp}/debian-installer/$1/initrd.gz.orig
+        # on conserve le fichier initrd.gz.orig
+        # pour tester sa somme de contrôle lors d'une prochaine remise en place du dispositif
         echo -e "firmwares Debian incorporés à initrd.gz $1" | tee -a $compte_rendu
     else
         echo -e "${rouge}il manque le fichier initrd.gz Debian ${version_debian} pour $1 ?${neutre}" | tee -a $compte_rendu
@@ -637,13 +646,17 @@ gerer_firmware_debian()
 
 gestion_firmware_debian()
 {
-    # pour debian uniquement
+    # pour debian on incorpore les firmwares au fichier initrd.gz
     recuperer_somme_controle_firmware_depot_debian
     if [ "$?" = "0" ]
     then
         calculer_somme_controle_firmware_se3_debian
         gerer_firmware_debian
     fi
+    # pour ubuntu, c'est inutile
+    # cependant, on prépare les tests lors d'une prochaine remise en place du dispositif
+    cp -p ${rep_tftp}/ubuntu-installer/amd64/initrd.gz ${rep_tftp}/ubuntu-installer/amd64/initrd.gz.orig
+    cp -p ${rep_tftp}/ubuntu-installer/i386/initrd.gz ${rep_tftp}/ubuntu-installer/i386/initrd.gz.orig
 }
 
 transfert_repertoire_install()
