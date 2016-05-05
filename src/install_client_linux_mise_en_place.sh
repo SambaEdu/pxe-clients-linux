@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# version 20160429
+# version 20160505
 #
 
 ladate=$(date +%Y%m%d%H%M%S)
@@ -419,6 +419,7 @@ tester_fichiers()
     else
         # cas où le fichier linux n'est pas en présent
         a=""
+        eval linux_archive_${version}_$2=$(md5sum ${1}-installer/$2/linux | cut -f1 -d" ")
         eval b='$'linux_archive_${version}_$2
     fi
     # le fichier initrd.gz en place incorpore les firmwares dans le cas debian
@@ -435,6 +436,7 @@ tester_fichiers()
     else
         # cas où le fichier initrd.gz.orig n'est pas en présent
         c=""
+        eval initrd_archive_${version}_$2=$(md5sum ${1}-installer/$2/initrd.gz | cut -f1 -d" ")
         eval d='$'initrd_archive_${version}_$2
     fi
     # on regarde si les fichiers linux et initrd.gz sont identiques
