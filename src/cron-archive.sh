@@ -3,14 +3,42 @@
 git_dir="$HOME/pxe-clients-linux"
 archive_dir="$HOME/archive/pxe-clients-linux"
 log="$HOME/cron-archive.log"
-targz_shortname='install_client_linux_archive-tftp'
-targz_name="$targz_shortname.tar.gz"
-targz_src="$git_dir/archives/$targz_name"
-version_txt="$git_dir/archives/versions.txt"
-targz_symlink="$archive_dir/$targz_name"
-commit_pattern='COMMIT_ID'
-targz_target="$archive_dir/${targz_shortname}_${commit_pattern}.tar.gz"
-targz_pattern="${targz_shortname}_*.tar.gz"
+
+# Files to put in the archive directory.
+targz="$git_dir/archives/install_client_linux_archive-tftp.tar.gz"
+script="$git_dir/src/install_client_linux_mise_en_place.sh"
+versions="$git_dir/archives/versions.txt"
+
+# Takes 3 arguments:
+#
+#   1. The path of the source file.
+#   2. The commit ID.
+#   3. The target directory (the archive directory).
+#
+copy_in () {
+  local src="$1"
+  local commit_id="$2"
+  local archive_dir="$3"
+
+  local name="${src##*/}"
+  local shortname="${name%%.*}"        # name without the extension
+  local extension="${name#$shortname}" # extension with the dot charater
+
+  local target_pattern="${shortname}_*${extension}"
+  local target_name="${shortname}_${commit_id}${extension}"
+  local target="$archive_dir/${target_name}"
+  local symlink="$archive_dir/$name"
+
+  # Copy the source to archive.
+  cp -a "$src" "$target"
+
+  # Update the symlink.
+  rm -f "$symlink"
+  ln -s "$target_name" "$symlink"
+
+  # Remove old file(s).
+  find "$archive_dir" -maxdepth 1 -type f -name "$target_pattern" '!' -name "$target_name" -delete
+}
 
 exec >"$log" 2>&1
 date
@@ -36,22 +64,21 @@ timeout --kill-after=10s 20s git pull || {
 # The last commit id (just the last 10 characters).
 commit_id=$(git log --format="%H" -n 1 | sed -r 's/^(.{10}).*$/\1/')
 
-targz_target=$(printf '%s' "$targz_target" | sed "s/$commit_pattern/$commit_id/")
-targz_target_name="${targz_target##*/}"
+n=$(find "$archive_dir" -maxdepth 1 -type f -name "*${commit_id}*" | wc -l)
 
-if [ ! -f "$targz_target" ]
+if [ "$n" = '0' ]
 then
-    # New archive to build and put in the site.
-    if (cd "${git_dir}/src/" && './build-archive.sh')
+    # Need to build a new archive to build.
+    if (cd "$git_dir/src/" && './build-archive.sh')
     then
-        cp -a "$targz_src" "$targz_target"
-        rm -f "$targz_symlink"
-        ln -s "$targz_target_name" "$targz_symlink"
+        copy_in "$targz"    "$commit_id" "$archive_dir"
+        copy_in "$script"   "$commit_id" "$archive_dir"
+        copy_in "$versions" "$commit_id" "$archive_dir"
     fi
+    # Clean the git repository.
+    git checkout "$targz" "$versions"
+else
+    echo 'Files already present in archive.'
 fi
-
-# Cleaning.
-git checkout "$targz_src" "$version_txt"
-find "$archive_dir" -type f -name "$targz_pattern" ! -name "$targz_target_name" -delete
 
 
