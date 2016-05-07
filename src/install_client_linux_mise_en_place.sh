@@ -35,7 +35,7 @@ option_ubuntu="oui"
 # url des dépôts
 #
 url_debian="ftp.fr.debian.org/debian"
-url_ubuntu="archive.ubuntu.com/ubuntu"
+url_ubuntu="fr.archive.ubuntu.com/ubuntu"
 depot_firmware_debian="cdimage.debian.org/cdimage/unofficial/non-free/firmware"
 
 #####
@@ -814,8 +814,11 @@ END
             chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
             chmod 600 /etc/apt-cacher-ng/security.conf
             
-            # config propre ubuntu
+            # config propre ubuntu : est-ce utile ?
             echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
+            # rajouter modif configuration d'apt-cacher-ng : /etc/apt-cacher-ng/acng.config
+            # uniquement pour un se3-squeeze : problème lors de l'installation via pxe de xenial
+            # [TODO]
             
             if [ ! -e "/var/se3/apt-cacher-ng" ]
             then 
