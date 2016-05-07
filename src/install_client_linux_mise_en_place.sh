@@ -814,11 +814,8 @@ END
             chown apt-cacher-ng:apt-cacher-ng /etc/apt-cacher-ng/security.conf
             chmod 600 /etc/apt-cacher-ng/security.conf
             
-            # config propre ubuntu : est-ce utile ?
+            # config propre ubuntu :
             echo "http://fr.archive.ubuntu.com/ubuntu/" > /etc/apt-cacher-ng/backends_ubuntu
-            # rajouter modif configuration d'apt-cacher-ng : /etc/apt-cacher-ng/acng.config
-            # uniquement pour un se3-squeeze : problème lors de l'installation via pxe de xenial
-            # [TODO]
             
             if [ ! -e "/var/se3/apt-cacher-ng" ]
             then 
@@ -831,6 +828,14 @@ END
         echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
         service apt-cacher-ng restart
         echo ""
+        # modification de la configuration d'apt-cacher-ng : /etc/apt-cacher-ng/acng.conf
+        # uniquement pour un se3-squeeze : problème lors de l'installation via pxe de xenial avec apt-cacher-ng
+        if [ "$version_se3" = "squeeze" ]
+        then
+            # on rajoute une ligne à la fin du fichier de configuration d'apt-cacher-ng
+            echo "VfilePattern = (^|.*/)(Index|Packages(\.gz|\.bz2|\.lzma|\.xz)?|InRelease|Release|Release\.gpg|Sources(\.gz|\.bz2|\.lzma|\.xz)?|release|index\.db-.*\.gz|Contents-[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|pkglist[^/]*\.bz2|rclist[^/]*\.bz2|meta-release[^/]*|Translation[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|MD5SUMS|SHA1SUMS|((setup|setup-legacy)(\.ini|\.bz2|\.hint)(\.sig)?)|mirrors\.lst|repo(index|md)\.xml(\.asc|\.key)?|directory\.yast|products|content(\.asc|\.key)?|media|filelists\.xml\.gz|filelists\.sqlite\.bz2|repomd\.xml|packages\.[a-zA-Z][a-zA-Z]\.gz|info\.txt|license\.tar\.gz|license\.zip|.*\.(db|files|abs)(\.tar(\.gz|\.bz2|\.lzma|\.xz))?|metalink\?repo|.*prestodelta\.xml\.gz|repodata/.*\.(xml|sqlite)(\.gz|\.bz2|\.lzma|\.xz))$|/dists/.*/installer-[^/]+/[^0-9][^/]+/images/.*"  >> /etc/apt-cacher-ng/acng.conf
+        fi
+        
         # Paramétrage des fichiers preseed
         echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
         # [en prévision d'une évolution TODO : il faudra décommenter]
