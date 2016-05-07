@@ -30,7 +30,7 @@ copy_in () {
   local symlink="$archive_dir/$name"
 
   # Copy the source to archive.
-  cp -a "$src" "$target"
+  cp "$src" "$target"
 
   # Update the symlink.
   rm -f "$symlink"
