@@ -823,18 +823,24 @@ END
             fi
             echo ""
         fi
-        # restart apt-cacher-ng
-        # pour être certain que le service est disponible suite à une éventuelle mise à jour de se3-clonage
-        echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
-        service apt-cacher-ng restart
-        echo ""
         # modification de la configuration d'apt-cacher-ng : /etc/apt-cacher-ng/acng.conf
         # uniquement pour un se3-squeeze : problème lors de l'installation via pxe de xenial avec apt-cacher-ng
         if [ "$version_se3" = "squeeze" ]
         then
             # on rajoute une ligne à la fin du fichier de configuration d'apt-cacher-ng
-            echo "VfilePattern = (^|.*/)(Index|Packages(\.gz|\.bz2|\.lzma|\.xz)?|InRelease|Release|Release\.gpg|Sources(\.gz|\.bz2|\.lzma|\.xz)?|release|index\.db-.*\.gz|Contents-[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|pkglist[^/]*\.bz2|rclist[^/]*\.bz2|meta-release[^/]*|Translation[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|MD5SUMS|SHA1SUMS|((setup|setup-legacy)(\.ini|\.bz2|\.hint)(\.sig)?)|mirrors\.lst|repo(index|md)\.xml(\.asc|\.key)?|directory\.yast|products|content(\.asc|\.key)?|media|filelists\.xml\.gz|filelists\.sqlite\.bz2|repomd\.xml|packages\.[a-zA-Z][a-zA-Z]\.gz|info\.txt|license\.tar\.gz|license\.zip|.*\.(db|files|abs)(\.tar(\.gz|\.bz2|\.lzma|\.xz))?|metalink\?repo|.*prestodelta\.xml\.gz|repodata/.*\.(xml|sqlite)(\.gz|\.bz2|\.lzma|\.xz))$|/dists/.*/installer-[^/]+/[^0-9][^/]+/images/.*"  >> /etc/apt-cacher-ng/acng.conf
+            # si elle n'est pas déjà présente
+            if ! grep -Eq "^[[:space:]]*VfilePattern[[:space:]]*=" /etc/apt-cacher-ng/acng.conf
+            then
+                echo "VfilePattern = (^|.*/)(Index|Packages(\.gz|\.bz2|\.lzma|\.xz)?|InRelease|Release|Release\.gpg|Sources(\.gz|\.bz2|\.lzma|\.xz)?|release|index\.db-.*\.gz|Contents-[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|pkglist[^/]*\.bz2|rclist[^/]*\.bz2|meta-release[^/]*|Translation[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|MD5SUMS|SHA1SUMS|((setup|setup-legacy)(\.ini|\.bz2|\.hint)(\.sig)?)|mirrors\.lst|repo(index|md)\.xml(\.asc|\.key)?|directory\.yast|products|content(\.asc|\.key)?|media|filelists\.xml\.gz|filelists\.sqlite\.bz2|repomd\.xml|packages\.[a-zA-Z][a-zA-Z]\.gz|info\.txt|license\.tar\.gz|license\.zip|.*\.(db|files|abs)(\.tar(\.gz|\.bz2|\.lzma|\.xz))?|metalink\?repo|.*prestodelta\.xml\.gz|repodata/.*\.(xml|sqlite)(\.gz|\.bz2|\.lzma|\.xz))$|/dists/.*/installer-[^/]+/[^0-9][^/]+/images/.*"  >> /etc/apt-cacher-ng/acng.conf
+            fi
         fi
+        # redémarrage du serveur apt-cacher-ng
+        # pour être certain que le service est disponible
+        # suite à une éventuelle mise à jour de se3-clonage
+        # ou une relance de la mise en place du mécanisme
+        echo "on redémarre le service apt-cacher-ng" | tee -a $compte_rendu
+        service apt-cacher-ng restart
+        echo ""
         
         # Paramétrage des fichiers preseed
         echo "correction des fichiers de preseed Debian ${version_debian}" | tee -a $compte_rendu
