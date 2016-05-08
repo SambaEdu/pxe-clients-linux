@@ -155,7 +155,7 @@ installation_se3_clonage()
 installation_se3_clients_linux()
 {
     echo "installation/upgrade du module client-linux" | tee -a "$compte_rendu"
-    apt-get install se3-clients-linux --allow-unauthenticated
+    apt-get install se3-clients-linux --yes --allow-unauthenticated
     echo ""
 }
 
