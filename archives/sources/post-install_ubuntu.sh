@@ -221,49 +221,93 @@ recuperer_script_integration()
 
 recuperer_nom_client()
 {
-    # cela ne concerne que le cas où il n'y a qu'une carte réseau
-    # eth0 ou HWaddr ? [TODO : gestion du cas où on a plusieurs cartes réseaux]
-    t=$(ifconfig | grep eth0 | sed -e "s|.*HWaddr ||" | wc -l)
-    if [ "${t}" = "1" ]
+    # on prend les adresses mac de toutes les cartes
+    mac=$(ifconfig | grep HWaddr | awk -- '{ print $5 }')
+    # on teste s'il y a ou non des adresses mac qui permettent de joindre l'annuaire
+    if [ "$mac" = "" ]
     then
-        # Il semble qu'on n'entre pas ici en post-inst exécuté en fin d'installation
-        mac=$(ifconfig | grep HWaddr | sed -e "s|.*HWaddr ||")
-        echo "une adresse mac trouvée : $mac" | tee -a $compte_rendu
-        if [ -n "$mac" ]
-        then
-            #nom_machine=$(ldapsearch -xLLL macAddress=$mac cn|grep "^cn: "|sed -e "s|^cn: ||")
-            t=$(ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||" | head -n1)
-            if [ -z "$t" ]
+        # cas improbable…
+        # il n'y a pas d'adresse mac : pas de carte réseau ?
+        # étonnant si on a installé la machine via pxe…
+        echo "Pas de carte réseau ?" | tee -a $compte_rendu
+        # la machine doit être nommée : on entrera dans la boucle while ci-dessous…
+    else
+        # il y a au moins une carte réseau
+        # on continue en inspectant les différentes addresses mac
+        # jusqu'à en trouver une qui permet de joindre l'annuaire Ldap
+        # normalement, ce devrait être la 1ère de la liste
+        for i in $mac
+        do
+            lecture_annuaire=$(ldapsearch -xLLL macAddress=$i cn | grep "^cn: " | sed -e "s|^cn: ||" | head -n1)
+            if [ -z "$lecture_annuaire" ]
             then
-                echo "nom de machine non trouvé dans l'annuaire LDAP" | tee -a $compte_rendu
+                # nom de la machine non trouvée dans l'annuaire ?
+                # ou bien carte non branchée sur le réseau ?
+                # ou bien… ?
+                # on passe à la suivante
+                # il faudra signaler le cas où aucune mention de nom pour le client n'est dans l'annuaire
+                adresse=""
             else
-                tab_nom_machine=($(ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||"))
+                # on a pu joindre l'annuaire à l'aide de la carte réseau analysée
+                adresse="1"
+                echo "une adresse mac trouvée : $i" | tee -a $compte_rendu
+                tab_nom_machine=($(ldapsearch -xLLL macAddress=$i cn | grep "^cn: " | sed -e "s|^cn: ||"))
                 if [ "${#tab_nom_machine[*]}" = "1" ]
                 then
+                    # l'annuaire contient un nom et un seul
+                    # on regarde la conformité du nom issu de l'annuaire
                     t=$(echo "${tab_nom_machine[0]}" | sed -e "s|[^A-Za-z0-9_\-]||g")
                     t2=$(echo "${tab_nom_machine[0]}" | sed -e "s|_|-|g")
                     if [ "$t" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides${neutre}"
+                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides${neutre}" | tee -a $compte_rendu
+                        # on va donc regarder l'éventuelle carte suivante de la liste
+                        # et s'il n'y en a plus, on entrera dans la boucle while ci-desous
+                        # pour choisir un nom de machine
                     elif [ "$t2" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des ${jaune}_${orange} qui seront remplaces par des ${jaune}-${neutre}"
+                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des ${jaune}_${orange} qui seront remplaces par des ${jaune}-${neutre}" | tee -a $compte_rendu
                         nom_machine="$t2"
-                        echo "nouveau nom : $nom_machine"
+                        echo "nouveau nom : $nom_machine" | tee -a $compte_rendu
                         sleep 2
+                        # il faut sortir de la boucle
+                        # on ne regarde pas les éventuelles cartes réseau suivantes de la liste
+                        # faut-il quand même le faire ? [TODO]
+                        continue
                     else
+                        # le nom de l'annuaire est conforme : on le prend
                         nom_machine=${tab_nom_machine[0]}
-                        echo "nom de machine trouvé dans l'annuaire LDAP : $nom_machine"
+                        echo "nom de machine trouvé dans l'annuaire LDAP : $nom_machine" | tee -a $compte_rendu
+                        # il faut sortir de la boucle
+                        # on ne regarde pas les éventuelles cartes réseau suivantes de la liste
+                        # faut-il quand même le faire ? [TODO]
+                        continue
                     fi
                 else
-                    echo "${rouge}attention : l'adresse MAC ${neutre}${mac}${rouge} est associée à plusieurs machines :${neutre}"
-                    ldapsearch -xLLL macAddress=$mac cn | grep "^cn: " | sed -e "s|^cn: ||"
+                    # l'annuaire contient plusieurs noms pour la carte réseau
+                    # on le signale mais on ne retient aucun nom de machine
+                    echo "${rouge}Attention : l'adresse MAC ${neutre}${i}${rouge} est associée à plusieurs machines :${neutre}" | tee -a $compte_rendu
+                    ldapsearch -xLLL macAddress=$i cn | grep "^cn: " | sed -e "s|^cn: ||"
+                    # faut-il sortir de la boucle,
+                    # sans regarder les éventuelles cartes réseau de la liste ? [TODO]
                 fi
             fi
-        else
-            echo "Attention : adresse MAC illisible !"
-        fi
+        done
     fi
+    # on signale si aucune carte réseau n'a permis de trouver un nom
+    if [ "$adresse" = "" ]
+    then
+        echo "${rouge}Attention : aucune carte réseau n'a permis de trouver un nom pour la machine${neutre}" | tee -a $compte_rendu
+    fi
+    # plusieurs cas possibles à envisager :
+    #  cas où l'annuaire ne contient pas de nom de machine associé à une des cartes réseau de la machine
+    #  cas où l'annuaire contient plusieurs noms de machine associés à une des cartes réseau de la machine
+    #  cas où on n'a pu joindre un annuaire
+    #  cas où il n'y a pas de carte réseau
+    #  autres cas ?
+    # dans tous ces cas, $nom_machine sera vide : il faut donner un nom…
+    # par contre, si $nom_machine n'est pas vide,
+    # on n'entre pas dans la boucle while ci-dessous
     while [ -z "$nom_machine" ]
     do
         echo -e "machine non connue de l'annuaire, Veuillez saisir un nom"
@@ -272,12 +316,14 @@ recuperer_nom_client()
         echo "nom de machine: $nom_machine"
         if [ -n "${nom_machine}" ]
         then
+            # le nom récupéré commence-t-il par une lettre ?
             t=$(echo "${nom_machine:0:1}" | grep "[A-Za-z]")
             if [ -z "$t" ]
             then
                 echo "le nom doit commencer par une lettre"
                 nom_machine=""
             else
+                # le nom récupéré contient-il des caractères non conformes ?
                 t=$(echo "${nom_machine}" | sed -e "s/[A-Za-z0-9\-]//g")
                 if [ -n "$t" ]
                 then
