@@ -204,15 +204,15 @@ EOF
 
 recuperer_script_integration()
 {
-    echo "Telechargement de integration_xenial.bash..." | tee -a $compte_rendu
+    echo "Téléchargement de integration_xenial.bash..." | tee -a $compte_rendu
 	mkdir -p /root/bin
 	cd /root/bin
 	wget http://${ip_se3}/install/integration_xenial.bash >/dev/null 2>&1
 	if [ "$?" = "0" ]; then
-		echo "Telechargement reussi." | tee -a $compte_rendu
+		echo "Téléchargement réussi." | tee -a $compte_rendu
 		chmod +x integration_xenial.bash
 	else
-		echo "Echec du telechargement." | tee -a $compte_rendu
+		echo "Échec du téléchargement." | tee -a $compte_rendu
 		echo "Le poste ne pourra pas être intégré au domaine" | tee -a $compte_rendu 
 		ISCRIPT="erreur"
 	fi   
