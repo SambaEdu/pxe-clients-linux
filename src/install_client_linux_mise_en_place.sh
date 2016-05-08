@@ -154,13 +154,9 @@ installation_se3_clonage()
 
 installation_se3_clients_linux()
 {
-    # vérification de la présence du paquet client-linux
-    if [ ! -e "${rep_client_linux}" ]
-    then
-        echo "installation du module client-linux" | tee -a $compte_rendu
-        apt-get install se3-clients-linux -y --force-yes
-        echo ""
-    fi
+    echo "installation/upgrade du module client-linux" | tee -a "$compte_rendu"
+    apt-get install se3-clients-linux --allow-unauthenticated
+    echo ""
 }
 
 gerer_repertoires()
@@ -693,6 +689,11 @@ copier_script_integration()
         script_integration="0"
         return 0
     fi
+
+    # Add a symlink to the lib.sh "toolbox".
+    if [ ! -e "$rep_lien/lib.sh" ]
+        ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
+    if
 }
 
 gestion_script_integration()
