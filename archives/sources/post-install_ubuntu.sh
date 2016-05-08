@@ -260,13 +260,13 @@ recuperer_nom_client()
                     t2=$(echo "${tab_nom_machine[0]}" | sed -e "s|_|-|g")
                     if [ "$t" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides${neutre}" | tee -a $compte_rendu
+                        echo -e "${orange}le nom de machine ${tab_nom_machine[0]} contient des caracteres invalides${neutre}" | tee -a $compte_rendu
                         # on va donc regarder l'éventuelle carte suivante de la liste
                         # et s'il n'y en a plus, on entrera dans la boucle while ci-desous
                         # pour choisir un nom de machine
                     elif [ "$t2" != "${tab_nom_machine[0]}" ]
                     then
-                        echo "${orange}le nom de machine ${tab_nom_machine[0]} contient des ${jaune}_${orange} qui seront remplaces par des ${jaune}-${neutre}" | tee -a $compte_rendu
+                        echo -e "${orange}le nom de machine ${tab_nom_machine[0]} contient des ${jaune}_${orange} qui seront remplaces par des ${jaune}-${neutre}" | tee -a $compte_rendu
                         nom_machine="$t2"
                         echo "nouveau nom : $nom_machine" | tee -a $compte_rendu
                         sleep 2
@@ -286,7 +286,7 @@ recuperer_nom_client()
                 else
                     # l'annuaire contient plusieurs noms pour la carte réseau
                     # on le signale mais on ne retient aucun nom de machine
-                    echo "${rouge}Attention : l'adresse MAC ${neutre}${i}${rouge} est associée à plusieurs machines :${neutre}" | tee -a $compte_rendu
+                    echo -e "${rouge}Attention : l'adresse MAC ${neutre}${i}${rouge} est associée à plusieurs machines :${neutre}" | tee -a $compte_rendu
                     ldapsearch -xLLL macAddress=$i cn | grep "^cn: " | sed -e "s|^cn: ||"
                     # faut-il sortir de la boucle,
                     # sans regarder les éventuelles cartes réseau de la liste ? [TODO]
@@ -297,7 +297,7 @@ recuperer_nom_client()
     # on signale si aucune carte réseau n'a permis de trouver un nom
     if [ "$adresse" = "" ]
     then
-        echo "${rouge}Attention : aucune carte réseau n'a permis de trouver un nom pour la machine${neutre}" | tee -a $compte_rendu
+        echo -e "${rouge}Attention : aucune carte réseau n'a permis de trouver un nom pour la machine${neutre}" | tee -a $compte_rendu
     fi
     # plusieurs cas possibles à envisager :
     #  cas où l'annuaire ne contient pas de nom de machine associé à une des cartes réseau de la machine
