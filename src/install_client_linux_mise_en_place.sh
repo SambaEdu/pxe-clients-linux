@@ -1054,6 +1054,7 @@ recuperer_variables_se3
 extraire_archive_tftp
 installation_se3_clonage
 installation_se3_clients_linux
+download_open_sankore_deb
 gerer_repertoires
 verifier_presence_mkpasswd
 mise_en_place_tftpboot
@@ -1061,7 +1062,6 @@ gestion_netboot
 gestion_firmware_debian
 transfert_repertoire_install
 gestion_script_integration
-download_open_sankore_deb
 gestion_cles_publiques
 gestion_fichiers_tftp
 gestion_miroir
