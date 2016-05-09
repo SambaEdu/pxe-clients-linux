@@ -31,6 +31,22 @@ compte_rendu=/root/compte_rendu_post-install_${ladate}.txt
 # les fonctions (début)
 #----- -----
 
+recuperer_lib_sh()
+{
+	# Récupération de la librairie lib.sh des fonctions shell 
+	wget -q http://${ip_se3}/lib.sh
+	
+	if [ "$?" = "0" ]
+    then
+		chmod +x lib.sh
+		mv lib.sh /root/bin/lib.sh
+		. /root/bin/lib.sh
+    else
+        echo "${rouge}échec de la recupération de la libraire lib.sh" | tee -a $compte_rendu
+        sleep 5
+    fi
+}
+
 arret_gdm()
 {
     # On arrête le gestionnaire de connexion
@@ -600,6 +616,7 @@ message_fin()
 # début du programme
 arret_gdm
 recuperer_parametres
+recuperer_lib_sh
 test_se3
 message_debut
 cles_publiques_ssh
