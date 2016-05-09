@@ -1054,6 +1054,7 @@ mise_en_place_tftpboot
 gestion_netboot
 gestion_firmware_debian
 transfert_repertoire_install
+download_open_sankore_deb
 gestion_script_integration
 gestion_cles_publiques
 gestion_fichiers_tftp
