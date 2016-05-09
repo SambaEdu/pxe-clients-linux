@@ -156,6 +156,10 @@ installation_se3_clients_linux()
 {
     echo "installation/upgrade du module client-linux" | tee -a "$compte_rendu"
     apt-get install se3-clients-linux --yes --allow-unauthenticated
+    
+    # Add all function of lib.sh library of se3-clients-linux package
+	.  "$rep_client_linux/lib.sh"
+   
     echo ""
 }
 
@@ -708,9 +712,6 @@ gestion_script_integration()
     then
         ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
     fi
-    
-	# Add all function of lib.sh library of se3-clients-linux package
-	.  "$rep_client_linux/lib.sh"
     
     echo ""
 }
