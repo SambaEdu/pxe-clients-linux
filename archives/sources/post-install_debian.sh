@@ -247,14 +247,23 @@ recuperer_script_integration()
 
 recuperer_nom_client()
 {
-    # on détecte d'abord les cartes connectées
-    # pas besoin d'inspecter celles qui ne sont pas connectées ;-)
-    carte_disponibles=$(nmcli -t -f device,type,state dev status | grep -v lo | grep -v indisponible | cut -d":" -f1)
+    # On détecte d'abord les cartes connectées uniquement.
+    local available_ifaces=$(
+        LC_ALL=C nmcli -t -f device,type,state dev status \
+            | grep -v '^lo:'                              \
+            | grep ':connected$'                          \
+            | cut -d':' -f1
+    )
+
+    # Pour récupérer l'adresse MAC de eth0, une manière parmi d'autres
+    # (celle que personnellement j'utiliserais) :
+    local macaddress=$(ip link show eth0 | awk '/link\/ether/ {print $2}')
+
     # le 1er test se fera donc sur cette variable $mac → $carte_disponibles
     # ensuite, s'il y en a, on bouclera sur les cartes disponibles
     # et on prendra son adresse mac :
     mac=$(ip -o link | grep eth0 | cut -d" " -f20)
-    # ou alors :
+    # ou alors : (Les deux commandes ne donnent pas le même résultat ?)
     mac=$(ip -o link | grep eth0 | awk -F"link/ether" '{print $2}' | cut -d" " -f2)
     
     # en attendant, on garde l'ancien code
