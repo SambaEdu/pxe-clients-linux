@@ -692,6 +692,7 @@ copier_script_integration()
 
     # Add a symlink to the lib.sh "toolbox".
     if [ ! -e "$rep_lien/lib.sh" ]
+    then
         ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
     fi
 }
