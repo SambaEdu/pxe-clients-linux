@@ -257,6 +257,7 @@ recuperer_nom_client()
     # ou alors :
     mac=$(ip -o link | grep eth0 | awk -F"link/ether" '{print $2}' | cut -d" " -f2)
     
+    # en attendant, on garde l'ancien code
     # on prend les adresses mac de toutes les cartes
     mac=$(ifconfig | grep HWaddr | awk -- '{ print $5 }')
     # on teste s'il y a ou non des adresses mac qui permettent de joindre l'annuaire
