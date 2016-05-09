@@ -156,6 +156,10 @@ installation_se3_clients_linux()
 {
     echo "installation/upgrade du module client-linux" | tee -a "$compte_rendu"
     apt-get install se3-clients-linux --yes --allow-unauthenticated
+    
+    # Add all function of lib.sh library of se3-clients-linux package
+	.  "$rep_client_linux/lib.sh"
+   
     echo ""
 }
 
@@ -701,12 +705,14 @@ gestion_script_integration()
     copier_script_integration debian
     # on met en place le lien pour ubuntu
     copier_script_integration ubuntu
+    
     # Add a symlink to the lib.sh "toolbox".
     echo "creation du lien vers lib.sh"
     if [ ! -e "$rep_lien/lib.sh" ]
     then
         ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
     fi
+    
     echo ""
 }
 
@@ -1055,6 +1061,7 @@ gestion_netboot
 gestion_firmware_debian
 transfert_repertoire_install
 gestion_script_integration
+download_open_sankore_deb
 gestion_cles_publiques
 gestion_fichiers_tftp
 gestion_miroir

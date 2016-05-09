@@ -580,40 +580,7 @@ chown -R enseignant:enseignant /home/enseignant/.config
 chmod -R 770 /home/enseignant/.config
 }
 
-# Installer OpenSankore
-install_open_sankore()
-{
-echo "Installation d'Open-Sankore" | tee -a $compte_rendu
-url_open_sankore='http://www.cndp.fr/open-sankore/OpenSankore/Releases/v2.5.1'
 
-test_archi=$(uname -r | grep -c amd64)
-if [ "$test_arch" = "1" ]
-then
-	wget -q "$url_open_sankore/Open-Sankore_Ubuntu_12.04_2.5.1_amd64.zip"
-	if [ "$?" = "0" ] 
-	then
-		mkdir open-sankore
-		unzip -d open-sankore Open-Sankore_Ubuntu*.zip 
-		dpkg -i open-sankore/Open-Sankore*.deb > /dev/null
-		apt-get install -f 
-		rm -rf Open-Sankore_Ubuntu*.zip open-sankore
-	fi
-fi
-
-test_archi=$(uname -r | grep -c i386)
-if [ "$test_arch" = "1" ]
-then
-	wget -q "$url_open_sankore/Open-Sankore_Ubuntu_12.04_2.5.1_i386.zip"
-	if [ "$?" = "0" ] 
-	then
-		mkdir open-sankore
-		unzip -d open-sankore Open-Sankore_Ubuntu*.zip 
-		dpkg -i open-sankore/Open-Sankore*.deb > /dev/null
-		apt-get install -f 
-		rm -rf Open-Sankore_Ubuntu*.zip open-sankore
-	fi
-fi
-}
 
 message_fin()
 {
