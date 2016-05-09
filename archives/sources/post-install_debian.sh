@@ -247,6 +247,16 @@ recuperer_script_integration()
 
 recuperer_nom_client()
 {
+    # on détecte d'abord les cartes connectées
+    # pas besoin d'inspecter celles qui ne sont pas connectées ;-)
+    carte_disponibles=$(nmcli -t -f device,type,state dev status | grep -v lo | grep -v indisponible | cut -d":" -f1)
+    # le 1er test se fera donc sur cette variable $mac → $carte_disponibles
+    # ensuite, s'il y en a, on bouclera sur les cartes disponibles
+    # et on prendra son adresse mac :
+    mac=$(ip -o link | grep eth0 | cut -d" " -f20)
+    # ou alors :
+    mac=$(ip -o link | grep eth0 | awk -F"link/ether" '{print $2}' | cut -d" " -f2)
+    
     # on prend les adresses mac de toutes les cartes
     mac=$(ifconfig | grep HWaddr | awk -- '{ print $5 }')
     # on teste s'il y a ou non des adresses mac qui permettent de joindre l'annuaire
