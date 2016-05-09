@@ -689,12 +689,6 @@ copier_script_integration()
         script_integration="0"
         return 0
     fi
-
-    # Add a symlink to the lib.sh "toolbox".
-    if [ ! -e "$rep_lien/lib.sh" ]
-    then
-        ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
-    fi
 }
 
 gestion_script_integration()
@@ -707,6 +701,12 @@ gestion_script_integration()
     copier_script_integration debian
     # on met en place le lien pour ubuntu
     copier_script_integration ubuntu
+    # Add a symlink to the lib.sh "toolbox".
+    echo "creation du lien vers lib.sh"
+    if [ ! -e "$rep_lien/lib.sh" ]
+    then
+        ln -s "$rep_client_linux/lib.sh" "$rep_lien/lib.sh"
+    fi
     echo ""
 }
 
