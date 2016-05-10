@@ -1055,7 +1055,7 @@ extraire_archive_tftp
 installation_se3_clonage
 installation_se3_clients_linux
 gerer_repertoires
-download_open_sankore_deb
+download_open_sankore_deb "$rep_install"
 verifier_presence_mkpasswd
 mise_en_place_tftpboot
 gestion_netboot
