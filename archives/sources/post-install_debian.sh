@@ -635,7 +635,7 @@ integrer_domaine
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
 installer_liste_paquets
-install_open_sankore "$compte_rendu"
+install_open_sankore "$compte_rendu" "$ip_se3"
 configurer_grub
 menage_script
 activer_gdm

@@ -634,7 +634,7 @@ integrer_domaine
 maj_skel_compte_enseignant
 preconfigurer_ttf
 installer_liste_paquets
-install_open_sankore "$compte_rendu"
+install_open_sankore "$compte_rendu" "$ip_se3"
 configurer_grub
 menage_script
 activer_gdm
