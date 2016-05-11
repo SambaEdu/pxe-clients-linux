@@ -245,7 +245,7 @@ recuperer_script_integration()
     cd - >/dev/null
 }
 
-recuperer_nom_client_new()
+recuperer_nom_client()
 {
     # On détecte d'abord uniquement les cartes connectées.
     local available_ifaces=$(
@@ -370,7 +370,7 @@ recuperer_nom_client_new()
     sleep 2
 }
 
-recuperer_nom_client()
+recuperer_nom_client_old()
 {
     # en attendant la nouvelle fonction, on garde l'ancien code
     # on prend les adresses mac de toutes les cartes
