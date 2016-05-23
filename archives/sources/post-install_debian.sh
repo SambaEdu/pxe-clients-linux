@@ -146,9 +146,9 @@ fi
 END
         cat >> /etc/wgetrc <<END
 # configuration du proxy lors de la post-installation 
-http_proxy=http://$ip_proxy:$port_proxy
-https_proxy=http://$ip_proxy:$port_proxy
-ftp_proxy=http://$ip_proxy:$port_proxy
+http_proxy = http://$ip_proxy:$port_proxy/
+https_proxy = http://$ip_proxy:$port_proxy/
+ftp_proxy = http://$ip_proxy:$port_proxy/
 use_proxy = on
 END
     else

@@ -1,2 +1,2 @@
-20160505;c714447e6425e953b80d527ff10747dd;install_client_linux_archive-tftp.tar.gz
-20160505;a885f7a73f902043040521988b69cc7f;install_client_linux_mise_en_place.sh
+20160513;949eb08e73204dafe38a287d34f14caa;install_client_linux_archive-tftp.tar.gz
+20160513;07fd3a9343e85c99bf1bea7de6beec07;install_client_linux_mise_en_place.sh
