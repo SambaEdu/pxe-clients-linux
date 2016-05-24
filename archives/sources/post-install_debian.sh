@@ -36,7 +36,6 @@ recuperer_lib_sh()
 {
     # Récupération de la librairie lib.sh des fonctions shell 
     wget -q http://${ip_se3}/install/lib.sh
-    
     if [ "$?" = "0" ]
     then
         chmod +x lib.sh
@@ -623,18 +622,8 @@ installer_liste_paquets()
     echo ""
 }
 
-configurer_grub()
+mot_de_passe_grub()
 {
-    echo "configuration de grub…" | tee -a $compte_rendu
-    # Virer l'entrée "mode de dépannage"
-    sed -i '/GRUB_DISABLE_RECOVERY/ s/^#//' /etc/default/grub
-    # resolution
-    sed -i "/^GRUB_GFXMODE/ s/=.*/=1024x768 800x600 640x480/" /etc/default/grub 
-    
-    # dernier os lancé par défaut
-    sed -i "/^GRUB_DEFAULT/ s/=.*/=saved/" /etc/default/grub 
-    sed -i "/^GRUB_DEFAULT=saved/a\GRUB_SAVEDEFAULT=true" /etc/default/grub 
-    
     # mise en place du mot de passe crypté
     # Le fichier /etc/grub.d/40_custom existe déjà,
     # il faut le rééditer en partant de zéro.
@@ -660,6 +649,22 @@ configurer_grub()
         # Ajout de l'option « --unrestricted ».
         sed -i "s/$pattern/& --unrestricted/" /etc/grub.d/10_linux
     fi
+}
+
+configurer_grub()
+{
+    echo "configuration de grub…" | tee -a $compte_rendu
+    # Virer l'entrée "mode de dépannage"
+    sed -i '/GRUB_DISABLE_RECOVERY/ s/^#//' /etc/default/grub
+    # resolution
+    sed -i "/^GRUB_GFXMODE/ s/=.*/=1024x768 800x600 640x480/" /etc/default/grub 
+    
+    # dernier os lancé par défaut
+    sed -i "/^GRUB_DEFAULT/ s/=.*/=saved/" /etc/default/grub 
+    sed -i "/^GRUB_DEFAULT=saved/a\GRUB_SAVEDEFAULT=true" /etc/default/grub 
+    
+    # on sécurise grub
+    mot_de_passe_grub
     
     # On met à jour la configuration de Grub.
     if ! update-grub >> /dev/null 2>&1
