@@ -649,6 +649,23 @@ mot_de_passe_grub()
         # Ajout de l'option « --unrestricted ».
         sed -i "s/$pattern/& --unrestricted/" /etc/grub.d/10_linux
     fi
+    
+    # Dans le cas d'un double-boot,
+    # on fait de même dans le fichier /etc/grub.d/30_os-prober
+    # et cela pour tous les systèmes présents
+    pattern="\"\${DEVICE}\")'"
+    if ! grep -- "$pattern" /etc/grub.d/30_os-prober | grep -q -- '--unrestricted'
+    then
+        # Ajout de l'option « --unrestricted ».
+        sed -i "s/$pattern/& --unrestricted/" /etc/grub.d/30_os-prober
+    fi
+    # y compris les systèmes GNU/Linux
+    pattern="'osprober-gnulinux-simple-\$boot_device_id'"
+    if ! grep -- "$pattern" /etc/grub.d/30_os-prober | grep -q -- '--unrestricted'
+    then
+        # Ajout de l'option « --unrestricted ».
+        sed -i "s/$pattern/& --unrestricted/" /etc/grub.d/30_os-prober
+    fi
 }
 
 configurer_grub()
