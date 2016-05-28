@@ -1006,11 +1006,17 @@ gestion_scripts_unefois()
         # ^. n'existe pas : on renomme all en ^.
         mv ${rep_client_linux}/unefois/all ${rep_client_linux}/unefois/\^\.
     else
-        # ^. existe : on copie le contenu de all dans ^. puis on supprime all
+        # ^. existe :
+        # on supprime les unefois des anciennes archives :
+        # (conf-ocs, get-ssh-key et installer_applis)
+        # ils seront remplacés par ceux de l'archive, contenus dans all
+        rm -f ${rep_client_linux}/unefois/\^\./conf-ocs*.unefois
+        rm -f ${rep_client_linux}/unefois/\^\./get-ssh-key.unefois
+        rm -f ${rep_client_linux}/unefois/\^\./installer_applis_perso*.unefois
+        # on copie le contenu de all dans ^.
+        # puis on supprime all
         cp ${rep_client_linux}/unefois/all/* ${rep_client_linux}/unefois/\^\./
         rm -rf ${rep_client_linux}/unefois/all
-        # on supprime l'ancien script conf-ocs.unefois
-        rm -f ${rep_client_linux}/unefois/\^\./conf-ocs.unefois
     fi 
     # gestion du répertoire ^* : remplacé par ^.
     [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
