@@ -1,0 +1,4 @@
+# liste perso de paquets à installer pour les clients-linux Debian
+# lors de la post-installation
+# ou lors de l'utilisation du script installer_applis_perso_20160430.unefois
+
