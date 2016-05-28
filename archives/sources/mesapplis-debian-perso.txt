@@ -1,2 +1,0 @@
-# liste perso de paquets à installer pour les clients-linux Debian lors de la post-installation
-
