@@ -170,16 +170,20 @@ gerer_repertoires()
     setfacl -m u:www-data:rx ${rep_client_linux}
     setfacl -m d:u:www-data:rx ${rep_client_linux}
     [ ! -e "${rep_temp}" ] && mkdir ${rep_temp}
-    # on préserve la liste des applis perso debian et ubuntu
-    if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
+    # gestion de la migration depuis une ancienne version éventuelle :
+    # on transfère la liste des applis perso debian et ubuntu
+    # dans /messcripts_perso (si elles ne s'y trouvent pas déjà)
+    if [ ! -e "$rep_install/messcripts_perso/mesapplis-debian-perso.txt" ]
     then
-        mv $rep_install/mesapplis-debian-perso.txt ${rep_temp}/
+        # on le transfère dans le répertoire /messcripts_perso
+        mv $rep_install/mesapplis-debian-perso.txt $rep_install/messcripts_perso/
     fi
-    if [ -e "$rep_install/mesapplis-ubuntu-perso.txt" ]
+    if [ ! -e "$rep_install/messcripts_perso/mesapplis-ubuntu-perso.txt" ]
     then
-        mv $rep_install/mesapplis-ubuntu-perso.txt ${rep_temp}/
+        mv $rep_install/mesapplis-ubuntu-perso.txt $rep_install/messcripts_perso/
     fi
     # on préserve le répertoire des scripts perso
+    # cela préservera de facto la liste perso des applis
     if [ -e "$rep_install/messcripts_perso" ]
     then
         mv $rep_install/messcripts_perso ${rep_temp}/
@@ -192,16 +196,7 @@ gerer_repertoires()
     chmod 755 $rep_install
     chown root $rep_install
     ln -s $rep_install $rep_lien
-    # on remet en place la liste des applis perso debian ou ubuntu
-    if [ -e "${rep_temp}/mesapplis-debian-perso.txt" ]
-    then
-        mv ${rep_temp}/mesapplis-debian-perso.txt $rep_install/
-    fi
-    if [ -e "${rep_temp}/mesapplis-ubuntu-perso.txt" ]
-    then
-        mv ${rep_temp}/mesapplis-ubuntu-perso.txt $rep_install/
-    fi
-    # et le répertoire des scripts perso
+    # on remet en place le répertoire des scripts perso
     if [ -e "${rep_temp}/messcripts_perso" ]
     then
         mv ${rep_temp}/messcripts_perso $rep_install/
