@@ -38,6 +38,7 @@ recuperer_lib_sh()
     wget -q http://${ip_se3}/install/lib.sh
     if [ "$?" = "0" ]
     then
+        echo "la librairie de fonctions lib.sh a bien été récupérée" | tee -a $compte_rendu
         chmod +x lib.sh
         mv lib.sh /root/bin/lib.sh
         . /root/bin/lib.sh
@@ -477,6 +478,21 @@ gerer_mesapplis()
     
 }
 
+recuperer_liste_perso()
+{
+    cd /root/bin/
+    echo "on récupère la liste des applis perso"
+    wget -q http://${ip_se3}/install/messcripts_perso/mesapplis-debian-perso.txt
+    if [ "$?" = "0" ]
+    then
+        echo "récupération de la liste réussie" | tee -a $compte_rendu
+    else
+        echo "${rouge}échec de la récupération de la liste des applis perso${neutre}" | tee -a $compte_rendu
+        # [gestion de cette erreur ? TODO]
+    fi
+    cd - >/dev/null
+}
+
 installer_liste_paquets()
 {
     echo -e "${jaune}"
@@ -629,9 +645,9 @@ message_fin()
 # début du programme
 arret_gdm
 recuperer_parametres
-recuperer_lib_sh
 test_se3
 message_debut
+recuperer_lib_sh
 cles_publiques_ssh
 permettre_ssh_root
 configurer_proxy
@@ -644,6 +660,7 @@ recuperer_nom_client
 integrer_domaine
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
+recuperer_liste_perso
 installer_liste_paquets
 install_open_sankore "$compte_rendu" "$ip_se3"
 configurer_grub

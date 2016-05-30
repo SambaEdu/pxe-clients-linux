@@ -176,11 +176,19 @@ gerer_repertoires()
     if [ ! -e "$rep_install/messcripts_perso/mesapplis-debian-perso.txt" ]
     then
         # on le transfère dans le répertoire /messcripts_perso
-        mv $rep_install/mesapplis-debian-perso.txt $rep_install/messcripts_perso/
+        # si elle existe (sinon, ce sera le fichier de l'archive : voir ci-dessous)
+        if [ -e "$rep_install/mesapplis-debian-perso.txt" ]
+        then
+            mv $rep_install/mesapplis-debian-perso.txt $rep_install/messcripts_perso/
+        fi
     fi
     if [ ! -e "$rep_install/messcripts_perso/mesapplis-ubuntu-perso.txt" ]
     then
-        mv $rep_install/mesapplis-ubuntu-perso.txt $rep_install/messcripts_perso/
+        # si elle existe (sinon, ce sera le fichier de l'archive : voir ci-dessous)
+        if [ -e "$rep_install/mesapplis-ubuntu-perso.txt" ]
+        then
+            mv $rep_install/mesapplis-ubuntu-perso.txt $rep_install/messcripts_perso/
+        fi
     fi
     # on préserve le répertoire des scripts perso
     # cela préservera de facto la liste perso des applis
