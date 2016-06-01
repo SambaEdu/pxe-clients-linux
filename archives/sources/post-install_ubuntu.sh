@@ -95,6 +95,7 @@ message_debut()
     echo -e "${neutre}"
     echo -e "appuyez sur Entrée pour continuer (sinon, attendre 10s…)"
     read -t 10 dummy
+    echo ""
 }
 
 cles_publiques_ssh()
