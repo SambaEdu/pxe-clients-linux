@@ -482,7 +482,8 @@ gerer_mesapplis()
 recuperer_liste_perso()
 {
     cd /root/bin/
-    echo "on récupère la liste des applis perso"
+    echo "" | tee -a $compte_rendu
+    echo "on récupère la liste des applis perso" | tee -a $compte_rendu
     wget -q http://${ip_se3}/install/messcripts_perso/mesapplis-debian-perso.txt
     if [ "$?" = "0" ]
     then
