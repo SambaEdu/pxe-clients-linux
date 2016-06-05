@@ -77,7 +77,7 @@ gerer_mesapplis()
             installer_un_paquet $i
         done
      else
-        echo -e "${rouge}pas de paquets à installé dans $1 ?${neutre}"
+        echo -e "${rouge}pas de paquets à installer dans $1 ?${neutre}"
      fi
     
 }
