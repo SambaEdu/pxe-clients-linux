@@ -675,6 +675,7 @@ gestion_firmware_debian()
 
 transfert_repertoire_install()
 {
+    echo "mise en place du répertoire $rep_install/" | tee -a $compte_rendu
     # on met en place les fichiers dans le répertoire install sans écraser ni la liste des applis perso, ni le répertoire des scripts perso
     cp -n -r ${src}/${archive_tftp}/post-install* ${src}/${archive_tftp}/preseed*.cfg ${src}/${archive_tftp}/mesapplis*.txt ${src}/${archive_tftp}/messcripts_perso ${src}/${archive_tftp}/autologin_*.conf /var/remote_adm/.ssh/id_rsa.pub $rep_lien/
     # les fichiers gdm3 et lightdm serviront lors de la post-installation
@@ -1007,6 +1008,7 @@ END
 
 gestion_scripts_unefois()
 {
+    echo "gestion des scripts unefois" | tee -a $compte_rendu
     # voir la doc du paquet se3-clients-linux pour le rôle du fichier PAUSE
     [ -e "${rep_client_linux}/unefois/PAUSE" ] && mv ${rep_client_linux}/unefois/PAUSE ${rep_client_linux}/unefois/NO-PAUSE
     
