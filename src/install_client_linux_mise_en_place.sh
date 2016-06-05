@@ -5,6 +5,7 @@
 #
 
 ladate=$(date +%Y%m%d%H%M%S)
+reference=$(date +%Y%m%d)
 
 #####
 # quelques couleurs ;-)
@@ -1034,6 +1035,9 @@ gestion_scripts_unefois()
     # gestion du répertoire ^* : remplacé par ^.
     [ -e ${rep_client_linux}/unefois/\^\* ] && mv ${rep_client_linux}/unefois/\^\*/*  ${rep_client_linux}/unefois/\^\./
     rm -rf ${rep_client_linux}/unefois/\^\*
+    # on référence les scripts conf-ocs et installer_applis
+    mv ${rep_client_linux}/unefois/\^\./conf-ocs*.unefois ${rep_client_linux}/unefois/\^\./conf-ocs_$reference.unefois
+    mv ${rep_client_linux}/unefois/\^\./installer_applis_perso*.unefois ${rep_client_linux}/unefois/\^\./installer_applis_perso_$reference.unefois
 }
 
 
