@@ -857,6 +857,27 @@ END
                 echo "VfilePattern = (^|.*/)(Index|Packages(\.gz|\.bz2|\.lzma|\.xz)?|InRelease|Release|Release\.gpg|Sources(\.gz|\.bz2|\.lzma|\.xz)?|release|index\.db-.*\.gz|Contents-[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|pkglist[^/]*\.bz2|rclist[^/]*\.bz2|meta-release[^/]*|Translation[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|MD5SUMS|SHA1SUMS|((setup|setup-legacy)(\.ini|\.bz2|\.hint)(\.sig)?)|mirrors\.lst|repo(index|md)\.xml(\.asc|\.key)?|directory\.yast|products|content(\.asc|\.key)?|media|filelists\.xml\.gz|filelists\.sqlite\.bz2|repomd\.xml|packages\.[a-zA-Z][a-zA-Z]\.gz|info\.txt|license\.tar\.gz|license\.zip|.*\.(db|files|abs)(\.tar(\.gz|\.bz2|\.lzma|\.xz))?|metalink\?repo|.*prestodelta\.xml\.gz|repodata/.*\.(xml|sqlite)(\.gz|\.bz2|\.lzma|\.xz))$|/dists/.*/installer-[^/]+/[^0-9][^/]+/images/.*"  >> /etc/apt-cacher-ng/acng.conf
             fi
         fi
+        # sous wheezy se3, installation de la version 0.8 d'apt-cacher-ng (backports de wheezy)
+        apt_cacher_ng_version=$(dpkg-query -W apt-cacher-ng | cut -f 2 | cut -c 1-3)
+        if [ "$version_se3" = "wheezy" ] && [ "$apt_cacher_ng_version" != "0.8" ]
+        then
+			# On ajoute le depot backports de wheezy à la liste des depots du se3
+			echo 'deb http://ftp.fr.debian.org/debian/ wheezy-backports main' >> /etc/apt/sources.list
+			apt-get update -q2
+			# On pre-configure apt-cacher-ng pour qu'il garde sa configuration déjà existante à chaque maj
+debconf-set-selections << EOF
+apt-cacher-ng	apt-cacher-ng/bindaddress	string	keep
+apt-cacher-ng	apt-cacher-ng/cachedir	string	keep
+apt-cacher-ng	apt-cacher-ng/port	string	keep
+apt-cacher-ng	apt-cacher-ng/proxy	string	keep
+apt-cacher-ng	apt-cacher-ng/gentargetmode	select	No automated setup
+EOF
+			echo "Le se3 est wheezy : on installe la version 0.8 (backports) du paquet apt-cacher-ng" | tee -a $compte_rendu
+			apt-get install -t wheezy-backports -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
+			# Retrait des backports de la liste des dépots du se3 puis maj de la liste des paquets
+			sed -i "/^deb http:\/\/ftp.fr.debian.org\/debian\/ wheezy-backports main$/d" /etc/apt/sources.list
+			apt-get update -q2
+        fi
         # redémarrage du serveur apt-cacher-ng
         # pour être certain que le service est disponible
         # suite à une éventuelle mise à jour de se3-clonage
