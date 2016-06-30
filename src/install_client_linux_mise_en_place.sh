@@ -858,7 +858,8 @@ END
             fi
         fi
         # sous wheezy se3, installation de la version 0.8 d'apt-cacher-ng (backports de wheezy) pour prise en charge clients xenial
-        apt_cacher_ng_version="$(dpkg-query -W apt-cacher-ng |cut -f2 - |cut -c1-3 -)"
+        #apt_cacher_ng_version="$(dpkg-query -W apt-cacher-ng |cut -f2 - |cut -c1-3 -)"
+        eval apt_cacher_ng_version=$(dpkg-query -W apt-cacher-ng | cut -c15-17 -)
         if [ "$version_se3" = "wheezy" ] && [ "$apt_cacher_ng_version" != "0.8" ]
         then
 			# On ajoute le depot backports de wheezy à la liste des depots du se3
