@@ -857,8 +857,8 @@ END
                 echo "VfilePattern = (^|.*/)(Index|Packages(\.gz|\.bz2|\.lzma|\.xz)?|InRelease|Release|Release\.gpg|Sources(\.gz|\.bz2|\.lzma|\.xz)?|release|index\.db-.*\.gz|Contents-[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|pkglist[^/]*\.bz2|rclist[^/]*\.bz2|meta-release[^/]*|Translation[^/]*(\.gz|\.bz2|\.lzma|\.xz)?|MD5SUMS|SHA1SUMS|((setup|setup-legacy)(\.ini|\.bz2|\.hint)(\.sig)?)|mirrors\.lst|repo(index|md)\.xml(\.asc|\.key)?|directory\.yast|products|content(\.asc|\.key)?|media|filelists\.xml\.gz|filelists\.sqlite\.bz2|repomd\.xml|packages\.[a-zA-Z][a-zA-Z]\.gz|info\.txt|license\.tar\.gz|license\.zip|.*\.(db|files|abs)(\.tar(\.gz|\.bz2|\.lzma|\.xz))?|metalink\?repo|.*prestodelta\.xml\.gz|repodata/.*\.(xml|sqlite)(\.gz|\.bz2|\.lzma|\.xz))$|/dists/.*/installer-[^/]+/[^0-9][^/]+/images/.*"  >> /etc/apt-cacher-ng/acng.conf
             fi
         fi
-        # sous wheezy se3, installation de la version 0.8 d'apt-cacher-ng (backports de wheezy)
-        apt_cacher_ng_version=$(dpkg-query -W apt-cacher-ng | cut -f 2 | cut -c 1-3)
+        # sous wheezy se3, installation de la version 0.8 d'apt-cacher-ng (backports de wheezy) pour prise en charge clients xenial
+        apt_cacher_ng_version="$(dpkg-query -W apt-cacher-ng | cut -f 2 | cut -c 1-3)"
         if [ "$version_se3" = "wheezy" ] && [ "$apt_cacher_ng_version" != "0.8" ]
         then
 			# On ajoute le depot backports de wheezy à la liste des depots du se3
