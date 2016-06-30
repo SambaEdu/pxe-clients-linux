@@ -858,7 +858,7 @@ END
             fi
         fi
         # sous wheezy se3, installation de la version 0.8 d'apt-cacher-ng (backports de wheezy) pour prise en charge clients xenial
-        apt_cacher_ng_version="$(dpkg-query -W apt-cacher-ng | cut -f 2 | cut -c 1-3)"
+        apt_cacher_ng_version="$(dpkg-query -W apt-cacher-ng | cut -f2 | cut -c 1-3)"
         if [ "$version_se3" = "wheezy" ] && [ "$apt_cacher_ng_version" != "0.8" ]
         then
 			# On ajoute le depot backports de wheezy à la liste des depots du se3
@@ -873,7 +873,7 @@ apt-cacher-ng	apt-cacher-ng/proxy	string	keep
 apt-cacher-ng	apt-cacher-ng/gentargetmode	select	No automated setup
 EOF
 			echo "Le se3 est wheezy : on installe la version 0.8 (backports) du paquet apt-cacher-ng" | tee -a $compte_rendu
-			DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get install -t wheezy-backports -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
+			DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical LC_ALL=C apt-get install -t wheezy-backports -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
 			# Retrait des backports de la liste des dépots du se3 puis maj de la liste des paquets
 			sed -i "/^deb http:\/\/ftp.fr.debian.org\/debian\/ wheezy-backports main$/d" /etc/apt/sources.list
 			apt-get update -q2
