@@ -873,7 +873,7 @@ apt-cacher-ng	apt-cacher-ng/proxy	string	keep
 apt-cacher-ng	apt-cacher-ng/gentargetmode	select	No automated setup
 EOF
 			echo "Le se3 est wheezy : on installe la version 0.8 (backports) du paquet apt-cacher-ng" | tee -a $compte_rendu
-			apt-get install -t wheezy-backports -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
+			DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get install -t wheezy-backports -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
 			# Retrait des backports de la liste des dépots du se3 puis maj de la liste des paquets
 			sed -i "/^deb http:\/\/ftp.fr.debian.org\/debian\/ wheezy-backports main$/d" /etc/apt/sources.list
 			apt-get update -q2
