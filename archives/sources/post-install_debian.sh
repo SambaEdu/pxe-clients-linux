@@ -665,7 +665,7 @@ integrer_domaine
 recuperer_liste_perso
 installer_liste_paquets
 install_open_sankore "$compte_rendu" "$ip_se3"
-install_wine
+install_wine "$compte_rendu"
 configurer_grub
 menage_script
 activer_gdm
