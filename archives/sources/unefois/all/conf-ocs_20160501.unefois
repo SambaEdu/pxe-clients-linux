@@ -8,6 +8,7 @@ ocsinventory-agent	ocsinventory-agent/tag	string
 EOF
 
 apt-get install ocsinventory-agent -y
+DEBIAN_FRONTEND=noninteractive dpkg-reconfigure ocsinventory-agent
 
 
 exit 0

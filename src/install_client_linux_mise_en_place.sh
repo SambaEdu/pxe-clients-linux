@@ -1051,6 +1051,7 @@ gestion_scripts_unefois()
         rm -f ${rep_client_linux}/unefois/\^\./conf-ocs*.unefois
         rm -f ${rep_client_linux}/unefois/\^\./get-ssh-key.unefois
         rm -f ${rep_client_linux}/unefois/\^\./installer_applis_perso*.unefois
+        rm -f ${rep_client_linux}/unefois/\^\./polkit_network_manager.unefois
         # on copie le contenu de all dans ^.
         # puis on supprime all
         cp ${rep_client_linux}/unefois/all/* ${rep_client_linux}/unefois/\^\./
