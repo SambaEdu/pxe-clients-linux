@@ -672,12 +672,12 @@ configurer_proxy
 configurer_vim
 configurer_ldap
 configurer_ssmtp
-configurer_ocs
 recuperer_script_integration
 recuperer_nom_client
 integrer_domaine
 [ "$rep" != "n" ] && lancer_integration
 [ "$rep" = "n" ] && renommer_machine
+configurer_ocs
 recuperer_liste_perso
 maj_skel_compte_enseignant
 preconfigurer_ttf
