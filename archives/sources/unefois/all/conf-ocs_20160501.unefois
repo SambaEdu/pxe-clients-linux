@@ -8,7 +8,7 @@ ocsinventory-agent	ocsinventory-agent/tag	string
 EOF
 
 apt-get install ocsinventory-agent -y
-echo "server=$SE3:80" > /etc/ocsinventory/ocsinventory-agent.cfg
+echo "server=$SE3:###_PORT_OCS_###" > /etc/ocsinventory/ocsinventory-agent.cfg
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure ocsinventory-agent
 /usr/bin/ocsinventory-agent
 
