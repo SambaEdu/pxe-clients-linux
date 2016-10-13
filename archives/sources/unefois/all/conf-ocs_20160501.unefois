@@ -2,13 +2,14 @@
 
 debconf-set-selections <<EOF
 ocsinventory-agent	ocsinventory-agent/method	select	http
-ocsinventory-agent	ocsinventory-agent/server	string	$SE3:###_PORT_OCS_###
+ocsinventory-agent	ocsinventory-agent/server	string	"$SE3":###_PORT_OCS_###
 # Action souhaitée pour le fichier de configuration modifié ocsinventory-agent.cfg :
 ocsinventory-agent	ocsinventory-agent/tag	string
 EOF
 
 apt-get install ocsinventory-agent -y
+echo "server=$SE3:80" > /etc/ocsinventory/ocsinventory-agent.cfg
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure ocsinventory-agent
-
+/usr/bin/ocsinventory-agent
 
 exit 0
