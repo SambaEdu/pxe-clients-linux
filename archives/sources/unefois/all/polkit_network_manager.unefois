@@ -6,7 +6,13 @@
 # de la machine ...). Pour éviter ce comportement, on désactive via polkit le bouton qui permet à l'utilisateur de désactiver le réseau
 #=====
 
+VERSION_OS="$(cat /etc/os-release | grep VERSION_ID | cut -d '=' -f 2)"
+VERSION_POLKIT="$(pkaction --version | cut -d '.' -f 2)"
 
+if [ "$VERSION_POLKIT" -le "105" ]
+then
+	if [ "$VERSION_OS" = '"8"' ] || [ "$VERSION_OS" = '"16.04"' ]
+	then
 cat <<'EOF' >/etc/polkit-1/localauthority/30-site.d/network-manager-policy.pkla 
 [NetworkManager permissions]
 Identity=unix-user:*
@@ -15,3 +21,14 @@ ResultAny=no
 ResultInactive=no
 ResultActive=no
 EOF
+	fi
+else
+# A tester avant de décommenter ... (quand la version ultérieure de polkit sera disponible sur Debian et Ubuntu)
+#cat << 'EOF' >/usr/share/polkit-1/rules.d/61-network-manager.rules 
+#polkit.addRule(function(action, subject) {
+#  if (action.id.indexOf("org.freedesktop.NetworkManager.") == 0) {
+#    return polkit.Result.NO;
+#  }
+#});
+#EOF 
+fi
