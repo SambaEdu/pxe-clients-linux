@@ -38,8 +38,7 @@ recuperer_fichier_applis()
 {
     # distribution : Debian ou Ubuntu ?
     distribution=$(cat /etc/issue | awk -- '{ print tolower($1) }')
-    # prévoir /mnt/netlogon/install/messcripts_perso/mesapplis-${distribution}-perso.txt ?
-    cp /mnt/netlogon/install/mesapplis-${distribution}-perso.txt mesapplis-perso.txt
+    cp /mnt/netlogon/install/messcripts_perso/mesapplis-${distribution}-perso.txt mesapplis-perso.txt
     if [ "$?" = "0" ]
     then
         echo "on a récupéré la liste des applis"
