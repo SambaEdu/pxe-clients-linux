@@ -1,15 +1,15 @@
 # Liste de propositions d'évolution du module pxe-clients-linux
 
 * rendre indépendant le module pxe-clients-linux du module se3-clonage.
-* Reste à transposer pour les SE3 wheezy. Pour toute la partie PXE et client linux c'est exactement la même chose donc pas de pb. En revanche pour la partie se3-clonage, il y a des histoires d'encodages différents donc le paquet est à refaire en tenant compte de ces quelques modifs. Je regarderai ça et je pourrai tester car serveur d'établissement est en wheezy.
 * modifier le fichier install.menu pour qu'il ne comporte plus de référence à jessie ou trusty afin d'être indépendant du futur paquet pxe-clients-linux.
-* compléter la doc pour le choix du nom du client (partie post-installation).
 * mettre en place une liste perso d'applis pour ubuntu
 * gestion des erreurs dans les scripts mise en place et post-installation
 * gestion du cas où on a plusieurs cartes réseaux (script post-installation)
 * mettre au point l'interface web du paquet pxe-clients-linux en reprenant la partie actuelle
 * dans l'interface web, pouvoir notifier le mot de passe du compte local enseignant
 * unifier les scripts et fichiers pour Debian/Ubuntu
+* installer le paquet ocs après avoir lancé l'intégration : appel à la fonction à déplacer
+* cas où la machine n'a pas d'entrée dans l'annuaire : le script doit demander le nom ; relance-t-on alors la boucle de lecture de l'annuaire pour savoir si la machine a été réservé entre-temps
 
 
 # liste de évolutions réalisées
@@ -21,6 +21,7 @@
 * possibilité de lancer des scripts perso à la fin de la post-installation
 * mise en fonctions les scripts mise en place et post-installation pour Ubuntu.
 * mise en place de la possibilité d'installer des paquets une fois l'installation effectuée à l'aide du script installer_applis_perso_20160430.unefois
+* ajout dans la doc pour le choix du nom du client (partie post-installation).
 
 
 # Quelques remarques
