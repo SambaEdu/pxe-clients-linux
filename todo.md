@@ -10,6 +10,7 @@
 * unifier les scripts et fichiers pour Debian/Ubuntu
 * installer le paquet ocs après avoir lancé l'intégration : appel à la fonction à déplacer
 * cas où la machine n'a pas d'entrée dans l'annuaire : le script doit demander le nom ; relance-t-on alors la boucle de lecture de l'annuaire pour savoir si la machine a été réservé entre-temps
+* utiliser httpredir à la place de ftp.fr pour les dépôts Debian
 
 
 # liste de évolutions réalisées
