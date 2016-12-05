@@ -863,7 +863,8 @@ END
         if [ "$version_se3" = "wheezy" ] && [ "$apt_cacher_ng_version" != "0.9" ]
         then
 			# On ajoute le depot backports de wheezy à la liste des depots du se3
-			echo 'deb http://ftp.fr.debian.org/debian/ wheezy-backports-sloppy main' >> /etc/apt/sources.list
+			#echo 'deb http://ftp.fr.debian.org/debian/ wheezy-backports-sloppy main' >> /etc/apt/sources.list
+			echo 'deb http://ftp.fr.debian.org/debian/ wheezy-backports-sloppy main' > /etc/apt/sources.list.d/sloppy.list
 			apt-get update -q2
 			# On pre-configure apt-cacher-ng pour qu'il garde sa configuration déjà existante à chaque maj
 debconf-set-selections << EOF
@@ -876,8 +877,9 @@ EOF
 			echo "Le se3 est wheezy : on installe la version 0.9 (du dépot backports-sloppy) du paquet apt-cacher-ng" | tee -a $compte_rendu
 			DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical apt-get install -t wheezy-backports-sloppy -q2 -y -o Dpkg::Options::="--force-confold" apt-cacher-ng
 			# Retrait des backports de la liste des dépots du se3 puis maj de la liste des paquets
-			sed -i "/^deb http:\/\/ftp.fr.debian.org\/debian\/ wheezy-backports-sloppy main$/d" /etc/apt/sources.list
-			apt-get update -q2
+			# ->> on ne retire pas le dépot sloppy afin que d'éventuelles maj d'apt-cacher-ng puissent être faites ...
+			#sed -i "/^deb http:\/\/ftp.fr.debian.org\/debian\/ wheezy-backports-sloppy main$/d" /etc/apt/sources.list
+			#apt-get update -q2
         fi
         # redémarrage du serveur apt-cacher-ng
         # pour être certain que le service est disponible
