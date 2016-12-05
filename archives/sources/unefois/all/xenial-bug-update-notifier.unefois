@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=====
+# Correction pour éviter l'envoi quotidien des clients xenial d'un mail d'erreur d'update-notifier
+#=====
+
+VERSION_OS="$(cat /etc/os-release | grep VERSION_ID | cut -d '=' -f 2)"
+
+if [ "$VERSION_OS" = '"16.04"' ]
+then
+adduser --force-badname --system --home /nonexistent --no-create-home --quiet _apt || true
+chown _apt /var/lib/update-notifier/package-data-downloads/partial/
+fi
+
+
