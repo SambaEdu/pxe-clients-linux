@@ -11,7 +11,7 @@
 * installer le paquet ocs après avoir lancé l'intégration : appel à la fonction à déplacer
 * cas où la machine n'a pas d'entrée dans l'annuaire : le script doit demander le nom ; relance-t-on alors la boucle de lecture de l'annuaire pour savoir si la machine a été réservé entre-temps
 * utiliser httpredir à la place de ftp.fr pour les dépôts Debian
-* passer le se3 à la version 0.9 d' apt-cacher-ng (via le dépôt backports-wheezy-sloppy) car c'est la version d'apt-cacher-ng conçue et adaptée pour des clients Ubuntu Xenial et aussi pour la future version de Debian Stretch…
+
 
 
 # liste de évolutions réalisées
@@ -24,6 +24,7 @@
 * mise en fonctions les scripts mise en place et post-installation pour Ubuntu.
 * mise en place de la possibilité d'installer des paquets une fois l'installation effectuée à l'aide du script installer_applis_perso_20160430.unefois
 * ajout dans la doc pour le choix du nom du client (partie post-installation).
+* passer le se3 à la version 0.9 d' apt-cacher-ng (via le dépôt backports-wheezy-sloppy) car c'est la version d'apt-cacher-ng conçue et adaptée pour des clients Ubuntu Xenial et aussi pour la future version de Debian Stretch…
 
 
 # Quelques remarques
