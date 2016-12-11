@@ -364,6 +364,8 @@ recuperer_nom_client()
                 then
                     echo "le nom $nom_machine contient des caractères invalides: '$t'"
                     nom_machine=""
+                else
+                    echo "Via le DHCP, pensez à réserver l'IP de la machine avec le même nom"
                 fi
             fi
         fi
