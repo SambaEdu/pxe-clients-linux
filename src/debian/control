@@ -1,0 +1,15 @@
+Source: se3-pxe-client-linux
+Section: unknown
+Priority: extra
+Maintainer: root <root@debian-se3.stage.ac-rouen.fr>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/se3-pxe-client-linux.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/se3-pxe-client-linux.git;a=summary
+
+Package: se3-pxe-client-linux
+Architecture: all
+Depends: ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
