@@ -1,9 +1,9 @@
 # Liste de propositions d'évolution du module pxe-clients-linux
 
-* [] rendre indépendant le module pxe-clients-linux du module se3-clonage.
+* [ ] rendre indépendant le module pxe-clients-linux du module se3-clonage.
 * [X] modifier le fichier install.menu pour qu'il ne comporte plus de référence à jessie ou trusty afin d'être indépendant du futur paquet pxe-clients-linux.
-* mettre en place une liste perso d'applis pour ubuntu
-* gestion des erreurs dans les scripts mise en place et post-installation
+[ ] mettre en place une liste perso d'applis pour ubuntu
+[X] gestion des erreurs dans les scripts mise en place et post-installation
 * gestion du cas où on a plusieurs cartes réseaux (script post-installation)
 * mettre au point l'interface web du paquet pxe-clients-linux en reprenant la partie actuelle
 * dans l'interface web, pouvoir notifier le mot de passe du compte local enseignant
