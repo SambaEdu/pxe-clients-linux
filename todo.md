@@ -4,12 +4,12 @@
 * [ ] modifier le fichier install.menu pour qu'il ne comporte plus de référence à jessie ou trusty afin d'être indépendant du futur paquet pxe-clients-linux.
 * [ ] mettre en place une liste perso d'applis pour ubuntu
 * [ ] gestion des erreurs dans les scripts mise en place et post-installation
-* [X]gestion du cas où on a plusieurs cartes réseaux (script post-installation)
-* [ ]mettre au point l'interface web du paquet pxe-clients-linux en reprenant la partie actuelle
-* [ ]dans l'interface web, pouvoir notifier le mot de passe du compte local enseignant
-* [ ]unifier les scripts et fichiers pour Debian/Ubuntu
-* [A]utiliser httpredir à la place de ftp.fr pour les dépôts Debian
-* [ ]utiliser deb.debian.org à la place de ftp.fr.debian.org pour les dépôts Debian
+* [X] gestion du cas où on a plusieurs cartes réseaux (script post-installation)
+* [ ] mettre au point l'interface web du paquet pxe-clients-linux en reprenant la partie actuelle
+* [ ] dans l'interface web, pouvoir notifier le mot de passe du compte local enseignant
+* [ ] unifier les scripts et fichiers pour Debian/Ubuntu
+* [A] utiliser httpredir à la place de ftp.fr pour les dépôts Debian
+* [ ] utiliser deb.debian.org à la place de ftp.fr.debian.org pour les dépôts Debian
 
 
 
