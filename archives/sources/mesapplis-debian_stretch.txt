@@ -1,0 +1,20 @@
+# liste de paquets à installer pour Debian lors de la post-installation
+
+#
+firmware-linux
+
+# capture d'écran
+#shutter
+
+# gestion des applications windows
+#wine
+#ttf-mscorefonts-installer
+
+#
+#gocr
+#grsync
+#icedtea-plugin
+
+# pour réaliser des cartes mentales
+#freeplane
+

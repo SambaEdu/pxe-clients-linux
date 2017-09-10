@@ -1,0 +1,16 @@
+# liste de paquets à installer pour Gnome lors de la post-installation
+
+#
+#nautilus-image-converter
+
+#
+#gnome-shell-extension-suspend-button
+
+#
+#gdebi
+
+#
+#gksu
+
+#
+bidule
